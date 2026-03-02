@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useAccount, useWriteContract, usePublicClient } from "wagmi";
 import { pad } from "viem";
 import { BENEVOLENCE_VAULT_ABI } from "../utils/abis";
@@ -86,7 +86,7 @@ export default function SubmitImpactForm() {
   const [checkingPending, setCheckingPending] = useState<boolean>(true);
 
   // Check for existing pending community review
-  const checkPendingReview = async () => {
+  const checkPendingReview = useCallback(async () => {
     if (!address) {
       setCheckingPending(false);
       return;
@@ -108,7 +108,7 @@ export default function SubmitImpactForm() {
     } finally {
       setCheckingPending(false);
     }
-  };
+  }, [address]);
 
   useEffect(() => {
     checkPendingReview();

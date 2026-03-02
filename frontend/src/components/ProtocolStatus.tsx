@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ENV } from "../utils/env";
 
 const ORACLE_API = ENV.ORACLE_URL;
@@ -118,17 +118,24 @@ export default function ProtocolStatus() {
     const [currentPhase, setCurrentPhase] = useState<Phase | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        Promise.all([
-            hFetch("/api/v1/protocol/roadmap").then(r => r.json()),
-            hFetch("/api/v1/protocol/layers").then(r => r.json()),
-            hFetch("/api/v1/protocol/status").then(r => r.json()),
-        ]).then(([rm, ly, st]) => {
+    const loadProtocolData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const [rm, ly, st] = await Promise.all([
+                hFetch("/api/v1/protocol/roadmap").then(r => r.json()),
+                hFetch("/api/v1/protocol/layers").then(r => r.json()),
+                hFetch("/api/v1/protocol/status").then(r => r.json()),
+            ]);
             setRoadmap(rm.phases || []);
             setLayers(ly.layers || []);
             setCurrentPhase(st.current_phase || null);
-        }).catch(() => { }).finally(() => setLoading(false));
+        } catch { /* ignore */ }
+        finally { setLoading(false); }
     }, []);
+
+    useEffect(() => {
+        loadProtocolData();
+    }, [loadProtocolData]);
 
     if (loading) return (
         <div style={{ textAlign: "center", padding: "80px 0", color: "var(--t2)" }}>

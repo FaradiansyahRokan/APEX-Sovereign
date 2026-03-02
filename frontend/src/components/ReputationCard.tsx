@@ -19,9 +19,9 @@ const glassCard: React.CSSProperties = {
 // Mengubah emoji string dari constants.ts menjadi Vektor SVG Premium
 const RankHologram = ({ iconStr }: { iconStr: string }) => {
   let svgContent = null;
-  
+
   switch (iconStr) {
-    case "citizen": 
+    case "citizen":
       svgContent = (
         <>
           <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" className="svg-spin-slow" />
@@ -29,7 +29,7 @@ const RankHologram = ({ iconStr }: { iconStr: string }) => {
         </>
       );
       break;
-    case "guardian": 
+    case "guardian":
       svgContent = (
         <>
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.5" className="svg-draw" />
@@ -128,16 +128,16 @@ export default function ReputationCard({ address, reputationScore }: Props) {
     query: { refetchInterval: 8_000 },
   });
 
-  const score   = rep ? Number((rep as any)[0]) / 100 : reputationScore;
-  const events  = rep ? Number((rep as any)[1]) : 0;
+  const score = rep ? Number((rep as any)[0]) / 100 : reputationScore;
+  const events = rep ? Number((rep as any)[1]) : 0;
   const lastUpd = rep ? Number((rep as any)[2]) : 0;
 
   const apexFmt = apexBalance
     ? Number(apexBalance.formatted).toLocaleString("en-US", { maximumFractionDigits: 4 })
     : "0";
 
-  const history  = (hist as any[]) ?? [];
-  const recent   = [...history].reverse().slice(0, 5);
+  const history = (hist as any[]) ?? [];
+  const recent = [...history].reverse().slice(0, 5);
   const lastDate = lastUpd > 0
     ? new Date(lastUpd * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : "Never";
@@ -171,7 +171,7 @@ export default function ReputationCard({ address, reputationScore }: Props) {
             }}>
               <RankHologram iconStr={rank.icon} />
             </div>
-            
+
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
                 <p style={{
@@ -209,7 +209,7 @@ export default function ReputationCard({ address, reputationScore }: Props) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
             {[
               { label: "Events Completed", value: events.toString(), gradient: "linear-gradient(135deg,#00dfb2,#7c6aff)", glow: "rgba(0,223,178,0.2)" },
-              { label: "APEX Balance",      value: apexFmt,           gradient: "linear-gradient(135deg,#ffbd59,#ff6eb4)", glow: "rgba(255,189,89,0.2)" },
+              { label: "APEX Balance", value: apexFmt, gradient: "linear-gradient(135deg,#ffbd59,#ff6eb4)", glow: "rgba(255,189,89,0.2)" },
             ].map(s => (
               <div key={s.label} style={{
                 padding: "14px", borderRadius: "12px",
@@ -273,10 +273,10 @@ export default function ReputationCard({ address, reputationScore }: Props) {
               background: "linear-gradient(135deg, rgba(255,189,89,0.1), rgba(255,110,180,0.1))",
               border: "1px solid rgba(255,189,89,0.2)",
             }}>
-              <p style={{ fontSize: "11px", fontWeight: 800, color: "#ffbd59", letterSpacing: "0.1em" }}>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "#ffbd59", letterSpacing: "0.1em" }}>
                 <span style={{ display: "inline-block", marginRight: "6px", verticalAlign: "middle" }}><IconEnergyCore /></span>
                 APEX OF HUMANITY — MAX RANK
-              </p>
+              </div>
             </div>
           )}
         </div>
@@ -323,8 +323,8 @@ export default function ReputationCard({ address, reputationScore }: Props) {
             }}>Recent Activity</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               {recent.map((e: any, i: number) => {
-                const s  = Number(e.score ?? 0), ts = Number(e.timestamp ?? 0);
-                const d  = ts > 0 ? new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—";
+                const s = Number(e.score ?? 0), ts = Number(e.timestamp ?? 0);
+                const d = ts > 0 ? new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—";
                 const op = 1 - i * 0.15;
                 return (
                   <div key={i} style={{

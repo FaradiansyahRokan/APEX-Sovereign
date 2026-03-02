@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAccount, useBalance } from "wagmi";
 import { ENV } from "../utils/env";
 
@@ -79,35 +79,39 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
         query: { enabled: !!address, refetchInterval: 8_000 },
     });
 
-    useEffect(() => {
-        loadProposals();
-        loadVotingPower();
-    }, [address, eventCount, nativeBalance, loadProposals, loadVotingPower]);
-
-    async function loadProposals() {
+    const loadProposals = useCallback(async () => {
         setLoading(true);
         try {
-            const r = await hFetch("/api/v1/governance/proposals");
-            const d = await r.json();
-            setProposals(d.proposals || []);
+            const res = await hFetch("/api/v1/governance/proposals");
+            const data = await res.json();
+            setProposals(data.proposals || []);
         } catch {
             setError("Failed to load proposals");
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
 
-    async function loadVotingPower() {
+    const loadVotingPower = useCallback(async () => {
         if (!address) return;
+        setLoading(true);
         try {
-            const tokenHeld = nativeBalance ? Number(nativeBalance.formatted) : 0;
-            const r = await hFetch(
-                `/api/v1/governance/voting-power?impact_events=${eventCount}&tenure_days=0&token_held=${tokenHeld}`
-            );
-            const d = await r.json();
-            setVotingPower(d.voting_power || 0);
+            const params = new URLSearchParams({
+                impact_events: eventCount.toString(),
+                tenure_days: "0",
+                token_held: nativeBalance ? nativeBalance.formatted : "0"
+            });
+            const res = await hFetch(`/api/v1/governance/voting-power?${params}`);
+            const data = await res.json();
+            setVotingPower(data.voting_power || 0);
         } catch { /* ignore */ }
-    }
+        finally { setLoading(false); }
+    }, [address, eventCount, nativeBalance, setVotingPower, setLoading]);
+
+    useEffect(() => {
+        loadProposals();
+        loadVotingPower();
+    }, [loadProposals, loadVotingPower]);
 
     async function castVote(proposalId: string, voteFor: boolean) {
         if (!address) return;
