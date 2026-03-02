@@ -1,0 +1,321 @@
+// ─── APEX HUMANITY — ABIs v2.0 ───────────────────────────────────────────────
+// Diambil langsung dari Hardhat artifact setelah deploy ke APEX Network
+// BenevolenceVault v2.0: Native Token Minting via NativeMinter Precompile
+// GOOD coin langsung di-mint ke wallet volunteer sebagai native L1 coin
+
+// ── BenevolenceVault v2.0 ─────────────────────────────────────────────────────
+export const BENEVOLENCE_VAULT_ABI = [
+  { inputs: [], name: "AccessControlBadConfirmation", type: "error" },
+  { inputs: [{ internalType: "address", name: "account", type: "address" }, { internalType: "bytes32", name: "neededRole", type: "bytes32" }], name: "AccessControlUnauthorizedAccount", type: "error" },
+  { inputs: [], name: "ECDSAInvalidSignature", type: "error" },
+  { inputs: [{ internalType: "uint256", name: "length", type: "uint256" }], name: "ECDSAInvalidSignatureLength", type: "error" },
+  { inputs: [{ internalType: "bytes32", name: "s", type: "bytes32" }], name: "ECDSAInvalidSignatureS", type: "error" },
+  { inputs: [], name: "EnforcedPause", type: "error" },
+  { inputs: [{ internalType: "bytes32", name: "eventId", type: "bytes32" }], name: "EventAlreadyProcessed", type: "error" },
+  { inputs: [], name: "ExpectedPause", type: "error" },
+  { inputs: [], name: "InvalidAddress", type: "error" },
+  { inputs: [], name: "InvalidOracleSignature", type: "error" },
+  { inputs: [], name: "NativeMintFailed", type: "error" },
+  { inputs: [{ internalType: "bytes32", name: "nonceHash", type: "bytes32" }], name: "NonceAlreadyUsed", type: "error" },
+  { inputs: [{ internalType: "uint256", name: "expiredAt", type: "uint256" }, { internalType: "uint256", name: "currentTime", type: "uint256" }], name: "PayloadExpired", type: "error" },
+  { inputs: [], name: "ReentrancyGuardReentrantCall", type: "error" },
+  { inputs: [{ internalType: "uint256", name: "score", type: "uint256" }, { internalType: "uint256", name: "minimum", type: "uint256" }], name: "ScoreBelowMinimum", type: "error" },
+  { inputs: [], name: "ZeroAmount", type: "error" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "NoSovereignID", type: "error" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "SovereignIDRevoked", type: "error" },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: "uint256", name: "oldMin", type: "uint256" }, { indexed: false, internalType: "uint256", name: "newMin", type: "uint256" }],
+    name: "MinScoreUpdated", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: "address", name: "oldOracle", type: "address" }, { indexed: false, internalType: "address", name: "newOracle", type: "address" }],
+    name: "OracleAddressUpdated", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }],
+    name: "Paused", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "volunteer", type: "address" },
+      { indexed: false, internalType: "uint256", name: "newScore", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "cumulativeScore", type: "uint256" },
+    ],
+    name: "ReputationUpdated", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "contractAddress", type: "address" },
+      { indexed: false, internalType: "bool", name: "required", type: "bool" },
+    ],
+    name: "SovereignIDConfigUpdated", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "bytes32", name: "eventId", type: "bytes32" },
+      { indexed: true, internalType: "address", name: "volunteer", type: "address" },
+      { indexed: true, internalType: "address", name: "beneficiary", type: "address" },
+      { indexed: false, internalType: "uint256", name: "impactScore", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "tokenReward", type: "uint256" },
+      { indexed: false, internalType: "bytes32", name: "zkProofHash", type: "bytes32" },
+      { indexed: false, internalType: "bytes32", name: "eventHash", type: "bytes32" },
+      { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" },
+    ],
+    name: "RewardReleased", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "bytes32", name: "role", type: "bytes32" }, { indexed: true, internalType: "bytes32", name: "previousAdminRole", type: "bytes32" }, { indexed: true, internalType: "bytes32", name: "newAdminRole", type: "bytes32" }],
+    name: "RoleAdminChanged", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "bytes32", name: "role", type: "bytes32" }, { indexed: true, internalType: "address", name: "account", type: "address" }, { indexed: true, internalType: "address", name: "sender", type: "address" }],
+    name: "RoleGranted", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "bytes32", name: "role", type: "bytes32" }, { indexed: true, internalType: "address", name: "account", type: "address" }, { indexed: true, internalType: "address", name: "sender", type: "address" }],
+    name: "RoleRevoked", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }],
+    name: "Unpaused", type: "event",
+  },
+  { inputs: [], name: "DAO_ADMIN_ROLE", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "DEFAULT_ADMIN_ROLE", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "ORACLE_ROLE", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }], name: "getRoleAdmin", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+  {
+    inputs: [],
+    name: "getStats",
+    outputs: [
+      { internalType: "uint256", name: "deposited", type: "uint256" },
+      { internalType: "uint256", name: "distributed", type: "uint256" },
+      { internalType: "uint256", name: "eventsVerified", type: "uint256" },
+      { internalType: "uint256", name: "currentBalance", type: "uint256" },
+    ],
+    stateMutability: "view", type: "function",
+  },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "account", type: "address" }], name: "grantRole", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "account", type: "address" }], name: "hasRole", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "eventId", type: "bytes32" }], name: "isEventProcessed", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "string", name: "nonce", type: "string" }], name: "isNonceUsed", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "minImpactScoreToRelease", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "oracleAddress", outputs: [{ internalType: "address", name: "", type: "address" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "pause", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "paused", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "unpause", outputs: [], stateMutability: "nonpayable", type: "function" },
+  {
+    inputs: [
+      { internalType: "bytes32", name: "eventId", type: "bytes32" },
+      { internalType: "address", name: "volunteerAddress", type: "address" },
+      { internalType: "address", name: "beneficiaryAddress", type: "address" },
+      { internalType: "uint256", name: "impactScoreScaled", type: "uint256" },
+      { internalType: "uint256", name: "tokenRewardWei", type: "uint256" },
+      { internalType: "bytes32", name: "zkProofHash", type: "bytes32" },
+      { internalType: "bytes32", name: "eventHash", type: "bytes32" },
+      { internalType: "string", name: "nonce", type: "string" },
+      { internalType: "uint256", name: "expiresAt", type: "uint256" },
+      { internalType: "uint8", name: "v", type: "uint8" },
+      { internalType: "bytes32", name: "r", type: "bytes32" },
+      { internalType: "bytes32", name: "s", type: "bytes32" },
+    ],
+    name: "releaseReward", outputs: [], stateMutability: "nonpayable", type: "function",
+  },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "callerConfirmation", type: "address" }], name: "renounceRole", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "reputationLedger", outputs: [{ internalType: "address", name: "", type: "address" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "account", type: "address" }], name: "revokeRole", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "uint256", name: "newMin", type: "uint256" }], name: "setMinImpactScore", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address", name: "newOracle", type: "address" }], name: "setOracleAddress", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address", name: "_contract", type: "address" }, { internalType: "bool", name: "_required", type: "bool" }], name: "setSovereignIDConfig", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "sovereignIDContract", outputs: [{ internalType: "address", name: "", type: "address" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "requireSovereignID", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }], name: "supportsInterface", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalEventsVerified", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalFundsDistributed", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { stateMutability: "payable", type: "receive" },
+] as const;
+
+// ── ReputationLedger ABI ──────────────────────────────────────────────────────
+export const REPUTATION_LEDGER_ABI = [
+  { inputs: [], name: "AccessControlBadConfirmation", type: "error" },
+  { inputs: [{ internalType: "address", name: "account", type: "address" }, { internalType: "bytes32", name: "neededRole", type: "bytes32" }], name: "AccessControlUnauthorizedAccount", type: "error" },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "address", name: "volunteer", type: "address" }, { indexed: true, internalType: "uint8", name: "badgeId", type: "uint8" }, { indexed: false, internalType: "string", name: "badgeName", type: "string" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "BadgeEarned", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "address", name: "volunteer", type: "address" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "LeaderboardEntryAdded", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "address", name: "volunteer", type: "address" }, { indexed: false, internalType: "uint256", name: "scoreDelta", type: "uint256" }, { indexed: false, internalType: "uint256", name: "newCumulativeScore", type: "uint256" }, { indexed: false, internalType: "uint256", name: "eventCount", type: "uint256" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "ReputationUpdated", type: "event",
+  },
+  { inputs: [], name: "DEFAULT_ADMIN_ROLE", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "VAULT_ROLE", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+  {
+    inputs: [{ internalType: "address", name: "volunteer", type: "address" }],
+    name: "getAllBadges",
+    outputs: [{ components: [{ internalType: "uint8", name: "id", type: "uint8" }, { internalType: "string", name: "name", type: "string" }, { internalType: "string", name: "description", type: "string" }, { internalType: "string", name: "icon", type: "string" }, { internalType: "uint256", name: "earnedAt", type: "uint256" }], internalType: "struct ReputationLedger.BadgeInfo[]", name: "badges", type: "tuple[]" }],
+    stateMutability: "view", type: "function",
+  },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }, { internalType: "uint8", name: "badgeId", type: "uint8" }], name: "getBadgeEarnedAt", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "getBadges", outputs: [{ internalType: "uint8[]", name: "", type: "uint8[]" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getGlobalStats", outputs: [{ internalType: "uint256", name: "participants", type: "uint256" }, { internalType: "uint256", name: "totalScore", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getLeaderboardLength", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "uint256", name: "offset", type: "uint256" }, { internalType: "uint256", name: "limit", type: "uint256" }], name: "getLeaderboardPage", outputs: [{ internalType: "address[]", name: "addresses", type: "address[]" }, { internalType: "uint256[]", name: "scores", type: "uint256[]" }, { internalType: "uint256[]", name: "ranks", type: "uint256[]" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "getReputation", outputs: [{ internalType: "uint256", name: "cumulativeScore", type: "uint256" }, { internalType: "uint256", name: "eventCount", type: "uint256" }, { internalType: "uint256", name: "lastUpdatedAt", type: "uint256" }, { internalType: "uint256", name: "rank", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }], name: "getRoleAdmin", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "getScoreHistory", outputs: [{ components: [{ internalType: "uint256", name: "score", type: "uint256" }, { internalType: "uint256", name: "timestamp", type: "uint256" }, { internalType: "bytes32", name: "eventHash", type: "bytes32" }], internalType: "struct ReputationLedger.ScoreEntry[]", name: "", type: "tuple[]" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "account", type: "address" }], name: "grantRole", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }, { internalType: "uint8", name: "badgeId", type: "uint8" }], name: "hasBadge", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "account", type: "address" }], name: "hasRole", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "uint256", name: "", type: "uint256" }], name: "leaderboard", outputs: [{ internalType: "address", name: "", type: "address" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "callerConfirmation", type: "address" }], name: "renounceRole", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }, { internalType: "address", name: "account", type: "address" }], name: "revokeRole", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }], name: "supportsInterface", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalImpactScoreGenerated", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalParticipants", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }, { internalType: "uint256", name: "scoreDelta", type: "uint256" }, { internalType: "bytes32", name: "eventHash", type: "bytes32" }], name: "updateReputation", outputs: [{ internalType: "uint256", name: "newCumulative", type: "uint256" }], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address[]", name: "volunteers", type: "address[]" }, { internalType: "uint256[]", name: "ranks", type: "uint256[]" }], name: "updateRanks", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "banAddress", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "unbanAddress", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address", name: "volunteer", type: "address" }], name: "isBanned", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "KEEPER_ROLE", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
+] as const;
+
+// ── IMPACT_TOKEN_ABI — Kosong (v2.0: APEX = native coin, bukan ERC-20) ──────────
+export const IMPACT_TOKEN_ABI = [] as const;
+
+// ── SovereignID ABI ───────────────────────────────────────────────────────────
+export const SOVEREIGN_ID_ABI = [
+  { inputs: [], name: "AlreadyHasIdentity", type: "error" },
+  { inputs: [], name: "NoIdentityFound", type: "error" },
+  { inputs: [], name: "SoulboundTransferForbidden", type: "error" },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "address", name: "owner", type: "address" }, { indexed: true, internalType: "uint256", name: "tokenId", type: "uint256" }, { indexed: false, internalType: "string", name: "didDocument", type: "string" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "IdentityIssued", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "address", name: "owner", type: "address" }, { indexed: true, internalType: "uint256", name: "tokenId", type: "uint256" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "IdentityRevoked", type: "event",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "string", name: "didDocument", type: "string" },
+      { internalType: "string", name: "countryIso", type: "string" },
+      { internalType: "bytes32", name: "biometricHash", type: "bytes32" },
+      { internalType: "address[]", name: "vouchers", type: "address[]" }
+    ],
+    name: "issueIdentity", outputs: [], stateMutability: "nonpayable", type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "owner", type: "address" }], name: "getIdentity",
+    outputs: [{ components: [{ internalType: "uint256", name: "tokenId", type: "uint256" }, { internalType: "string", name: "didDocument", type: "string" }, { internalType: "string", name: "countryIso", type: "string" }, { internalType: "bytes32", name: "biometricHash", type: "bytes32" }, { internalType: "uint256", name: "issuedAt", type: "uint256" }, { internalType: "bool", name: "isActive", type: "bool" }, { internalType: "bool", name: "isVerifiedHuman", type: "bool" }], internalType: "struct SovereignID.Identity", name: "", type: "tuple" }],
+    stateMutability: "view", type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "owner", type: "address" }], name: "getSovereignProfile",
+    outputs: [{ components: [{ internalType: "uint256", name: "tokenId", type: "uint256" }, { internalType: "string", name: "didDocument", type: "string" }, { internalType: "string", name: "countryIso", type: "string" }, { internalType: "bytes32", name: "biometricHash", type: "bytes32" }, { internalType: "uint256", name: "issuedAt", type: "uint256" }, { internalType: "bool", name: "isActive", type: "bool" }, { internalType: "bool", name: "isVerifiedHuman", type: "bool" }], internalType: "struct SovereignID.Identity", name: "identity", type: "tuple" }, { internalType: "uint256", name: "cumulativeScore", type: "uint256" }, { internalType: "uint256", name: "eventCount", type: "uint256" }, { internalType: "uint256", name: "rank", type: "uint256" }],
+    stateMutability: "view", type: "function",
+  },
+  { inputs: [{ internalType: "address", name: "owner", type: "address" }], name: "hasIdentity", outputs: [{ internalType: "bool", name: "", type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "address", name: "owner", type: "address" }], name: "revokeIdentity", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "address", name: "owner", type: "address" }], name: "markHumanVerified", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "totalIdentities", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "reputationLedger", outputs: [{ internalType: "address", name: "", type: "address" }], stateMutability: "view", type: "function" },
+] as const;
+
+// ── SupplyGovernor ABI (Layer 2 — Living Economy) ─────────────────────────────
+export const SUPPLY_GOVERNOR_ABI = [
+  { inputs: [], name: "SG__InvalidIndex", type: "error" },
+  { inputs: [], name: "SG__ZeroAddress", type: "error" },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: "uint256", name: "oldIndex", type: "uint256" }, { indexed: false, internalType: "uint256", name: "newIndex", type: "uint256" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "SufferingIndexUpdated", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: "string", name: "oldPhase", type: "string" }, { indexed: false, internalType: "string", name: "newPhase", type: "string" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "PhaseAdvanced", type: "event",
+  },
+  { inputs: [{ internalType: "uint256", name: "newIndex", type: "uint256" }], name: "updateSufferingIndex", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "uint256", name: "estimate", type: "uint256" }], name: "updateIdleTokensEstimate", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ internalType: "string", name: "newPhase", type: "string" }, { internalType: "uint256", name: "newPhaseCap", type: "uint256" }], name: "advancePhase", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "getAnnualMintCap", outputs: [{ internalType: "uint256", name: "mintCap", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getMintRatePerSecond", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "getAnnualIdleBurn", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  {
+    inputs: [], name: "getEconomySnapshot",
+    outputs: [
+      { internalType: "uint256", name: "annualMintCap", type: "uint256" },
+      { internalType: "uint256", name: "mintRatePerSec", type: "uint256" },
+      { internalType: "uint256", name: "annualIdleBurn", type: "uint256" },
+      { internalType: "uint256", name: "_sufferingIndex", type: "uint256" },
+      { internalType: "string", name: "phase", type: "string" },
+      { internalType: "uint256", name: "updatedAt", type: "uint256" },
+    ],
+    stateMutability: "view", type: "function",
+  },
+  { inputs: [], name: "sufferingIndex", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "currentPhase", outputs: [{ internalType: "string", name: "", type: "string" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "currentPhaseCap", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "lastUpdated", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalIdleTokensEstimate", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "BASE_SUPPLY", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "FLEX_FACTOR", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+] as const;
+
+// ── CrisisFund ABI (Layer 7 — Macro Economy Flywheel) ────────────────────────
+export const CRISIS_FUND_ABI = [
+  { inputs: [], name: "CF__ZeroAmount", type: "error" },
+  { inputs: [], name: "CF__ZeroAddress", type: "error" },
+  { inputs: [{ internalType: "uint8", name: "sdg", type: "uint8" }], name: "CF__InvalidSDG", type: "error" },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "address", name: "donor", type: "address" }, { indexed: false, internalType: "uint256", name: "amount", type: "uint256" }, { indexed: false, internalType: "uint8", name: "sdg", type: "uint8" }, { indexed: false, internalType: "uint256", name: "reflexBonus", type: "uint256" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "DonationReceived", type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: true, internalType: "address", name: "crisisZone", type: "address" }, { indexed: false, internalType: "uint256", name: "amount", type: "uint256" }, { indexed: false, internalType: "uint8", name: "sdg", type: "uint8" }, { indexed: false, internalType: "uint256", name: "timestamp", type: "uint256" }],
+    name: "CrisisDistribution", type: "event",
+  },
+  { inputs: [{ internalType: "uint8", name: "sdgGoal", type: "uint8" }], name: "donate", outputs: [], stateMutability: "payable", type: "function" },
+  { inputs: [{ internalType: "address", name: "crisisZone", type: "address" }, { internalType: "uint256", name: "amount", type: "uint256" }, { internalType: "uint8", name: "sdgGoal", type: "uint8" }], name: "distributeToCrisis", outputs: [], stateMutability: "nonpayable", type: "function" },
+  {
+    inputs: [], name: "getStats",
+    outputs: [
+      { internalType: "uint256", name: "donated", type: "uint256" },
+      { internalType: "uint256", name: "distributed", type: "uint256" },
+      { internalType: "uint256", name: "reflexPaid", type: "uint256" },
+      { internalType: "uint256", name: "treasuryBalance", type: "uint256" },
+    ],
+    stateMutability: "view", type: "function",
+  },
+  { inputs: [{ internalType: "uint8", name: "sdg", type: "uint8" }], name: "getSDGStats", outputs: [{ internalType: "uint256", name: "totalForSDG", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "address", name: "donor", type: "address" }], name: "donorTotal", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalDonated", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalDistributed", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "totalReflexPaid", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "REFLEX_BPS", outputs: [{ internalType: "uint256", name: "", type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "pause", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "unpause", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { stateMutability: "payable", type: "receive" },
+] as const;
