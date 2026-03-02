@@ -5,19 +5,11 @@ import { useWriteContract, usePublicClient, useReadContract } from "wagmi";
 import { pad } from "viem";
 import { CONTRACTS, ACTION_TYPES, URGENCY_LEVELS, getRank } from "../utils/constants";
 import { BENEVOLENCE_VAULT_ABI } from "../utils/abis";
+import { ENV } from "../utils/env";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── ENV (synced with SubmitImpactForm.tsx v2.0) ───────────────────────────────
-// const getOracleUrl = () => {
-//   if (typeof window === "undefined")
-//     return process.env.NEXT_PUBLIC_ORACLE_URL;
-//   const host = window.location.hostname;
-//   const isLocal = host === "localhost" || host === "127.0.0.1";
-//   if (isLocal) return "http://127.0.0.1:8000";
-//   return process.env.NEXT_PUBLIC_ORACLE_URL || `http://${host}:8000`;
-// };
-
-const ORACLE_URL = process.env.NEXT_PUBLIC_ORACLE_URL;
+const ORACLE_URL = process.env.NEXT_PUBLIC_ORACLE_URL || ENV.ORACLE_URL;
 const ORACLE_KEY = process.env.NEXT_PUBLIC_SATIN_API_KEY || "apex-dev-key";
 const POLL_MS = 15_000;
 

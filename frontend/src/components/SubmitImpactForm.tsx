@@ -7,15 +7,7 @@ import { BENEVOLENCE_VAULT_ABI } from "../utils/abis";
 import { CONTRACTS } from "../utils/constants";
 import { ENV } from "../utils/env";
 
-const getOracleUrl = () => {
-  if (typeof window === "undefined") return process.env.NEXT_PUBLIC_ORACLE_URL || "http://localhost:8000";
-  const host = window.location.hostname;
-  const isLocal = host === "localhost" || host === "127.0.0.1";
-  if (isLocal) return "http://127.0.0.1:8000";
-  return process.env.NEXT_PUBLIC_ORACLE_URL || `http://${host}:8000`;
-};
-
-const ORACLE_URL = getOracleUrl();
+const ORACLE_URL = ENV.ORACLE_URL;
 const ORACLE_KEY = process.env.NEXT_PUBLIC_SATIN_API_KEY || "apex-dev-key";
 
 type Step = "form" | "uploading" | "oracle" | "onchain" | "success";
