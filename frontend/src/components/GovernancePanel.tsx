@@ -82,7 +82,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
     useEffect(() => {
         loadProposals();
         loadVotingPower();
-    }, [address, eventCount, nativeBalance]);
+    }, [address, eventCount, nativeBalance, loadProposals, loadVotingPower]);
 
     async function loadProposals() {
         setLoading(true);

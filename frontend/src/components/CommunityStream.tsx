@@ -19,59 +19,59 @@ const getOracleUrl = () => {
 
 const ORACLE_URL = getOracleUrl();
 const ORACLE_KEY = process.env.NEXT_PUBLIC_SATIN_API_KEY || "apex-dev-key";
-const POLL_MS    = 15_000;
+const POLL_MS = 15_000;
 
 // ── Types (synced with backend v2.0 stream_entry + vote_info) ─────────────────
 interface VoteInfo {
-  approve:    number;
-  reject:     number;
-  total:      number;
-  outcome:    string | null;
-  phase:      number;
-  phase2_in:  number;
-  voters?:    string[];
+  approve: number;
+  reject: number;
+  total: number;
+  outcome: string | null;
+  phase: number;
+  phase2_in: number;
+  voters?: string[];
 }
 
 interface StreamEntry {
-  event_id:              string;
-  volunteer_address:     string;
-  action_type:           string;
-  urgency_level:         string;
-  description:           string;
-  latitude:              number;
-  longitude:             number;
-  effort_hours:          number;
-  people_helped:         number;
-  impact_score:          number;
-  ai_confidence:         number;
-  token_reward:          number;
-  source:                string;
-  image_base64:          string | null;
-  integrity_warnings:    string[];
-  parameter_warnings?:   string[];         // v2.0: from param_result.warnings
-  llm_verdict?:          string;           // v2.0: "consistent" | "suspicious" | "fabricated"
-  llm_reason?:           string;
-  visual_description?:   string;           // v2.0: Fase 1 — what AI saw
+  event_id: string;
+  volunteer_address: string;
+  action_type: string;
+  urgency_level: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  effort_hours: number;
+  people_helped: number;
+  impact_score: number;
+  ai_confidence: number;
+  token_reward: number;
+  source: string;
+  image_base64: string | null;
+  integrity_warnings: string[];
+  parameter_warnings?: string[];         // v2.0: from param_result.warnings
+  llm_verdict?: string;           // v2.0: "consistent" | "suspicious" | "fabricated"
+  llm_reason?: string;
+  visual_description?: string;           // v2.0: Fase 1 — what AI saw
   claim_accuracy_score?: number;           // v2.0: Fase 2 — 0.0–1.0
-  discrepancies?:        string[];         // v2.0: Fase 2 — specific mismatches
-  integrity_score?:      number;           // v2.0: Fase 3 — overall
-  phase1_scene_type?:    string;           // v2.0: Fase 1 raw
+  discrepancies?: string[];         // v2.0: Fase 2 — specific mismatches
+  integrity_score?: number;           // v2.0: Fase 3 — overall
+  phase1_scene_type?: string;           // v2.0: Fase 1 raw
   phase1_people_visible?: number;          // v2.0: Fase 1 raw
-  phase1_activity?:      string;           // v2.0: Fase 1 raw
-  phase1_image_auth?:    string;           // v2.0: Fase 1 raw
+  phase1_activity?: string;           // v2.0: Fase 1 raw
+  phase1_image_auth?: string;           // v2.0: Fase 1 raw
   needs_community_review: boolean;
-  needs_champion_audit?:  boolean;
-  submitted_at:           number;
-  vote_info?:             VoteInfo;
+  needs_champion_audit?: boolean;
+  submitted_at: number;
+  vote_info?: VoteInfo;
 }
 
 // ── Design tokens (on-theme, no emojis) ──────────────────────────────────────
 const C = {
-  teal:    "#00dfb2",
-  purple:  "#7c6aff",
-  pink:    "#ff6eb4",
-  amber:   "#ffbd59",
-  red:     "#ff5050",
+  teal: "#00dfb2",
+  purple: "#7c6aff",
+  pink: "#ff6eb4",
+  amber: "#ffbd59",
+  red: "#ff5050",
   dimText: "rgba(255,255,255,0.3)",
   faintBg: "rgba(255,255,255,0.025)",
   faintBd: "rgba(255,255,255,0.07)",
@@ -104,24 +104,24 @@ const capsLabel: React.CSSProperties = {
 // ── Utility ───────────────────────────────────────────────────────────────────
 function timeAgo(unix: number) {
   const s = Math.floor(Date.now() / 1000) - unix;
-  if (s < 60)   return `${s}s ago`;
+  if (s < 60) return `${s}s ago`;
   if (s < 3600) return `${Math.floor(s / 60)}m ago`;
   return `${Math.floor(s / 3600)}h ago`;
 }
 
 // ── Verdict color map ─────────────────────────────────────────────────────────
 const verdictMeta: Record<string, { label: string; color: string; bg: string; bd: string }> = {
-  consistent: { label: "CONSISTENT",  color: C.teal,   bg: "rgba(0,223,178,0.08)",   bd: "rgba(0,223,178,0.25)" },
-  suspicious: { label: "SUSPICIOUS",  color: C.amber,  bg: "rgba(255,189,89,0.08)",  bd: "rgba(255,189,89,0.25)" },
-  fabricated: { label: "FABRICATED",  color: C.red,    bg: "rgba(255,80,80,0.08)",   bd: "rgba(255,80,80,0.25)" },
+  consistent: { label: "CONSISTENT", color: C.teal, bg: "rgba(0,223,178,0.08)", bd: "rgba(0,223,178,0.25)" },
+  suspicious: { label: "SUSPICIOUS", color: C.amber, bg: "rgba(255,189,89,0.08)", bd: "rgba(255,189,89,0.25)" },
+  fabricated: { label: "FABRICATED", color: C.red, bg: "rgba(255,80,80,0.08)", bd: "rgba(255,80,80,0.25)" },
 };
 
 const authMeta: Record<string, { color: string; bg: string }> = {
-  real_photo:          { color: C.teal,   bg: "rgba(0,223,178,0.08)" },
-  likely_screenshot:   { color: C.red,    bg: "rgba(255,80,80,0.08)" },
-  likely_digital_art:  { color: C.red,    bg: "rgba(255,80,80,0.08)" },
-  possibly_manipulated:{ color: C.amber,  bg: "rgba(255,189,89,0.08)" },
-  unclear:             { color: C.dimText,bg: "rgba(255,255,255,0.04)" },
+  real_photo: { color: C.teal, bg: "rgba(0,223,178,0.08)" },
+  likely_screenshot: { color: C.red, bg: "rgba(255,80,80,0.08)" },
+  likely_digital_art: { color: C.red, bg: "rgba(255,80,80,0.08)" },
+  possibly_manipulated: { color: C.amber, bg: "rgba(255,189,89,0.08)" },
+  unclear: { color: C.dimText, bg: "rgba(255,255,255,0.04)" },
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -154,9 +154,9 @@ function ActionBadge({ type }: { type: string }) {
 function UrgencyBadge({ level }: { level: string }) {
   const map: Record<string, string> = {
     CRITICAL: C.purple,
-    HIGH:     C.pink,
-    MEDIUM:   C.amber,
-    LOW:      C.teal,
+    HIGH: C.pink,
+    MEDIUM: C.amber,
+    LOW: C.teal,
   };
   const c = map[level] ?? C.amber;
   return <Pill color={c}>{level}</Pill>;
@@ -178,7 +178,7 @@ function Bar({
 }
 
 function ConfidenceRow({ value }: { value: number }) {
-  const pct   = Math.round(value * 100);
+  const pct = Math.round(value * 100);
   const color = pct >= 60 ? C.teal : pct >= 30 ? C.amber : C.red;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
@@ -200,11 +200,11 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
   if (!hasPhase1 && !hasPhase2 && !hasPhase3) return null;
 
   const verdict = entry.llm_verdict ?? "suspicious";
-  const vm      = verdictMeta[verdict] ?? verdictMeta.suspicious;
-  const acc     = entry.claim_accuracy_score ?? 0.5;
-  const accPct  = Math.round(acc * 100);
-  const accColor= acc > 0.7 ? C.teal : acc > 0.4 ? C.amber : C.red;
-  const integ   = entry.integrity_score ?? 0.5;
+  const vm = verdictMeta[verdict] ?? verdictMeta.suspicious;
+  const acc = entry.claim_accuracy_score ?? 0.5;
+  const accPct = Math.round(acc * 100);
+  const accColor = acc > 0.7 ? C.teal : acc > 0.4 ? C.amber : C.red;
+  const integ = entry.integrity_score ?? 0.5;
   const integColor = integ > 0.7 ? C.teal : integ > 0.4 ? C.amber : C.red;
   const authKey = entry.phase1_image_auth ?? "unclear";
   const authStyle = authMeta[authKey] ?? authMeta.unclear;
@@ -246,7 +246,7 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
                 background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)",
                 marginBottom: "8px",
               }}>
-                "{entry.visual_description}"
+                &quot;{entry.visual_description}&quot;
               </p>
             )}
             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" as const }}>
@@ -359,28 +359,28 @@ function VotingPanel({
 }: { entry: StreamEntry; address: string; reputationScore: number; onVoted: () => void }) {
   const vi = entry.vote_info!;
   const [voting, setVoting] = useState(false);
-  const [msg, setMsg]       = useState("");
+  const [msg, setMsg] = useState("");
   const [claiming, setClaiming] = useState(false);
-  const [claimTx, setClaimTx]   = useState("");
+  const [claimTx, setClaimTx] = useState("");
 
   const { writeContractAsync } = useWriteContract();
   const publicClient = usePublicClient();
 
   const { data: isProcessed } = useReadContract({
     address: CONTRACTS.BENEVOLENCE_VAULT as `0x${string}`,
-    abi:     BENEVOLENCE_VAULT_ABI,
+    abi: BENEVOLENCE_VAULT_ABI,
     functionName: "isEventProcessed",
     args: [pad(`0x${entry.event_id.replace(/-/g, "")}` as `0x${string}`, { size: 32 })],
   });
 
-  const isOwner        = address.toLowerCase() === entry.volunteer_address.toLowerCase();
-  const hasVoted       = vi.voters?.map(v => v.toLowerCase()).includes(address.toLowerCase());
-  const isChampion     = reputationScore >= 500;
+  const isOwner = address.toLowerCase() === entry.volunteer_address.toLowerCase();
+  const hasVoted = vi.voters?.map(v => v.toLowerCase()).includes(address.toLowerCase());
+  const isChampion = reputationScore >= 500;
   const isChampionAudit = entry.needs_champion_audit;
-  const canVote        = isChampionAudit ? isChampion : (vi.phase === 2 || isChampion);
-  const total          = (vi.approve + vi.reject) || 1;
-  const approveP       = Math.round((vi.approve / total) * 100);
-  const rejectP        = 100 - approveP;
+  const canVote = isChampionAudit ? isChampion : (vi.phase === 2 || isChampion);
+  const total = (vi.approve + vi.reject) || 1;
+  const approveP = Math.round((vi.approve / total) * 100);
+  const rejectP = 100 - approveP;
 
   const handleClaim = async () => {
     setClaiming(true); setMsg("");
@@ -394,10 +394,10 @@ function VotingPanel({
         return;
       }
       const real = await res.json();
-      const ca   = real.contract_args;
+      const ca = real.contract_args;
       const hash = await writeContractAsync({
         address: CONTRACTS.BENEVOLENCE_VAULT as `0x${string}`,
-        abi:     BENEVOLENCE_VAULT_ABI,
+        abi: BENEVOLENCE_VAULT_ABI,
         functionName: "releaseReward",
         args: [
           pad(`0x${real.event_id.replace(/-/g, "")}` as `0x${string}`, { size: 32 }),
@@ -426,11 +426,11 @@ function VotingPanel({
     setVoting(true);
     try {
       const res = await fetch(`${ORACLE_URL}/api/v1/vote`, {
-        method:  "POST",
+        method: "POST",
         headers: { "Content-Type": "application/json", "X-APEX-Oracle-Key": ORACLE_KEY },
-        body:    JSON.stringify({
-          event_id:        entry.event_id,
-          voter_address:   address,
+        body: JSON.stringify({
+          event_id: entry.event_id,
+          voter_address: address,
           vote,
           reputation_score: reputationScore,
         }),
@@ -562,7 +562,7 @@ function VotingPanel({
         <div>
           <div style={{ display: "flex", height: "5px", borderRadius: "99px", overflow: "hidden" }}>
             <div style={{ width: `${approveP}%`, background: C.teal, transition: "width 0.4s" }} />
-            <div style={{ width: `${rejectP}%`, background: C.red,  transition: "width 0.4s" }} />
+            <div style={{ width: `${rejectP}%`, background: C.red, transition: "width 0.4s" }} />
           </div>
           <p style={{ ...capsLabel, marginTop: "5px" }}>
             {vi.approve} approve · {vi.reject} reject · quorum: 3
@@ -588,8 +588,8 @@ function VotingPanel({
       ) : canVote ? (
         <div style={{ display: "flex", gap: "8px" }}>
           {[
-            { label: "Approve", vote: "approve" as const, color: C.teal,  bg: "rgba(0,223,178,0.10)" },
-            { label: "Reject",  vote: "reject"  as const, color: C.red,   bg: "rgba(255,80,80,0.08)" },
+            { label: "Approve", vote: "approve" as const, color: C.teal, bg: "rgba(0,223,178,0.10)" },
+            { label: "Reject", vote: "reject" as const, color: C.red, bg: "rgba(255,80,80,0.08)" },
           ].map(({ label, vote, color, bg }) => (
             <motion.button
               key={vote}
@@ -623,11 +623,11 @@ function VotingPanel({
 function StreamCard({
   entry, address, reputationScore, onVoted,
 }: { entry: StreamEntry; address: string; reputationScore: number; onVoted: () => void }) {
-  const flagged      = entry.needs_community_review;
+  const flagged = entry.needs_community_review;
   const [expanded, setExpanded] = useState(false);
 
-  const accentColor  = flagged ? C.amber : C.teal;
-  const topGradient  = flagged
+  const accentColor = flagged ? C.amber : C.teal;
+  const topGradient = flagged
     ? `linear-gradient(90deg, ${C.amber}, ${C.pink})`
     : `linear-gradient(90deg, ${C.teal}, ${C.purple})`;
 
@@ -779,10 +779,10 @@ function StreamCard({
           paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.04)",
         }}>
           {[
-            { label: "Score",   value: `${entry.impact_score}/100`,           grad: `linear-gradient(90deg, ${C.teal}, ${C.purple})` },
-            { label: "Reward",  value: `${(entry.token_reward ?? 0).toFixed(2)} APEX`, grad: `linear-gradient(90deg, ${C.amber}, ${C.pink})` },
-            { label: "Effort",  value: `${entry.effort_hours}h`,              grad: `linear-gradient(90deg, ${C.purple}, ${C.pink})` },
-            { label: "Helped",  value: `${entry.people_helped}`,              grad: `linear-gradient(90deg, ${C.teal}, ${C.purple})` },
+            { label: "Score", value: `${entry.impact_score}/100`, grad: `linear-gradient(90deg, ${C.teal}, ${C.purple})` },
+            { label: "Reward", value: `${(entry.token_reward ?? 0).toFixed(2)} APEX`, grad: `linear-gradient(90deg, ${C.amber}, ${C.pink})` },
+            { label: "Effort", value: `${entry.effort_hours}h`, grad: `linear-gradient(90deg, ${C.purple}, ${C.pink})` },
+            { label: "Helped", value: `${entry.people_helped}`, grad: `linear-gradient(90deg, ${C.teal}, ${C.purple})` },
           ].map(s => (
             <div key={s.label}>
               <p style={capsLabel}>{s.label}</p>
@@ -859,10 +859,10 @@ export default function CommunityStream({
   address,
   reputationScore,
 }: { address: string; reputationScore: number }) {
-  const [items,        setItems]       = useState<StreamEntry[]>([]);
-  const [loading,      setLoading]     = useState(true);
-  const [lastRefresh,  setLastRefresh] = useState(Date.now());
-  const [filter,       setFilter]      = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [items, setItems] = useState<StreamEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const rank = getRank(reputationScore);
 
   const fetchStream = useCallback(async () => {
@@ -888,8 +888,8 @@ export default function CommunityStream({
 
   const filteredItems = items
     .filter(entry => {
-      if (filter === "all")      return true;
-      if (filter === "pending")  return entry.needs_community_review && !entry.vote_info?.outcome;
+      if (filter === "all") return true;
+      if (filter === "pending") return entry.needs_community_review && !entry.vote_info?.outcome;
       if (filter === "approved") return entry.vote_info?.outcome === "approved";
       if (filter === "rejected") return entry.vote_info?.outcome === "rejected";
       return true;
@@ -903,8 +903,8 @@ export default function CommunityStream({
     });
 
   const FILTERS: { key: typeof filter; label: string }[] = [
-    { key: "all",      label: "All" },
-    { key: "pending",  label: "Pending" },
+    { key: "all", label: "All" },
+    { key: "pending", label: "Pending" },
     { key: "approved", label: "Approved" },
     { key: "rejected", label: "Rejected" },
   ];
@@ -1049,7 +1049,7 @@ export default function CommunityStream({
                 key={entry.event_id}
                 layout
                 initial={{ opacity: 0, y: 16, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0,  scale: 1 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95, filter: "blur(6px)" }}
                 transition={{ duration: 0.28, delay: Math.min(index * 0.04, 0.24), ease: [0.4, 0, 0.2, 1] }}
               >

@@ -258,8 +258,8 @@ export default function Home() {
             fontSize: "16px", color: "var(--t1)",
             maxWidth: "460px", lineHeight: 1.75, fontWeight: 400,
           }}>
-            The world's first protocol where your most valuable asset is the number of lives
-            you've changed — verified by AI, immortalized on-chain.
+            The world&apos;s first protocol where your most valuable asset is the number of lives
+            you&apos;ve changed — verified by AI, immortalized on-chain.
           </p>
 
 

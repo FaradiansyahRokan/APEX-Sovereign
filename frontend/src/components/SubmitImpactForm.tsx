@@ -112,7 +112,7 @@ export default function SubmitImpactForm() {
 
   useEffect(() => {
     checkPendingReview();
-  }, [address]);
+  }, [address, checkPendingReview]);
 
   // Auto-request GPS on mount so user doesn't have to click Auto
   useEffect(() => {
@@ -500,7 +500,7 @@ export default function SubmitImpactForm() {
                       padding: "8px 12px", borderRadius: "8px",
                       background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)",
                     }}>
-                      "{oracle.visual_description}"
+                      &quot;{oracle.visual_description}&quot;
                     </p>
                   )}
                   {(oracle.phase1_scene_type || oracle.phase1_people_visible !== undefined) && (
@@ -544,10 +544,10 @@ export default function SubmitImpactForm() {
                       letterSpacing: "0.06em", textTransform: "uppercase",
                       background: oracle.llm_verdict === "consistent"
                         ? "rgba(107,255,158,0.12)" : oracle.llm_verdict === "suspicious"
-                        ? "rgba(255,189,89,0.12)" : "rgba(255,100,100,0.12)",
+                          ? "rgba(255,189,89,0.12)" : "rgba(255,100,100,0.12)",
                       border: `1px solid ${oracle.llm_verdict === "consistent"
                         ? "rgba(107,255,158,0.3)" : oracle.llm_verdict === "suspicious"
-                        ? "rgba(255,189,89,0.3)" : "rgba(255,100,100,0.3)"}`,
+                          ? "rgba(255,189,89,0.3)" : "rgba(255,100,100,0.3)"}`,
                       color: oracle.llm_verdict === "consistent" ? "#6bff9e"
                         : oracle.llm_verdict === "suspicious" ? "#ffbd59" : "#ff6b6b",
                     }}>
@@ -564,8 +564,8 @@ export default function SubmitImpactForm() {
                             background: oracle.claim_accuracy_score > 0.7
                               ? "linear-gradient(90deg,#00dfb2,#6bff9e)"
                               : oracle.claim_accuracy_score > 0.4
-                              ? "linear-gradient(90deg,#ffbd59,#ff9f43)"
-                              : "linear-gradient(90deg,#ff6b6b,#ee5a24)",
+                                ? "linear-gradient(90deg,#ffbd59,#ff9f43)"
+                                : "linear-gradient(90deg,#ff6b6b,#ee5a24)",
                             transition: "width 0.8s ease",
                           }} />
                         </div>
@@ -621,8 +621,8 @@ export default function SubmitImpactForm() {
                         background: (oracle.integrity_score ?? 1) > 0.7
                           ? "linear-gradient(90deg,#00dfb2,#6bff9e)"
                           : (oracle.integrity_score ?? 1) > 0.4
-                          ? "linear-gradient(90deg,#ffbd59,#ff9f43)"
-                          : "linear-gradient(90deg,#ff6b6b,#ee5a24)",
+                            ? "linear-gradient(90deg,#ffbd59,#ff9f43)"
+                            : "linear-gradient(90deg,#ff6b6b,#ee5a24)",
                         borderRadius: "3px",
                         transition: "width 0.8s ease",
                         boxShadow: "0 0 8px rgba(0,223,178,0.4)",
@@ -979,8 +979,8 @@ export default function SubmitImpactForm() {
                 {form.description.length < 20
                   ? "⚠️ Min 20 karakter — terlalu pendek untuk diverifikasi"
                   : form.description.length < 60
-                  ? "💡 Bagus! Tambah detail: lokasi, jumlah orang, situasi"
-                  : "✅ Deskripsi cukup detail untuk cross-examination AI"
+                    ? "💡 Bagus! Tambah detail: lokasi, jumlah orang, situasi"
+                    : "✅ Deskripsi cukup detail untuk cross-examination AI"
                 }
               </p>
               <p style={{
