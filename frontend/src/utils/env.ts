@@ -3,7 +3,7 @@
 // and use the correct names from .env.local
 
 export const ENV = {
-    ORACLE_URL: process.env.NEXT_PUBLIC_ORACLE_URL || "http://127.0.0.1:8000",
+    ORACLE_URL: process.env.NEXT_PUBLIC_ORACLE_URL,
     SATIN_API_KEY: process.env.NEXT_PUBLIC_SATIN_API_KEY || "",
 
     CHAIN_ID: Number(process.env.NEXT_PUBLIC_CHAIN_ID) || 6969,
