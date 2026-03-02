@@ -47,3 +47,26 @@ oracle/env/
 pip-log.txt
 pip-delete-this-directory.txt
 .pytest_cache/
+
+# ── 6. Documentation & AI ───────────────
+# Abaikan file AI yang besar dan tidak perlu di-commit
+oracle/ai_models/
+oracle/data/
+oracle/logs/
+oracle/outputs/
+oracle/temp/
+
+# Abaikan file dokumentasi teknis yang besar
+*.md
+*.txt
+*.pdf
+*.docx
+*.log
+
+# Abaikan file konfigurasi AI
+.env.ai
+.env.local.ai
+*.pt
+# Abaikan file cache AI
+.cache/
+.pytest_cache/

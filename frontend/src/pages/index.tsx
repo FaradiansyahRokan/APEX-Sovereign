@@ -46,7 +46,7 @@ const TABS: { id: TabId; label: string; color: string }[] = [
   { id: "economy", label: "Economy (L2 & L7)", color: "var(--mi)" },
   { id: "protocol", label: "Protocol (L8)", color: "var(--vi)" },
   { id: "profile", label: "My Profile", color: "var(--vi)" },
-  { id: "stream", label: "🔴 Community Stream", color: "#ff6eb4" },
+  { id: "stream", label: "Community Stream", color: "#ff6eb4" },
   { id: "feed", label: "Impact Feed", color: "var(--mi)" },
   { id: "badges", label: "Badges", color: "var(--go)" },
   { id: "leaderboard", label: "Leaderboard", color: "var(--vi)" },
