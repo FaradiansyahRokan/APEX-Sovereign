@@ -4,33 +4,36 @@ import { useState } from "react";
 import { useBalance, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther, isAddress } from "viem";
 
-interface TxRecord {
-  to: string; amount: string; time: number; status: "ok" | "err";
-}
+interface TxRecord { to: string; amount: string; time: number; status: "ok" | "err"; }
 
-const glassCard: React.CSSProperties = {
-  borderRadius: "16px",
-  border: "1px solid rgba(255,255,255,0.07)",
-  background: "rgba(255,255,255,0.03)",
-  overflow: "hidden",
-};
+const S = "Georgia, 'Times New Roman', serif";
+const M = "'JetBrains Mono', monospace";
 
-const inputStyle: React.CSSProperties = {
+const fieldStyle: React.CSSProperties = {
   width: "100%",
-  padding: "12px 16px",
-  borderRadius: "12px",
-  background: "rgba(255,255,255,0.04)",
-  border: "1px solid rgba(255,255,255,0.08)",
-  fontFamily: "'JetBrains Mono', monospace",
-  fontSize: "13px",
-  color: "#fff",
+  padding: "14px 16px",
+  background: "rgba(255,255,255,0.02)",
+  border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: "0",
+  fontFamily: M, fontSize: "12px",
+  color: "rgba(255,255,255,0.85)",
   outline: "none",
-  transition: "border-color 0.2s, box-shadow 0.2s",
+  transition: "border-color 0.15s",
   boxSizing: "border-box" as const,
 };
 
+function Label({ text }: { text: string }) {
+  return (
+    <p style={{
+      fontFamily: S, fontSize: "10px", fontStyle: "italic",
+      letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)",
+      marginBottom: "8px",
+    }}>{text}</p>
+  );
+}
+
 export default function P2PTransfer({ address }: { address: string }) {
-  const [to, setTo] = useState("");
+  const [to, setTo]       = useState("");
   const [amount, setAmount] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [history, setHistory] = useState<TxRecord[]>([]);
@@ -69,284 +72,240 @@ export default function P2PTransfer({ address }: { address: string }) {
   }
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 24, alignItems: "start" }}>
-
-      {/* ── Left: Send form ── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-
-        {/* Header */}
-        <div style={{ marginBottom: 4 }}>
-          <p style={{
-            fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em",
-            fontFamily: "'JetBrains Mono',monospace", fontWeight: 600,
-            background: "linear-gradient(90deg,#ffbd59,#ff6eb4)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            marginBottom: "6px",
-          }}>P2P Native Transfer</p>
-          <p style={{
-            fontFamily: "'Plus Jakarta Sans',sans-serif",
-            fontWeight: 800, fontSize: "22px", color: "#fff",
-          }}>Send VELD</p>
+    <div>
+      {/* Header */}
+      <div style={{ marginBottom: "40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
+          <span style={{
+            fontFamily: S, fontSize: "10px", fontStyle: "italic",
+            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+          }}>§ Capital Transfer</span>
+          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
         </div>
+        <h2 style={{
+          fontFamily: S, fontWeight: 400, fontSize: "30px",
+          color: "#fff", letterSpacing: "0.01em",
+        }}>Peer-to-Peer Settlement</h2>
+        <p style={{
+          fontFamily: S, fontStyle: "italic", fontSize: "13px",
+          color: "rgba(255,255,255,0.35)", marginTop: "6px",
+        }}>Direct native token transfer on the HAVEN L1 network</p>
+      </div>
 
-        {/* Balance card */}
-        <div style={{ ...glassCard, position: "relative", overflow: "hidden" }}>
-          <div style={{ height: "2px", background: "linear-gradient(90deg,#ffbd59,#ff6eb4,#7c6aff)" }} />
-          {/* Ambient glow */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "32px" }}>
+
+        {/* ── Left: Form ── */}
+        <div>
+          {/* Balance display */}
           <div style={{
-            position: "absolute", bottom: "-20px", right: "-20px",
-            width: "120px", height: "120px", borderRadius: "50%",
-            background: "radial-gradient(circle,rgba(255,189,89,0.12) 0%,transparent 70%)",
-            pointerEvents: "none",
-          }} />
-          <div style={{ padding: "22px 24px", position: "relative" }}>
-            <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "10px" }}>
-              Your Native Balance
-            </p>
+            padding: "28px",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderTop: "2px solid #fff",
+            marginBottom: "24px",
+          }}>
             <p style={{
-              fontFamily: "'JetBrains Mono',monospace",
-              fontSize: "36px", fontWeight: 800,
-              background: "linear-gradient(135deg,#ffbd59,#ff6eb4)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              letterSpacing: "-0.03em", lineHeight: 1, marginBottom: "18px",
+              fontFamily: S, fontSize: "10px", fontStyle: "italic",
+              color: "rgba(255,255,255,0.3)", letterSpacing: "0.12em",
+              marginBottom: "10px",
+            }}>Available Balance</p>
+            <p style={{
+              fontFamily: M, fontSize: "40px",
+              color: "#fff", letterSpacing: "-0.03em", lineHeight: 1,
             }}>
               {balFmt}
               <span style={{
-                fontFamily: "'Plus Jakarta Sans',sans-serif",
-                fontSize: "16px", fontWeight: 500,
-                color: "rgba(255,255,255,0.3)", marginLeft: "10px",
-                WebkitTextFillColor: "rgba(255,255,255,0.3)",
-                background: "none",
+                fontFamily: S, fontStyle: "italic", fontSize: "16px",
+                color: "rgba(255,255,255,0.4)", marginLeft: "10px",
               }}>VELD</span>
             </p>
-            {/* Progress bar */}
-            <div style={{ height: "4px", borderRadius: "2px", background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
-              <div style={{
-                height: "100%", width: `${pct}%`,
-                background: "linear-gradient(90deg,#ffbd59,#ff6eb4)",
-                borderRadius: "2px",
-                transition: "width 0.4s ease",
-                boxShadow: "0 0 8px rgba(255,189,89,0.4)",
-              }} />
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "7px" }}>
-              <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.25)", fontFamily: "'JetBrains Mono',monospace" }}>
-                Sending {pct.toFixed(1)}% of balance
-              </span>
-              <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", fontFamily: "'JetBrains Mono',monospace" }}>
-                {amtNum > 0 ? amtNum.toLocaleString("en-US", { maximumFractionDigits: 4 }) : "0"}
-              </span>
-            </div>
+
+            {/* Amount allocation bar */}
+            {amtNum > 0 && (
+              <div style={{ marginTop: "16px" }}>
+                <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", position: "relative" }}>
+                  <div style={{
+                    position: "absolute", left: 0, top: 0, bottom: 0,
+                    width: `${pct}%`, background: "#fff",
+                    transition: "width 0.3s ease",
+                  }} />
+                </div>
+                <p style={{
+                  fontFamily: S, fontSize: "10px", fontStyle: "italic",
+                  color: "rgba(255,255,255,0.3)", marginTop: "6px",
+                }}>
+                  {pct.toFixed(1)}% of balance allocated
+                </p>
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* Form card */}
-        <div style={{ ...glassCard }}>
-          <div style={{ padding: "22px 24px", display: "flex", flexDirection: "column", gap: 18 }}>
-
-            {/* Recipient */}
+          {/* Form fields */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <label style={{ display: "block", fontSize: "10px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.09em", marginBottom: "9px", fontFamily: "'JetBrains Mono',monospace" }}>
-                Recipient Address
-              </label>
+              <Label text="Recipient Address" />
               <input
-                style={{
-                  ...inputStyle,
-                  borderColor: to && !validTo ? "rgba(255,80,80,0.4)" : undefined,
-                  boxShadow: to && validTo ? "0 0 0 1px rgba(0,223,178,0.2)" : undefined,
-                }}
-                placeholder="0x…"
                 value={to}
                 onChange={e => setTo(e.target.value)}
-                onFocus={e => (e.target as HTMLInputElement).style.borderColor = "rgba(255,255,255,0.2)"}
-                onBlur={e => (e.target as HTMLInputElement).style.borderColor = to && !validTo ? "rgba(255,80,80,0.4)" : "rgba(255,255,255,0.08)"}
+                placeholder="0x…"
+                style={{
+                  ...fieldStyle,
+                  borderColor: to && !validTo ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)",
+                }}
+                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
+                onBlur={e => { e.target.style.borderColor = to && !validTo ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)"; }}
               />
               {to && !validTo && (
-                <p style={{ fontSize: "10px", color: "rgba(255,100,100,0.8)", marginTop: "6px", fontFamily: "'JetBrains Mono',monospace" }}>
-                  ✕ Invalid Ethereum address format
-                </p>
-              )}
-              {to && validTo && (
-                <p style={{ fontSize: "10px", color: "#00dfb2", marginTop: "6px", fontFamily: "'JetBrains Mono',monospace" }}>
-                  ✓ Valid address
+                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.4)", marginTop: "6px" }}>
+                  Invalid wallet address
                 </p>
               )}
             </div>
 
-            {/* Amount */}
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "9px" }}>
-                <label style={{ fontSize: "10px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.09em", fontFamily: "'JetBrains Mono',monospace" }}>
-                  Amount (VELD)
-                </label>
-                <div style={{ display: "flex", gap: "6px" }}>
-                  {[25, 50, 100].map(p => (
-                    <button key={p}
-                      onClick={() => setAmount(((balNum * p) / 100).toFixed(4))}
-                      style={{
-                        fontFamily: "'JetBrains Mono',monospace", fontSize: "10px",
-                        color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.1)",
-                        borderRadius: "6px", padding: "3px 9px",
-                        background: "rgba(255,255,255,0.03)", cursor: "pointer",
-                        transition: "all 0.2s",
-                      }}
-                      onMouseEnter={e => {
-                        const el = e.currentTarget as HTMLButtonElement;
-                        el.style.color = "#fff";
-                        el.style.background = "rgba(255,189,89,0.1)";
-                        el.style.borderColor = "rgba(255,189,89,0.3)";
-                      }}
-                      onMouseLeave={e => {
-                        const el = e.currentTarget as HTMLButtonElement;
-                        el.style.color = "rgba(255,255,255,0.4)";
-                        el.style.background = "rgba(255,255,255,0.03)";
-                        el.style.borderColor = "rgba(255,255,255,0.1)";
-                      }}>
-                      {p}%
-                    </button>
-                  ))}
-                </div>
+              <Label text="Amount (VELD)" />
+              <input
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                placeholder="0.0000"
+                type="number"
+                min="0"
+                step="0.0001"
+                style={fieldStyle}
+                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
+                onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
+              />
+              {/* Quick amounts */}
+              <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                {[25, 50, 75, 100].map(p => (
+                  <button key={p}
+                    onClick={() => setAmount((balNum * p / 100).toFixed(4))}
+                    style={{
+                      padding: "5px 10px",
+                      background: "transparent",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      color: "rgba(255,255,255,0.45)",
+                      fontFamily: S, fontStyle: "italic", fontSize: "10px",
+                      cursor: "pointer",
+                      transition: "all 0.12s",
+                    }}
+                    onMouseEnter={ev => {
+                      (ev.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)";
+                      (ev.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.8)";
+                    }}
+                    onMouseLeave={ev => {
+                      (ev.currentTarget as HTMLButtonElement).style.background = "transparent";
+                      (ev.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.45)";
+                    }}
+                  >
+                    {p}%
+                  </button>
+                ))}
               </div>
-              <div style={{ position: "relative" }}>
-                <input
-                  style={{
-                    ...inputStyle,
-                    paddingRight: "72px",
-                    fontSize: "20px", fontWeight: 700,
-                    borderColor: amount && !validAmt ? "rgba(255,80,80,0.4)" : undefined,
-                  }}
-                  type="number" min="0" step="any" placeholder="0.00"
-                  value={amount}
-                  onChange={e => setAmount(e.target.value)}
-                  onFocus={e => (e.target as HTMLInputElement).style.borderColor = "rgba(255,255,255,0.2)"}
-                  onBlur={e => (e.target as HTMLInputElement).style.borderColor = amount && !validAmt ? "rgba(255,80,80,0.4)" : "rgba(255,255,255,0.08)"}
-                />
-                <span style={{
-                  position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)",
-                  fontFamily: "'JetBrains Mono',monospace", fontSize: "11px",
-                  color: "rgba(255,189,89,0.6)", fontWeight: 700,
-                }}>VELD</span>
-              </div>
-              {amount && amtNum >= balNum && (
-                <p style={{ fontSize: "10px", color: "rgba(255,100,100,0.8)", marginTop: "6px", fontFamily: "'JetBrains Mono',monospace" }}>
-                  ✕ Insufficient balance (reserve gas fee)
-                </p>
-              )}
             </div>
 
-            {/* Status alerts */}
-            {isSuccess && (
-              <div style={{
-                padding: "12px 16px", borderRadius: "10px",
-                background: "rgba(0,223,178,0.06)", border: "1px solid rgba(0,223,178,0.18)",
-                fontSize: "12px", color: "#00dfb2", fontFamily: "'JetBrains Mono',monospace",
-              }}>✓ Transfer broadcasted to L1 successfully</div>
-            )}
+            {/* Error */}
             {statusErr && (
               <div style={{
-                padding: "12px 16px", borderRadius: "10px",
-                background: "rgba(255,80,80,0.05)", border: "1px solid rgba(255,80,80,0.15)",
-                fontSize: "11px", color: "rgba(255,120,120,0.9)", fontFamily: "'JetBrains Mono',monospace",
-                lineHeight: 1.5,
-              }}>✕ {statusErr.toString().slice(0, 100)}…</div>
+                padding: "12px 16px",
+                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(255,255,255,0.02)",
+              }}>
+                <p style={{
+                  fontFamily: S, fontStyle: "italic", fontSize: "11px",
+                  color: "rgba(255,255,255,0.5)",
+                }}>Error: {statusErr.slice(0, 100)}</p>
+              </div>
             )}
 
-            {/* Submit button */}
+            {/* CTA */}
             <button
-              disabled={!canSend}
               onClick={handleSend}
+              disabled={!canSend}
               style={{
-                width: "100%", padding: "15px",
-                borderRadius: "12px", border: "none",
-                background: canSend
-                  ? "linear-gradient(135deg,#ffbd59,#ff6eb4)"
-                  : "rgba(255,255,255,0.05)",
-                fontFamily: "'Plus Jakarta Sans',sans-serif",
-                fontSize: "14px", fontWeight: 800,
-                color: canSend ? "#0a0510" : "rgba(255,255,255,0.2)",
+                padding: "14px 32px",
+                background: canSend ? "#fff" : "rgba(255,255,255,0.06)",
+                border: "none",
+                color: canSend ? "#000" : "rgba(255,255,255,0.2)",
+                fontFamily: S, fontSize: "12px", letterSpacing: "0.18em",
+                textTransform: "uppercase",
                 cursor: canSend ? "pointer" : "not-allowed",
-                transition: "all 0.2s",
-                letterSpacing: "0.02em",
-                boxShadow: canSend ? "0 4px 20px rgba(255,189,89,0.3)" : "none",
+                transition: "all 0.15s",
               }}
-              onMouseEnter={e => { if (canSend) (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; }}
+              onMouseEnter={ev => { if (canSend) (ev.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.88)"; }}
+              onMouseLeave={ev => { if (canSend) (ev.currentTarget as HTMLButtonElement).style.background = "#fff"; }}
             >
-              {isPending || isConfirming
-                ? <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                  <span style={{ display: "inline-block", width: "12px", height: "12px", borderRadius: "50%", border: "2px solid rgba(0,0,0,0.3)", borderTop: "2px solid #000", animation: "spin 0.8s linear infinite" }} />
-                  Broadcasting to L1…
-                </span>
-                : "Send VELD Native →"
-              }
+              {isPending ? "Awaiting Wallet Confirmation…"
+                : isConfirming ? "Broadcasting Transaction…"
+                : "Execute Transfer"}
             </button>
+
+            {isSuccess && (
+              <div style={{
+                padding: "16px",
+                border: "1px solid rgba(255,255,255,0.2)",
+                background: "rgba(255,255,255,0.03)",
+              }}>
+                <p style={{
+                  fontFamily: S, fontSize: "12px",
+                  color: "rgba(255,255,255,0.75)", marginBottom: "4px",
+                }}>Transaction confirmed.</p>
+                {hash && (
+                  <p style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.35)" }}>
+                    {hash.slice(0, 18)}…{hash.slice(-8)}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* ── Right: TX history & info ── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-
-        {/* Transfer Ledger */}
+        {/* ── Right: History ── */}
         <div>
-          <p style={{
-            fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em",
-            fontFamily: "'JetBrains Mono',monospace", fontWeight: 600,
-            color: "rgba(255,255,255,0.3)", marginBottom: "12px",
-          }}>Transfer Ledger</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
+            <span style={{
+              fontFamily: S, fontSize: "10px", fontStyle: "italic",
+              color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase",
+            }}>Transaction Log</span>
+            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
+          </div>
 
           {history.length === 0 ? (
             <div style={{
-              ...glassCard,
-              padding: "52px 24px", textAlign: "center",
+              padding: "48px 24px", textAlign: "center",
+              border: "1px solid rgba(255,255,255,0.06)",
             }}>
-              <p style={{ fontSize: "30px", opacity: 0.06, marginBottom: "12px" }}>⟳</p>
-              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", marginBottom: "4px" }}>No transfers yet</p>
-              <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.2)" }}>Initiated transactions will appear here</p>
+              <p style={{
+                fontFamily: S, fontStyle: "italic", fontSize: "13px",
+                color: "rgba(255,255,255,0.2)",
+              }}>No transactions recorded this session.</p>
             </div>
           ) : (
-            <div style={{ ...glassCard }}>
-              <div style={{ height: "1px", background: "linear-gradient(90deg,#ffbd59,#ff6eb4,transparent)" }} />
-              {history.map((tx, i) => (
+            <div style={{ border: "1px solid rgba(255,255,255,0.07)", borderTop: "2px solid rgba(255,255,255,0.2)" }}>
+              {history.map((h, i) => (
                 <div key={i} style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
                   padding: "14px 18px",
-                  borderTop: i > 0 ? "1px solid rgba(255,255,255,0.04)" : undefined,
-                  gap: 12,
-                  transition: "background 0.12s",
-                }}
-                  onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.02)"}
-                  onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = "transparent"}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0, flex: 1 }}>
-                    <div style={{
-                      width: "32px", height: "32px", borderRadius: "9px", flexShrink: 0,
-                      background: tx.status === "ok" ? "rgba(0,223,178,0.1)" : "rgba(255,80,80,0.1)",
-                      border: `1px solid ${tx.status === "ok" ? "rgba(0,223,178,0.2)" : "rgba(255,80,80,0.2)"}`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "14px",
-                    }}>{tx.status === "ok" ? "✓" : "✕"}</div>
-                    <code style={{
-                      fontFamily: "'JetBrains Mono',monospace",
-                      fontSize: "11px", color: "rgba(255,255,255,0.5)",
-                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    }}>
-                      → {tx.to.slice(0, 8)}…{tx.to.slice(-6)}
-                    </code>
-                  </div>
-                  <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <p style={{
-                      fontFamily: "'JetBrains Mono',monospace",
-                      fontSize: "13px", fontWeight: 700,
-                      background: tx.status === "ok" ? "linear-gradient(135deg,#ffbd59,#ff6eb4)" : "none",
-                      WebkitBackgroundClip: tx.status === "ok" ? "text" : undefined,
-                      WebkitTextFillColor: tx.status === "ok" ? "transparent" : undefined,
-                      color: tx.status === "ok" ? "transparent" : "rgba(255,100,100,0.7)",
-                    }}>
-                      {tx.status === "ok" ? "-" : ""}{tx.amount} VELD
+                  borderBottom: i < history.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  gap: "16px",
+                }}>
+                  <div>
+                    <p style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.45)", marginBottom: "3px" }}>
+                      {h.to.slice(0, 10)}…{h.to.slice(-6)}
                     </p>
-                    <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: "10px", color: "rgba(255,255,255,0.2)", marginTop: "3px" }}>
-                      {new Date(tx.time).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                    <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.25)" }}>
+                      {new Date(h.time).toLocaleTimeString()}
+                    </p>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <p style={{ fontFamily: M, fontSize: "13px", color: "rgba(255,255,255,0.75)" }}>
+                      {h.amount} VELD
+                    </p>
+                    <p style={{
+                      fontFamily: S, fontStyle: "italic", fontSize: "9px",
+                      color: h.status === "ok" ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.3)",
+                      marginTop: "2px",
+                    }}>
+                      {h.status === "ok" ? "Settled" : "Failed"}
                     </p>
                   </div>
                 </div>
@@ -354,42 +313,7 @@ export default function P2PTransfer({ address }: { address: string }) {
             </div>
           )}
         </div>
-
-        {/* Network Parameters */}
-        <div style={{ ...glassCard }}>
-          <div style={{ height: "2px", background: "linear-gradient(90deg,#7c6aff,#00dfb2,transparent)" }} />
-          <div style={{ padding: "20px 22px" }}>
-            <p style={{
-              fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.09em",
-              fontFamily: "'JetBrains Mono',monospace", fontWeight: 600,
-              color: "rgba(255,255,255,0.3)", marginBottom: "16px",
-            }}>Network Parameters</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-              {[
-                { k: "Network", v: "BridgeStone L1", gradient: "linear-gradient(90deg,#00dfb2,#7c6aff)" },
-                { k: "Asset Type", v: "Native Gas Coin", gradient: "linear-gradient(90deg,#7c6aff,#ff6eb4)" },
-                { k: "Consensus", v: "Proof of Authority", gradient: "linear-gradient(90deg,#ff6eb4,#ffbd59)" },
-                { k: "Chain ID", v: "777000", gradient: "linear-gradient(90deg,#ffbd59,#00dfb2)" },
-              ].map((r, i, arr) => (
-                <div key={r.k} style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  padding: "11px 0",
-                  borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.04)" : undefined,
-                }}>
-                  <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{r.k}</span>
-                  <span style={{
-                    fontFamily: "'JetBrains Mono',monospace", fontSize: "11px", fontWeight: 600,
-                    background: r.gradient,
-                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>{r.v}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
-
-      <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

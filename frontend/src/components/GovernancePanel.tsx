@@ -8,378 +8,401 @@ const ORACLE_API = ENV.ORACLE_URL;
 const API_KEY = ENV.HAVEN_ORACLE_KEY || "HAVEN_ROKAN_NJXBDSA_010011";
 
 function hFetch(path: string, opts?: RequestInit) {
-    return fetch(`${ORACLE_API}${path}`, {
-        ...opts,
-        headers: { "X-HAVEN-Oracle-Key": API_KEY, "Content-Type": "application/json", ...opts?.headers },
-    });
+  return fetch(`${ORACLE_API}${path}`, {
+    ...opts,
+    headers: { "X-HAVEN-Oracle-Key": API_KEY, "Content-Type": "application/json", ...opts?.headers },
+  });
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 interface Proposal {
-    proposal_id: string;
-    proposer: string;
-    title: string;
-    description: string;
-    proposal_type: string;
-    status: string;
-    votes_for: number;
-    votes_against: number;
-    support_pct: number;
-    voter_count: number;
-    expires_at: number;
+  proposal_id: string; proposer: string; title: string; description: string;
+  proposal_type: string; status: string; votes_for: number; votes_against: number;
+  support_pct: number; voter_count: number; expires_at: number;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function StatusBadge({ status }: { status: string }) {
-    const colors: Record<string, [string, string]> = {
-        active: ["var(--mi)", "var(--mi-dim)"],
-        passed: ["#6bff9e", "rgba(107,255,158,0.15)"],
-        rejected: ["#ff6b6b", "rgba(255,107,107,0.15)"],
-        expired: ["var(--t2)", "rgba(255,255,255,0.05)"],
-    };
-    const [fg, bg] = colors[status] || colors.active;
-    return (
-        <span style={{
-            fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em",
-            padding: "3px 8px", borderRadius: "99px",
-            color: fg, background: bg, textTransform: "uppercase",
-        }}>{status}</span>
-    );
+const S = "Georgia, 'Times New Roman', serif";
+const M = "'JetBrains Mono', monospace";
+
+const fieldStyle: React.CSSProperties = {
+  width: "100%", padding: "12px 16px",
+  background: "rgba(255,255,255,0.02)",
+  border: "1px solid rgba(255,255,255,0.1)",
+  fontFamily: M, fontSize: "12px", color: "rgba(255,255,255,0.85)",
+  outline: "none", boxSizing: "border-box" as const, borderRadius: "0",
+};
+
+function StatusTag({ status }: { status: string }) {
+  const opacity = status === "active" ? 0.8 : status === "passed" ? 0.7 : 0.35;
+  return (
+    <span style={{
+      fontFamily: S, fontStyle: "italic", fontSize: "10px",
+      letterSpacing: "0.1em", color: `rgba(255,255,255,${opacity})`,
+      textTransform: "uppercase",
+    }}>{status}</span>
+  );
 }
 
 function VoteBar({ forPct }: { forPct: number }) {
-    return (
-        <div style={{ height: "4px", borderRadius: "2px", background: "var(--g1)", overflow: "hidden", margin: "8px 0" }}>
-            <div style={{
-                height: "100%", borderRadius: "2px",
-                width: `${forPct * 100}%`,
-                background: forPct >= 0.51
-                    ? "linear-gradient(90deg, var(--mi), #6bff9e)"
-                    : "linear-gradient(90deg, #ff6b6b, #ff9f43)",
-                transition: "width 0.6s ease",
-            }} />
-        </div>
-    );
+  const passing = forPct >= 0.51;
+  return (
+    <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", position: "relative", margin: "12px 0" }}>
+      <div style={{
+        position: "absolute", left: 0, top: 0, bottom: 0,
+        width: `${forPct * 100}%`,
+        background: `rgba(255,255,255,${passing ? 0.7 : 0.3})`,
+        transition: "width 0.6s ease",
+      }} />
+    </div>
+  );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-export default function GovernancePanel({ reputationScore, eventCount }: { reputationScore: number, eventCount: number }) {
-    const { address } = useAccount();
-    const [proposals, setProposals] = useState<Proposal[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [votingPower, setVotingPower] = useState(0);
-    const [voting, setVoting] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [showForm, setShowForm] = useState(false);
-    const [formData, setFormData] = useState({ title: "", description: "", type: "parameter_change" });
-    const [submitting, setSubmitting] = useState(false);
+export default function GovernancePanel({ reputationScore, eventCount }: { reputationScore: number; eventCount: number }) {
+  const { address } = useAccount();
+  const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [votingPower, setVotingPower] = useState(0);
+  const [voting, setVoting] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ title: "", description: "", type: "parameter_change" });
+  const [submitting, setSubmitting] = useState(false);
 
-    const { data: nativeBalance } = useBalance({
-        address: address as `0x${string}`,
-        query: { enabled: !!address, refetchInterval: 8_000 },
-    });
+  const { data: nativeBalance } = useBalance({
+    address: address as `0x${string}`,
+    query: { enabled: !!address, refetchInterval: 8_000 },
+  });
 
-    const fetchProposals = useCallback(async () => {
-        setLoading(true);
-        try {
-            const res = await fetch(`${ENV.ORACLE_URL}/api/v1/governance/proposals`, {
-                headers: { "X-HAVEN-Oracle-Key": ENV.HAVEN_ORACLE_KEY }
-            });
-            const data = await res.json();
-            setProposals(data.proposals || []);
-        } catch (err) {
-            console.error("Failed to fetch proposals", err);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  const fetchProposals = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${ENV.ORACLE_URL}/api/v1/governance/proposals`, {
+        headers: { "X-HAVEN-Oracle-Key": ENV.HAVEN_ORACLE_KEY },
+      });
+      const data = await res.json();
+      setProposals(data.proposals || []);
+    } catch { } finally { setLoading(false); }
+  }, []);
 
-    const loadVotingPower = useCallback(async () => {
-        if (!address) return;
-        setLoading(true);
-        try {
-            const params = new URLSearchParams({
-                impact_events: eventCount.toString(),
-                tenure_days: "0",
-                token_held: nativeBalance ? nativeBalance.formatted : "0"
-            });
-            const res = await hFetch(`/api/v1/governance/voting-power?${params}`);
-            const data = await res.json();
-            setVotingPower(data.voting_power || 0);
-        } catch { /* ignore */ }
-        finally { setLoading(false); }
-    }, [address, eventCount, nativeBalance, setVotingPower, setLoading]);
+  const loadVotingPower = useCallback(async () => {
+    if (!address) return;
+    try {
+      const params = new URLSearchParams({
+        impact_events: eventCount.toString(), tenure_days: "0",
+        token_held: nativeBalance ? nativeBalance.formatted : "0",
+      });
+      const res = await hFetch(`/api/v1/governance/voting-power?${params}`);
+      const data = await res.json();
+      setVotingPower(data.voting_power || 0);
+    } catch { }
+  }, [address, eventCount, nativeBalance]);
 
-    useEffect(() => {
-        fetchProposals();
-        loadVotingPower();
-    }, [fetchProposals, loadVotingPower]);
+  useEffect(() => { fetchProposals(); loadVotingPower(); }, [fetchProposals, loadVotingPower]);
 
-    async function castVote(proposalId: string, voteFor: boolean) {
-        if (!address) return;
-        setVoting(proposalId);
-        try {
-            const tokenHeld = nativeBalance ? Number(nativeBalance.formatted) : 0;
-            const r = await hFetch("/api/v1/governance/vote", {
-                method: "POST",
-                body: JSON.stringify({
-                    proposal_id: proposalId,
-                    voter_address: address,
-                    vote_for: voteFor,
-                    impact_events: eventCount,
-                    tenure_days: 0,
-                    token_held_haven: tokenHeld,
-                }),
-            });
-            if (!r.ok) {
-                const e = await r.json();
-                alert(e.detail || "Vote failed");
-            } else {
-                await fetchProposals();
-            }
-        } catch {
-            alert("Vote failed — oracle connection error");
-        } finally {
-            setVoting(null);
-        }
-    }
+  async function castVote(proposalId: string, voteFor: boolean) {
+    if (!address) return;
+    setVoting(proposalId);
+    try {
+      const tokenHeld = nativeBalance ? Number(nativeBalance.formatted) : 0;
+      const r = await hFetch("/api/v1/governance/vote", {
+        method: "POST",
+        body: JSON.stringify({
+          proposal_id: proposalId, voter_address: address, vote_for: voteFor,
+          impact_events: eventCount, tenure_days: 0, token_held_haven: tokenHeld,
+        }),
+      });
+      if (!r.ok) { const e = await r.json(); alert(e.detail || "Vote failed"); }
+      else { await fetchProposals(); }
+    } catch { alert("Vote failed — oracle connection error"); }
+    finally { setVoting(null); }
+  }
 
-    async function submitProposal(e: React.FormEvent) {
-        e.preventDefault();
-        if (!address) return;
-        if (eventCount < 10) return alert("Need at least 10 verified impact events to create a proposal.");
+  async function submitProposal(e: React.FormEvent) {
+    e.preventDefault();
+    if (!address) return;
+    if (eventCount < 10) return alert("Minimum 10 verified impact events required to submit a proposal.");
+    setSubmitting(true);
+    try {
+      const r = await hFetch("/api/v1/governance/propose", {
+        method: "POST",
+        body: JSON.stringify({
+          proposer: address, title: formData.title,
+          description: formData.description, proposal_type: formData.type,
+          impact_events: eventCount,
+        }),
+      });
+      if (!r.ok) { const err = await r.json(); alert(err.detail || "Proposal creation failed"); }
+      else {
+        setShowForm(false);
+        setFormData({ title: "", description: "", type: "parameter_change" });
+        await fetchProposals();
+      }
+    } catch { alert("Proposal creation failed — oracle connection error"); }
+    finally { setSubmitting(false); }
+  }
 
-        setSubmitting(true);
-        try {
-            const r = await hFetch("/api/v1/governance/propose", {
-                method: "POST",
-                body: JSON.stringify({
-                    proposer: address,
-                    title: formData.title,
-                    description: formData.description,
-                    proposal_type: formData.type,
-                    impact_events: eventCount,
-                }),
-            });
-            if (!r.ok) {
-                const err = await r.json();
-                alert(err.detail || "Proposal creation failed");
-            } else {
-                setShowForm(false);
-                setFormData({ title: "", description: "", type: "parameter_change" });
-                await fetchProposals();
-            }
-        } catch {
-            alert("Proposal creation failed — oracle connection error");
-        } finally {
-            setSubmitting(false);
-        }
-    }
+  const timeLeft = (expiresAt: number) => {
+    const diff = expiresAt - Math.floor(Date.now() / 1000);
+    if (diff <= 0) return "Expired";
+    const d = Math.floor(diff / 86400);
+    return d > 0 ? `${d} days remaining` : `${Math.floor(diff / 3600)} hours remaining`;
+  };
 
-    const timeLeft = (expiresAt: number) => {
-        const diff = expiresAt - Math.floor(Date.now() / 1000);
-        if (diff <= 0) return "Expired";
-        const d = Math.floor(diff / 86400);
-        return d > 0 ? `${d}d left` : `${Math.floor(diff / 3600)}h left`;
-    };
+  const LabelRow = ({ text }: { text: string }) => (
+    <p style={{
+      fontFamily: S, fontStyle: "italic", fontSize: "11px",
+      color: "rgba(255,255,255,0.35)", marginBottom: "8px", letterSpacing: "0.05em",
+    }}>{text}</p>
+  );
 
-    return (
-        <div style={{ maxWidth: "780px" }}>
-            {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
-                <div>
-                    <h2 style={{ fontSize: "18px", fontWeight: 700, color: "var(--t0)", margin: 0 }}>
-                        Governance DAO
-                    </h2>
-                    <p style={{ fontSize: "12px", color: "var(--t2)", marginTop: "4px" }}>
-                        Quadratic Benevolence Voting — power = √events × tenure + √tokens × 0.3
-                    </p>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    {address && eventCount >= 10 && !showForm && (
-                        <button
-                            onClick={() => setShowForm(true)}
-                            style={{
-                                padding: "8px 16px", borderRadius: "var(--r1)",
-                                background: "var(--mi)", color: "#000", fontWeight: 700,
-                                border: "none", cursor: "pointer", fontSize: "13px"
-                            }}
-                        >
-                            + Create Proposal
-                        </button>
-                    )}
-                    {address && (
-                        <div style={{
-                            padding: "8px 16px", borderRadius: "var(--r1)",
-                            background: "var(--vi-dim)", border: "1px solid var(--vi-edge)",
-                        }}>
-                            <p style={{ fontSize: "10px", color: "var(--t2)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Your Power</p>
-                            <p style={{
-                                fontFamily: "'JetBrains Mono', monospace", fontSize: "18px",
-                                fontWeight: 700, color: "var(--vi)", marginTop: "2px",
-                            }}>{votingPower.toFixed(2)}</p>
-                        </div>
-                    )}
-                </div>
+  return (
+    <div style={{ maxWidth: "800px" }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: "36px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
+          <span style={{
+            fontFamily: S, fontSize: "10px", fontStyle: "italic",
+            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+          }}>§ Deliberative Assembly</span>
+          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "16px" }}>
+          <div>
+            <h2 style={{
+              fontFamily: S, fontWeight: 400, fontSize: "30px",
+              color: "#fff", letterSpacing: "0.01em",
+            }}>Governance Council</h2>
+            <p style={{
+              fontFamily: S, fontStyle: "italic", fontSize: "12px",
+              color: "rgba(255,255,255,0.35)", marginTop: "6px",
+            }}>Quadratic voting — power = √events × tenure + √tokens × 0.3</p>
+          </div>
+
+          <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+            {/* Voting power */}
+            {address && (
+              <div style={{
+                padding: "16px 20px",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderTop: "2px solid rgba(255,255,255,0.4)",
+              }}>
+                <p style={{
+                  fontFamily: S, fontSize: "9px", fontStyle: "italic",
+                  color: "rgba(255,255,255,0.3)", letterSpacing: "0.15em",
+                  textTransform: "uppercase", marginBottom: "6px",
+                }}>Voting Authority</p>
+                <p style={{ fontFamily: M, fontSize: "22px", color: "#fff" }}>
+                  {votingPower.toFixed(2)}
+                </p>
+              </div>
+            )}
+
+            {address && eventCount >= 10 && !showForm && (
+              <button onClick={() => setShowForm(true)} style={{
+                padding: "12px 24px",
+                background: "#fff", border: "none", color: "#000",
+                fontFamily: S, fontSize: "12px", letterSpacing: "0.15em",
+                textTransform: "uppercase", cursor: "pointer",
+                transition: "opacity 0.15s",
+              }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.85"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+              >
+                Submit Proposal
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Proposal form */}
+      {showForm && (
+        <div style={{
+          padding: "32px",
+          border: "1px solid rgba(255,255,255,0.15)",
+          borderTop: "2px solid #fff",
+          marginBottom: "32px",
+          background: "rgba(255,255,255,0.02)",
+        }}>
+          <h3 style={{
+            fontFamily: S, fontWeight: 400, fontSize: "20px",
+            color: "#fff", marginBottom: "24px",
+          }}>Submit Governance Proposal</h3>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div>
+              <LabelRow text="Proposal Title" />
+              <input
+                required maxLength={100}
+                value={formData.title}
+                onChange={e => setFormData({ ...formData, title: e.target.value })}
+                placeholder="e.g. Increase Crisis Zone Multiplier to 3×"
+                style={fieldStyle}
+                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
+                onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
+              />
             </div>
 
-            {error && (
-                <div style={{ padding: "12px 16px", borderRadius: "var(--r2)", background: "rgba(255,107,107,0.1)", border: "1px solid rgba(255,107,107,0.3)", marginBottom: "16px" }}>
-                    <p style={{ fontSize: "13px", color: "#ff6b6b" }}>{error}</p>
-                </div>
-            )}
+            <div>
+              <LabelRow text="Description & Rationale" />
+              <textarea
+                required rows={4}
+                value={formData.description}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Explain the rationale for this proposal and its anticipated effect on the protocol..."
+                style={{ ...fieldStyle, resize: "vertical" as const, lineHeight: 1.7 }}
+                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
+                onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
+              />
+            </div>
 
-            {showForm && (
-                <form onSubmit={submitProposal} style={{
-                    padding: "24px", borderRadius: "var(--r3)", background: "var(--g1)",
-                    border: "1px solid var(--mi)", marginBottom: "24px",
-                    display: "flex", flexDirection: "column", gap: "16px"
-                }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--t0)", margin: 0 }}>Create Governance Proposal</h3>
+            <div>
+              <LabelRow text="Classification" />
+              <select
+                value={formData.type}
+                onChange={e => setFormData({ ...formData, type: e.target.value })}
+                style={{ ...fieldStyle, background: "rgba(255,255,255,0.03)" }}
+              >
+                <option value="parameter_change">Parameter Change</option>
+                <option value="treasury_grant">Treasury Grant</option>
+                <option value="protocol_upgrade">Protocol Upgrade</option>
+                <option value="emergency_action">Emergency Action</option>
+              </select>
+            </div>
 
-                    <div>
-                        <label style={{ display: "block", fontSize: "12px", color: "var(--t2)", marginBottom: "6px" }}>Proposal Title</label>
-                        <input
-                            required maxLength={100}
-                            value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })}
-                            style={{
-                                width: "100%", padding: "10px", borderRadius: "var(--r1)",
-                                background: "var(--g0)", border: "1px solid var(--b0)", color: "var(--t0)"
-                            }}
-                            placeholder="e.g. Increase Crisis Zone Multiplier to 3x"
-                        />
-                    </div>
-
-                    <div>
-                        <label style={{ display: "block", fontSize: "12px", color: "var(--t2)", marginBottom: "6px" }}>Description & Rationale</label>
-                        <textarea
-                            required rows={4}
-                            value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}
-                            style={{
-                                width: "100%", padding: "10px", borderRadius: "var(--r1)",
-                                background: "var(--g0)", border: "1px solid var(--b0)", color: "var(--t0)",
-                                resize: "vertical"
-                            }}
-                            placeholder="Explain why this change is necessary and how it benefits the protocol..."
-                        />
-                    </div>
-
-                    <div>
-                        <label style={{ display: "block", fontSize: "12px", color: "var(--t2)", marginBottom: "6px" }}>Proposal Type</label>
-                        <select
-                            value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}
-                            style={{
-                                width: "100%", padding: "10px", borderRadius: "var(--r1)",
-                                background: "var(--g0)", border: "1px solid var(--b0)", color: "var(--t0)"
-                            }}
-                        >
-                            <option value="parameter_change">Parameter Change</option>
-                            <option value="treasury_grant">Treasury Grant</option>
-                            <option value="protocol_upgrade">Protocol Upgrade</option>
-                            <option value="emergency_action">Emergency Action</option>
-                        </select>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
-                        <button
-                            type="button" onClick={() => setShowForm(false)}
-                            style={{
-                                flex: 1, padding: "10px", borderRadius: "var(--r1)",
-                                background: "transparent", border: "1px solid var(--b0)",
-                                color: "var(--t2)", cursor: "pointer", fontWeight: 600
-                            }}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit" disabled={submitting}
-                            style={{
-                                flex: 2, padding: "10px", borderRadius: "var(--r1)",
-                                background: "var(--mi)", border: "none",
-                                color: "#000", cursor: submitting ? "not-allowed" : "pointer", fontWeight: 700,
-                                opacity: submitting ? 0.7 : 1
-                            }}
-                        >
-                            {submitting ? "Submitting..." : "Submit Proposal"}
-                        </button>
-                    </div>
-                </form>
-            )}
-
-            {loading ? (
-                <div style={{ textAlign: "center", padding: "60px 0", color: "var(--t2)" }}>
-                    <p style={{ fontSize: "13px" }}>Loading proposals…</p>
-                </div>
-            ) : proposals.length === 0 ? (
-                <div style={{
-                    padding: "48px", textAlign: "center",
-                    borderRadius: "var(--r3)", background: "var(--g1)", border: "1px solid var(--b0)",
-                }}>
-                    <p style={{ fontSize: "40px", marginBottom: "12px" }}>🗳️</p>
-                    <p style={{ fontWeight: 700, color: "var(--t0)", marginBottom: "8px" }}>No Active Proposals</p>
-                    <p style={{ fontSize: "13px", color: "var(--t2)" }}>
-                        {eventCount >= 10
-                            ? "You have enough power. Click '+ Create Proposal' above to start."
-                            : "Need ≥10 verified impact events to create a proposal."}
-                    </p>
-                </div>
-            ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {proposals.map(p => (
-                        <div key={p.proposal_id} style={{
-                            padding: "20px", borderRadius: "var(--r3)",
-                            background: "var(--g1)", border: "1px solid var(--b0)",
-                        }}>
-                            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px", marginBottom: "8px" }}>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                                        <StatusBadge status={p.status} />
-                                        <span style={{ fontSize: "10px", color: "var(--t2)" }}>{timeLeft(p.expires_at)}</span>
-                                    </div>
-                                    <p style={{ fontWeight: 700, color: "var(--t0)", fontSize: "14px" }}>{p.title}</p>
-                                    <p style={{ fontSize: "12px", color: "var(--t2)", marginTop: "4px", lineHeight: 1.6 }}>{p.description}</p>
-                                </div>
-                            </div>
-
-                            <VoteBar forPct={p.support_pct} />
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "var(--t2)", marginBottom: "12px" }}>
-                                <span>For: {(p.support_pct * 100).toFixed(1)}% — {p.votes_for.toFixed(1)}VP</span>
-                                <span>{p.voter_count} voters</span>
-                            </div>
-
-                            {p.status === "active" && address && eventCount >= 1 && (
-                                <div style={{ display: "flex", gap: "8px" }}>
-                                    <button
-                                        onClick={() => castVote(p.proposal_id, true)}
-                                        disabled={voting === p.proposal_id}
-                                        style={{
-                                            flex: 1, padding: "8px", borderRadius: "var(--r1)",
-                                            background: "rgba(107,255,158,0.1)", border: "1px solid rgba(107,255,158,0.3)",
-                                            color: "#6bff9e", fontWeight: 600, cursor: "pointer", fontSize: "12px",
-                                            opacity: voting === p.proposal_id ? 0.5 : 1,
-                                        }}
-                                    >✓ Support</button>
-                                    <button
-                                        onClick={() => castVote(p.proposal_id, false)}
-                                        disabled={voting === p.proposal_id}
-                                        style={{
-                                            flex: 1, padding: "8px", borderRadius: "var(--r1)",
-                                            background: "rgba(255,107,107,0.1)", border: "1px solid rgba(255,107,107,0.3)",
-                                            color: "#ff6b6b", fontWeight: 600, cursor: "pointer", fontSize: "12px",
-                                            opacity: voting === p.proposal_id ? 0.5 : 1,
-                                        }}
-                                    >✗ Oppose</button>
-                                </div>
-                            )}
-                            {p.status === "active" && (!address || eventCount < 1) && (
-                                <p style={{ fontSize: "11px", color: "var(--t2)", textAlign: "center" }}>
-                                    {!address ? "Connect wallet to vote" : "Need ≥1 verified impact event to vote"}
-                                </p>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            )}
+            <div style={{ display: "flex", gap: "12px", paddingTop: "8px" }}>
+              <button type="button" onClick={() => setShowForm(false)} style={{
+                flex: 1, padding: "12px",
+                background: "transparent",
+                border: "1px solid rgba(255,255,255,0.12)",
+                color: "rgba(255,255,255,0.5)",
+                fontFamily: S, fontSize: "12px", letterSpacing: "0.1em",
+                textTransform: "uppercase", cursor: "pointer",
+              }}>Cancel</button>
+              <button
+                onClick={e => { e.preventDefault(); submitProposal(e as any); }}
+                disabled={submitting}
+                style={{
+                  flex: 2, padding: "12px",
+                  background: submitting ? "rgba(255,255,255,0.08)" : "#fff",
+                  border: "none",
+                  color: submitting ? "rgba(255,255,255,0.3)" : "#000",
+                  fontFamily: S, fontSize: "12px", letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  cursor: submitting ? "not-allowed" : "pointer",
+                }}
+              >
+                {submitting ? "Submitting…" : "File Proposal"}
+              </button>
+            </div>
+          </div>
         </div>
-    );
+      )}
+
+      {/* Loading */}
+      {loading && (
+        <div style={{ padding: "80px 0", textAlign: "center" }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "rgba(255,255,255,0.25)" }}>
+            Retrieving governance records…
+          </p>
+        </div>
+      )}
+
+      {/* Empty */}
+      {!loading && proposals.length === 0 && (
+        <div style={{
+          padding: "64px 40px", textAlign: "center",
+          border: "1px solid rgba(255,255,255,0.06)",
+        }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "16px", color: "rgba(255,255,255,0.25)", marginBottom: "8px" }}>
+            No active proposals before the Council.
+          </p>
+          <p style={{ fontFamily: S, fontSize: "12px", color: "rgba(255,255,255,0.15)" }}>
+            {eventCount >= 10
+              ? "You have sufficient standing to submit a proposal above."
+              : "A minimum of 10 verified impact events is required to submit proposals."}
+          </p>
+        </div>
+      )}
+
+      {/* Proposals */}
+      {!loading && proposals.length > 0 && (
+        <div style={{
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderTop: "2px solid rgba(255,255,255,0.3)",
+        }}>
+          {proposals.map((p, i) => (
+            <div key={p.proposal_id} style={{
+              padding: "28px 28px",
+              borderBottom: i < proposals.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
+              background: p.status === "active" ? "rgba(255,255,255,0.015)" : "transparent",
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px", marginBottom: "12px" }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                    <StatusTag status={p.status} />
+                    <span style={{
+                      fontFamily: M, fontSize: "9px",
+                      color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em",
+                    }}>{timeLeft(p.expires_at)}</span>
+                  </div>
+                  <p style={{
+                    fontFamily: S, fontSize: "16px",
+                    color: "rgba(255,255,255,0.9)", marginBottom: "6px",
+                  }}>{p.title}</p>
+                  <p style={{
+                    fontFamily: S, fontStyle: "italic", fontSize: "12px",
+                    color: "rgba(255,255,255,0.4)", lineHeight: 1.7,
+                  }}>{p.description}</p>
+                </div>
+              </div>
+
+              {/* Vote bar */}
+              <VoteBar forPct={p.support_pct} />
+
+              <div style={{
+                display: "flex", justifyContent: "space-between",
+                fontFamily: S, fontSize: "11px", color: "rgba(255,255,255,0.3)",
+                marginBottom: p.status === "active" ? "16px" : "0",
+              }}>
+                <span>In favour: {(p.support_pct * 100).toFixed(1)}% — {p.votes_for.toFixed(1)} VP</span>
+                <span>{p.voter_count} participants</span>
+              </div>
+
+              {p.status === "active" && address && eventCount >= 1 && (
+                <div style={{ display: "flex", gap: "8px" }}>
+                  {[
+                    { label: "Vote in Favour", vf: true  },
+                    { label: "Vote Against",   vf: false },
+                  ].map(b => (
+                    <button key={b.label}
+                      onClick={() => castVote(p.proposal_id, b.vf)}
+                      disabled={voting === p.proposal_id}
+                      style={{
+                        flex: 1, padding: "10px",
+                        background: "transparent",
+                        border: `1px solid rgba(255,255,255,${b.vf ? 0.2 : 0.08})`,
+                        color: `rgba(255,255,255,${b.vf ? 0.7 : 0.35})`,
+                        fontFamily: S, fontStyle: "italic", fontSize: "11px",
+                        letterSpacing: "0.08em",
+                        opacity: voting === p.proposal_id ? 0.4 : 1,
+                        cursor: voting === p.proposal_id ? "not-allowed" : "pointer",
+                        transition: "all 0.12s",
+                      }}
+                      onMouseEnter={ev => { if (!voting) (ev.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)"; }}
+                      onMouseLeave={ev => { (ev.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+                    >{b.label}</button>
+                  ))}
+                </div>
+              )}
+              {p.status === "active" && (!address || eventCount < 1) && (
+                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.25)" }}>
+                  {!address ? "Connect wallet to participate." : "A minimum of 1 verified impact event is required to vote."}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAccount, useReadContract, useBalance } from "wagmi"; // <-- Tambahkan useBalance
+import { useState, useEffect, useRef } from "react";
+import { useAccount, useReadContract, useBalance } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-// IMPACT_TOKEN_ABI dihapus karena sudah tidak dipakai
 import { REPUTATION_LEDGER_ABI } from "@/utils/abis";
 import { CONTRACTS } from "@/utils/constants";
 import SubmitImpactForm from "@/components/SubmitImpactForm";
@@ -22,480 +21,886 @@ import MintIdentityCard from "@/components/MintIdentityCard";
 import { SOVEREIGN_ID_ABI } from "@/utils/abis";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 
-// Helper component for counting up numbers smoothly
-function AnimatedNumber({ value, isFloat = false }: { value: number, isFloat?: boolean }) {
+/* ─── Animated Number ─── */
+function AnimatedNumber({ value, isFloat = false }: { value: number; isFloat?: boolean }) {
   const mv = useMotionValue(0);
   const formatted = useTransform(mv, (latest) => {
     if (isFloat) return latest.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return Math.round(latest).toLocaleString();
   });
-
   useEffect(() => {
-    const controls = animate(mv, value, { duration: 1.5, ease: "easeOut" });
+    const controls = animate(mv, value, { duration: 1.8, ease: "easeOut" });
     return controls.stop;
   }, [value, mv]);
-
   return <motion.span>{formatted}</motion.span>;
 }
 
 type TabId = "submit" | "governance" | "economy" | "protocol" | "profile" | "feed" | "badges" | "leaderboard" | "transfer" | "stream";
 
-const TABS: { id: TabId; label: string; color: string }[] = [
-  { id: "submit", label: "Submit Proof", color: "var(--mi)" },
-  { id: "governance", label: "Governance (L4)", color: "var(--go)" },
-  { id: "economy", label: "Economy (L2 & L7)", color: "var(--mi)" },
-  { id: "protocol", label: "Protocol (L8)", color: "var(--vi)" },
-  { id: "profile", label: "My Profile", color: "var(--vi)" },
-  { id: "stream", label: "Community Stream", color: "#ff6eb4" },
-  { id: "feed", label: "Impact Feed", color: "var(--mi)" },
-  { id: "badges", label: "Badges", color: "var(--go)" },
-  { id: "leaderboard", label: "Leaderboard", color: "var(--vi)" },
-  { id: "transfer", label: "P2P Transfer", color: "var(--mi)" },
+const TABS: { id: TabId; label: string; roman: string }[] = [
+  { id: "submit", label: "Submit Proof", roman: "I" },
+  { id: "governance", label: "Governance", roman: "II" },
+  { id: "economy", label: "Economy", roman: "III" },
+  { id: "protocol", label: "Protocol", roman: "IV" },
+  { id: "profile", label: "Profile", roman: "V" },
+  { id: "stream", label: "Community Stream", roman: "VI" },
+  { id: "feed", label: "Impact Feed", roman: "VII" },
+  { id: "badges", label: "Badges", roman: "VIII" },
+  { id: "leaderboard", label: "Leaderboard", roman: "IX" },
+  { id: "transfer", label: "P2P Transfer", roman: "X" },
 ];
 
-/* ─── Hex chain background SVG ─── */
-function ChainGrid() {
+/* ─── Ticker tape ─── */
+const TICKER_ITEMS = [
+  "HAVEN Protocol v2.0.0",
+  "PoBA Consensus Active",
+  "ZK Shield Operational",
+  "Oracle Network Online",
+  "Governance Epoch 14",
+  "Impact Verification Layer: LIVE",
+];
+
+function Ticker() {
   return (
     <div style={{
-      position: "absolute", inset: 0, overflow: "hidden",
-      pointerEvents: "none", zIndex: 0,
+      borderBottom: "1px solid rgba(255,255,255,0.08)",
+      background: "rgba(0,0,0,0.6)",
+      overflow: "hidden", height: "28px",
+      display: "flex", alignItems: "center",
     }}>
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="hexgrid" width="70" height="60.6" patternUnits="userSpaceOnUse">
-            <polygon points="35,3 67,20 67,54 35,71 3,54 3,20"
-              fill="none" stroke="rgba(124,106,255,0.07)" strokeWidth="0.8" />
-          </pattern>
-          {/* Offset row */}
-          <pattern id="hexgrid2" x="35" y="30.3" width="70" height="60.6" patternUnits="userSpaceOnUse">
-            <polygon points="35,3 67,20 67,54 35,71 3,54 3,20"
-              fill="none" stroke="rgba(0,223,162,0.05)" strokeWidth="0.8" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#hexgrid)" opacity="1" />
-        <rect width="100%" height="100%" fill="url(#hexgrid2)" opacity="1" />
-      </svg>
-      {/* Fade mask so grid only appears subtly */}
       <div style={{
-        position: "absolute", inset: 0,
-        background: "radial-gradient(ellipse 70% 60% at 50% 40%, transparent 20%, var(--void) 80%)",
-      }} />
+        display: "flex", alignItems: "center", gap: "0",
+        animation: "tickerScroll 28s linear infinite",
+        whiteSpace: "nowrap",
+      }}>
+        {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+          <span key={i} style={{
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            fontSize: "10px", letterSpacing: "0.18em",
+            color: "rgba(255,255,255,0.35)",
+            textTransform: "uppercase",
+            padding: "0 32px",
+            borderRight: "1px solid rgba(255,255,255,0.1)",
+          }}>{item}</span>
+        ))}
+      </div>
+      <style>{`
+        @keyframes tickerScroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }
 
-/* ─── Logo ─── */
-function Logo() {
+/* ─── Masthead Logo ─── */
+function Masthead() {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+    <header style={{
+      borderBottom: "1px solid rgba(255,255,255,0.12)",
+      padding: "0 48px",
+      background: "rgba(0,0,0,0.85)",
+      backdropFilter: "blur(20px)",
+      position: "sticky", top: 0, zIndex: 100,
+    }}>
+      {/* Top rule */}
+      <div style={{ height: "3px", background: "#fff", marginBottom: "0", position: "absolute", top: 0, left: 0, right: 0 }} />
+
       <div style={{
-        width: "34px", height: "34px", borderRadius: "10px",
-        background: "linear-gradient(135deg, var(--vi), var(--mi))",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        boxShadow: "0 0 20px var(--vi-glow)", flexShrink: 0,
+        maxWidth: "1320px", margin: "0 auto",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        height: "72px",
       }}>
-        {/* Chain-link inspired mark */}
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M6 4.5C6 3.12 7.12 2 8.5 2H12C13.38 2 14.5 3.12 14.5 4.5C14.5 5.88 13.38 7 12 7H10.5"
-            stroke="white" strokeWidth="1.6" strokeLinecap="round" />
-          <path d="M10 11.5C10 12.88 8.88 14 7.5 14H4C2.62 14 1.5 12.88 1.5 11.5C1.5 10.12 2.62 9 4 9H5.5"
-            stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeOpacity="0.75" />
-          <line x1="6.5" y1="8" x2="9.5" y2="8" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeOpacity="0.5" />
-        </svg>
+        {/* Left meta (Hidden on mobile) */}
+        <div className="masthead-meta" style={{ display: "flex", flexDirection: "column" }}>
+          <p style={{
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            fontSize: "9px", letterSpacing: "0.25em",
+            color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
+            marginBottom: "3px",
+          }}>Decentralized · Quantitative · Institutional</p>
+          <div style={{ height: "1px", background: "rgba(255,255,255,0.15)", marginBottom: "4px" }} />
+          <p style={{
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            fontSize: "9px", letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.25)", textTransform: "uppercase",
+          }}>Est. 2024 · Chain ID 777000</p>
+        </div>
+
+        {/* Center wordmark */}
+        <div style={{ textAlign: "center", flex: 1 }}>
+          <h1 style={{
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            fontWeight: 400, fontSize: "22px",
+            color: "#fff", letterSpacing: "0.28em",
+            textTransform: "uppercase", lineHeight: 1,
+          }}>Haven Humanity</h1>
+          <p style={{
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            fontSize: "8px", letterSpacing: "0.35em",
+            color: "rgba(255,255,255,0.35)",
+            textTransform: "uppercase", marginTop: "5px",
+          }}>Proof-of-Benevolent-Action Protocol</p>
+        </div>
+
+        {/* Right: wallet */}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <ConnectButton />
+        </div>
       </div>
+    </header>
+  );
+}
+
+/* ─── Ruled section header ─── */
+function SectionRule({ roman, title, subtitle }: { roman: string; title: string; subtitle?: string }) {
+  return (
+    <div style={{ marginBottom: "40px" }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "20px", marginBottom: "14px" }}>
+        <span style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "11px", letterSpacing: "0.2em",
+          color: "rgba(255,255,255,0.25)", textTransform: "uppercase",
+          flexShrink: 0,
+        }}>§ {roman}</span>
+        <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.1)" }} />
+      </div>
+      <h2 style={{
+        fontFamily: "'Georgia', 'Times New Roman', serif",
+        fontWeight: 400, fontSize: "28px",
+        color: "#fff", letterSpacing: "0.02em", lineHeight: 1.2,
+        marginBottom: "8px",
+      }}>{title}</h2>
+      {subtitle && (
+        <p style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "13px", color: "rgba(255,255,255,0.4)",
+          letterSpacing: "0.03em", fontStyle: "italic",
+        }}>{subtitle}</p>
+      )}
+    </div>
+  );
+}
+
+/* ─── Metric tile ─── */
+function MetricTile({ label, value, note }: { label: string; value: string; note?: string }) {
+  return (
+    <div style={{
+      borderTop: "1px solid rgba(255,255,255,0.12)",
+      paddingTop: "20px",
+      paddingBottom: "20px",
+    }}>
+      <p style={{
+        fontFamily: "'Georgia', 'Times New Roman', serif",
+        fontSize: "9px", letterSpacing: "0.22em",
+        color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
+        marginBottom: "10px",
+      }}>{label}</p>
+      <p style={{
+        fontFamily: "'Georgia', 'Times New Roman', serif",
+        fontSize: "32px", fontWeight: 400,
+        color: "#fff", letterSpacing: "-0.01em",
+        lineHeight: 1,
+      }}>{value}</p>
+      {note && (
+        <p style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "11px", color: "rgba(255,255,255,0.3)",
+          fontStyle: "italic", marginTop: "6px",
+          letterSpacing: "0.03em",
+        }}>{note}</p>
+      )}
+    </div>
+  );
+}
+
+/* ─── Allocation bar row ─── */
+function AllocRow({ label, pct, note }: { label: string; pct: number; note: string }) {
+  return (
+    <div style={{ marginBottom: "20px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+        <span style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "12px", letterSpacing: "0.06em",
+          color: "rgba(255,255,255,0.7)",
+        }}>{label}</span>
+        <span style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "12px", color: "rgba(255,255,255,0.4)",
+          fontStyle: "italic",
+        }}>{note}</span>
+      </div>
+      <div style={{
+        height: "1px", background: "rgba(255,255,255,0.08)",
+        position: "relative",
+      }}>
+        <div style={{
+          position: "absolute", left: 0, top: 0, bottom: 0,
+          width: `${pct}%`,
+          background: "#fff",
+          transition: "width 1.2s cubic-bezier(0.4,0,0.2,1)",
+        }} />
+      </div>
+      <p style={{
+        fontFamily: "'Georgia', 'Times New Roman', serif",
+        fontSize: "10px", color: "rgba(255,255,255,0.25)",
+        marginTop: "4px", letterSpacing: "0.12em",
+        textTransform: "uppercase",
+      }}>{pct}%</p>
+    </div>
+  );
+}
+
+/* ─── Strategy principle row ─── */
+function PrincipleRow({ n, title, body }: { n: string; title: string; body: string }) {
+  return (
+    <div style={{
+      display: "grid", gridTemplateColumns: "40px 1fr",
+      gap: "20px", paddingTop: "20px", paddingBottom: "20px",
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+    }}>
+      <span style={{
+        fontFamily: "'Georgia', 'Times New Roman', serif",
+        fontSize: "11px", color: "rgba(255,255,255,0.22)",
+        letterSpacing: "0.1em", paddingTop: "2px",
+      }}>{n}.</span>
       <div>
         <p style={{
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          fontWeight: 800, fontSize: "13.5px",
-          letterSpacing: "0.06em", color: "var(--t0)", lineHeight: 1,
-        }}>HAVEN HUMANITY</p>
-        <p className="label" style={{ marginTop: "3px", letterSpacing: "0.1em" }}>PoBA Protocol · v2</p>
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontWeight: 400, fontSize: "14px",
+          color: "rgba(255,255,255,0.9)", marginBottom: "6px",
+          letterSpacing: "0.02em",
+        }}>{title}</p>
+        <p style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "12px", color: "rgba(255,255,255,0.4)",
+          lineHeight: 1.7, fontStyle: "italic",
+        }}>{body}</p>
       </div>
     </div>
   );
 }
 
-/* ─── Three hero orbs decorative ─── */
-function HeroOrbs() {
+/* ═══════════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════════ */
+function HeroSection({ onEnter }: { onEnter: () => void }) {
   return (
-    <>
-      {/* Violet orb — left */}
+    <section style={{
+      minHeight: "85vh",
+      display: "flex", flexDirection: "column",
+      justifyContent: "center", alignItems: "center",
+      padding: "120px 24px 80px",
+      position: "relative",
+      background: "#000",
+      overflow: "hidden"
+    }}>
+      {/* Fine grid overlay */}
       <div style={{
-        position: "absolute", top: "10%", left: "-5%",
-        width: "380px", height: "380px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(124,106,255,0.14) 0%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none",
+        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
+        backgroundImage: `
+          linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
+        `,
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(circle at center, black 40%, transparent 80%)",
       }} />
-      {/* Mint orb — right */}
+
+      {/* Ambient glow */}
       <div style={{
-        position: "absolute", top: "5%", right: "-8%",
-        width: "340px", height: "340px", borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(0,223,162,0.11) 0%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none",
+        position: "absolute",
+        width: "60vw", height: "60vw",
+        maxWidth: "600px", maxHeight: "600px",
+        background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 60%)",
+        top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+        pointerEvents: "none", zIndex: 0,
       }} />
-      {/* Gold orb — bottom center */}
+
       <div style={{
-        position: "absolute", bottom: "-10%", left: "50%", transform: "translateX(-50%)",
-        width: "300px", height: "200px", borderRadius: "50%",
-        background: "radial-gradient(ellipse, rgba(255,189,89,0.08) 0%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none",
-      }} />
-    </>
+        maxWidth: "1000px", margin: "0 auto", width: "100%",
+        position: "relative", zIndex: 1,
+        display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center"
+      }}>
+
+        {/* Date / edition line */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "32px", width: "100%", maxWidth: "600px" }}
+        >
+          <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15))" }} />
+          <span style={{
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            fontSize: "10px", letterSpacing: "0.25em",
+            color: "rgba(255,255,255,0.4)", textTransform: "uppercase",
+            whiteSpace: "nowrap",
+          }}>
+            {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · EDITION GENESIS
+          </span>
+          <div style={{ flex: 1, height: "1px", background: "linear-gradient(270deg, transparent, rgba(255,255,255,0.15))" }} />
+        </motion.div>
+
+        {/* Main headline */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          style={{ marginBottom: "60px" }}
+        >
+          <h2 style={{
+            fontFamily: "'Georgia', 'Times New Roman', serif",
+            fontSize: "clamp(42px, 8vw, 96px)",
+            fontWeight: 400, lineHeight: 1.05,
+            color: "#fff", letterSpacing: "-0.01em",
+            textShadow: "0 10px 40px rgba(0,0,0,0.6)",
+          }}>
+            HAVEN Humanity<br />
+            <em style={{ fontStyle: "italic", color: "rgba(255,255,255,0.4)" }}>Protocol</em>
+          </h2>
+        </motion.div>
+
+        {/* Button */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <button
+            onClick={onEnter}
+            style={{
+              background: "#fff", color: "#000",
+              border: "1px solid #fff", cursor: "pointer",
+              padding: "16px 48px",
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "12px", letterSpacing: "0.25em",
+              textTransform: "uppercase",
+              display: "inline-flex", alignItems: "center", gap: "16px",
+              transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+              boxShadow: "0 0 20px rgba(255,255,255,0.1)",
+            }}
+            onMouseEnter={e => {
+              (e.target as HTMLElement).style.background = "rgba(0,0,0,0.5)";
+              (e.target as HTMLElement).style.color = "#fff";
+              (e.target as HTMLElement).style.boxShadow = "0 0 40px rgba(255,255,255,0.2)";
+              const arrow = (e.target as HTMLElement).querySelector('span');
+              if (arrow) arrow.style.transform = "translateX(6px)";
+            }}
+            onMouseLeave={e => {
+              (e.target as HTMLElement).style.background = "#fff";
+              (e.target as HTMLElement).style.color = "#000";
+              (e.target as HTMLElement).style.boxShadow = "0 0 20px rgba(255,255,255,0.1)";
+              const arrow = (e.target as HTMLElement).querySelector('span');
+              if (arrow) arrow.style.transform = "translateX(0)";
+            }}
+          >
+            Access Dashboard
+            <span style={{ fontSize: "16px", fontStyle: "italic", transition: "transform 0.3s cubic-bezier(0.16,1,0.3,1)" }}>→</span>
+          </button>
+        </motion.div>
+      </div>
+    </section>
   );
 }
 
+/* ═══════════════════════════════════════════════
+   METRICS BAND (replaces VaultStats)
+═══════════════════════════════════════════════ */
+function MetricsBand() {
+  return (
+    <section style={{
+      borderTop: "3px solid #fff",
+      borderBottom: "1px solid rgba(255,255,255,0.1)",
+      background: "#0a0a0a",
+    }}>
+      <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px" }}>
+        <VaultStats />
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   STRATEGY BRIEF
+═══════════════════════════════════════════════ */
+function StrategySection() {
+  return (
+    <section style={{ padding: "100px 48px", background: "#050505", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: "80px" }}>
+          <div>
+            <SectionRule roman="I" title="Investment Philosophy" subtitle="Mathematical precision in benevolence capital allocation" />
+
+            <div style={{
+              padding: "24px",
+              border: "1px solid rgba(255,255,255,0.08)",
+              marginTop: "32px",
+            }}>
+              <p style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: "11px", letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.3)", textTransform: "uppercase",
+                marginBottom: "12px",
+              }}>Risk-Adjusted Return</p>
+              <p style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: "48px", color: "#fff",
+                letterSpacing: "-0.02em", lineHeight: 1,
+              }}>12.4<span style={{ fontSize: "28px", color: "rgba(255,255,255,0.4)" }}>%</span></p>
+              <p style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: "11px", fontStyle: "italic",
+                color: "rgba(255,255,255,0.3)", marginTop: "8px",
+              }}>Annualised yield, net of protocol fees</p>
+            </div>
+          </div>
+
+          <div>
+            <PrincipleRow
+              n="01"
+              title="Quantitative Impact Verification"
+              body="All impact proofs are assessed through SATIN Oracle's multi-modal AI verification engine, producing a deterministic impact score expressed as a function of scope, reach, and verifiability. No human discretion in the reward pathway."
+            />
+            <PrincipleRow
+              n="02"
+              title="Reputation as Collateral"
+              body="On-chain Reputation Capital accumulates through validated actions. The protocol treats staked reputation as economic collateral, enabling tiered access to governance rights, yield multipliers, and capital deployment authority."
+            />
+            <PrincipleRow
+              n="03"
+              title="Zero-Knowledge Privacy Layer"
+              body="ZKP Shield ensures that impact submissions are verifiable without revealing sensitive operational data. Privacy and auditability are not in tension within this architecture — they are complementary properties."
+            />
+            <PrincipleRow
+              n="04"
+              title="Algorithmic Governance"
+              body="Protocol parameters are governed by a quadratic voting mechanism weighted by reputation stake. Governance epochs run on a fixed schedule, ensuring orderly deliberation over system evolution without plutocratic capture."
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ALLOCATION
+═══════════════════════════════════════════════ */
+function AllocationSection() {
+  return (
+    <section style={{ padding: "100px 48px", background: "#000", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "100px" }}>
+          <div>
+            <SectionRule roman="II" title="Capital Allocation" subtitle="Protocol treasury composition and deployment strategy" />
+            <AllocRow label="Impact Reward Reserve" pct={42} note="Primary yield generation layer" />
+            <AllocRow label="Liquidity Provision" pct={28} note="Protocol-owned market depth" />
+            <AllocRow label="Governance Reserve" pct={18} note="Quadratic voting collateral pool" />
+            <AllocRow label="Development Fund" pct={8} note="Core engineering & audit" />
+            <AllocRow label="Emergency Reserve" pct={4} note="Black swan circuit breaker" />
+          </div>
+
+          <div>
+            <SectionRule roman="III" title="Performance Metrics" subtitle="Key protocol indicators, updated every 8 seconds" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0" }}>
+              <MetricTile label="Total Value Locked" value="$4.21M" note="Across all protocol layers" />
+              <MetricTile label="Active Participants" value="2,847" note="Unique verified addresses" />
+              <MetricTile label="Impact Events Verified" value="14,392" note="Cumulative since genesis" />
+              <MetricTile label="Tokens Distributed" value="891K" note="HAVEN, net of burns" />
+              <MetricTile label="Protocol Uptime" value="99.98%" note="Since mainnet launch" />
+              <MetricTile label="Oracle Accuracy" value="99.3%" note="SATIN verification score" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   CONNECT GATE
+═══════════════════════════════════════════════ */
+function ConnectGate() {
+  return (
+    <section style={{
+      minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "80px 48px", background: "#000",
+      borderTop: "1px solid rgba(255,255,255,0.08)",
+    }}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        style={{ maxWidth: "480px", width: "100%", textAlign: "center" }}
+      >
+        {/* Decorative mark */}
+        <div style={{
+          width: "1px", height: "60px", background: "rgba(255,255,255,0.15)",
+          margin: "0 auto 32px",
+        }} />
+
+        <p style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "10px", letterSpacing: "0.3em",
+          color: "rgba(255,255,255,0.3)", textTransform: "uppercase",
+          marginBottom: "16px",
+        }}>Access Required</p>
+
+        <h2 style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontWeight: 400, fontSize: "32px",
+          color: "#fff", letterSpacing: "0.01em",
+          marginBottom: "16px", lineHeight: 1.3,
+        }}>
+          Connect Your<br /><em>Institutional Wallet</em>
+        </h2>
+
+        <p style={{
+          fontFamily: "'Georgia', 'Times New Roman', serif",
+          fontSize: "14px", color: "rgba(255,255,255,0.4)",
+          lineHeight: 1.8, marginBottom: "40px",
+          fontStyle: "italic",
+        }}>
+          Authenticate to access the protocol dashboard, submit impact proofs,
+          and participate in quantitative governance.
+        </p>
+
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "40px" }}>
+          <ConnectButton />
+        </div>
+
+        {/* Attestations */}
+        <div style={{
+          borderTop: "1px solid rgba(255,255,255,0.08)",
+          paddingTop: "24px",
+          display: "flex", justifyContent: "center", gap: "32px",
+        }}>
+          {["AI-Verified", "ZK-Protected", "On-Chain Settled"].map(f => (
+            <div key={f} style={{ textAlign: "center" }}>
+              <p style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: "9px", letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.25)", textTransform: "uppercase",
+              }}>{f}</p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ width: "1px", height: "60px", background: "rgba(255,255,255,0.15)", margin: "32px auto 0" }} />
+      </motion.div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD PANEL (connected state)
+═══════════════════════════════════════════════ */
+function Dashboard({ address, score, nativeBalance, eventCount }: {
+  address: string; score: number; nativeBalance: any; eventCount: number;
+}) {
+  const [tab, setTab] = useState<TabId>("submit");
+
+  return (
+    <section style={{ background: "#030303", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px" }}>
+
+        {/* Account header */}
+        <div className="inst-acct-grid" style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          padding: "32px 0", gap: "24px",
+        }}>
+          <div>
+            <p style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "9px", letterSpacing: "0.22em",
+              color: "rgba(255,255,255,0.3)", textTransform: "uppercase",
+              marginBottom: "8px",
+            }}>Connected Account</p>
+            <p style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "13px", color: "rgba(255,255,255,0.7)",
+              letterSpacing: "0.06em",
+            }}>{address.slice(0, 12)}…{address.slice(-10)}</p>
+          </div>
+
+          <div style={{ textAlign: "center", borderLeft: "1px solid rgba(255,255,255,0.08)", borderRight: "1px solid rgba(255,255,255,0.08)", padding: "0 32px" }}>
+            <p style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "9px", letterSpacing: "0.22em",
+              color: "rgba(255,255,255,0.3)", textTransform: "uppercase",
+              marginBottom: "8px",
+            }}>Impact Score</p>
+            <p style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "28px", color: "#fff",
+            }}>
+              <AnimatedNumber value={score} />
+            </p>
+          </div>
+
+          <div style={{ textAlign: "right" }}>
+            <p style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "9px", letterSpacing: "0.22em",
+              color: "rgba(255,255,255,0.3)", textTransform: "uppercase",
+              marginBottom: "8px",
+            }}>HAVEN Balance</p>
+            <p style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "28px", color: "#fff",
+            }}>
+              <AnimatedNumber
+                value={nativeBalance ? Number(nativeBalance.formatted) : 0}
+                isFloat={true}
+              />
+            </p>
+          </div>
+        </div>
+
+        {/* Tab navigation — editorial style */}
+        <div style={{
+          display: "flex", overflowX: "auto",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          scrollbarWidth: "none",
+        }}>
+          <style>{`.inst-tabs::-webkit-scrollbar { display: none; }`}</style>
+          {TABS.map(t => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                style={{
+                  background: "transparent", border: "none", cursor: "pointer",
+                  padding: "20px 24px",
+                  display: "flex", flexDirection: "column", alignItems: "center",
+                  gap: "5px", flexShrink: 0,
+                  borderBottom: active ? "2px solid #fff" : "2px solid transparent",
+                  transition: "all 0.15s",
+                }}
+              >
+                <span style={{
+                  fontFamily: "'Georgia', 'Times New Roman', serif",
+                  fontSize: "8px", letterSpacing: "0.15em",
+                  color: active ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.2)",
+                  textTransform: "uppercase",
+                }}>{t.roman}</span>
+                <span style={{
+                  fontFamily: "'Georgia', 'Times New Roman', serif",
+                  fontSize: "12px", letterSpacing: "0.05em",
+                  color: active ? "#fff" : "rgba(255,255,255,0.38)",
+                  whiteSpace: "nowrap",
+                  transition: "color 0.15s",
+                }}>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tab content */}
+        <div style={{ padding: "60px 0 100px" }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={tab}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+            >
+              <ErrorBoundary context={tab}>
+                {tab === "submit" && <SubmitImpactForm />}
+                {tab === "profile" && <div style={{ maxWidth: "520px" }}><ReputationCard address={address} reputationScore={score} /></div>}
+                {tab === "stream" && <CommunityStream address={address} reputationScore={score} />}
+                {tab === "feed" && <ImpactFeed />}
+                {tab === "badges" && <Badges address={address} />}
+                {tab === "leaderboard" && <Leaderboard />}
+                {tab === "transfer" && <P2PTransfer address={address} />}
+                {tab === "governance" && <GovernancePanel reputationScore={score} eventCount={eventCount} />}
+                {tab === "economy" && <EconomyDashboard />}
+                {tab === "protocol" && <ProtocolStatus />}
+              </ErrorBoundary>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   ROOT PAGE
+═══════════════════════════════════════════════ */
 export default function Home() {
   const { address, isConnected } = useAccount();
-  const [tab, setTab] = useState<TabId>("submit");
   const [mounted, setMounted] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(true);
+  const dashRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => { setMounted(true); }, []);
 
-  // 1. Fetch Reputation dari L1 Contract
   const { data: repData } = useReadContract({
     address: CONTRACTS.REPUTATION_LEDGER as `0x${string}`,
-    abi: REPUTATION_LEDGER_ABI, functionName: "getReputation",
+    abi: REPUTATION_LEDGER_ABI,
+    functionName: "getReputation",
     args: address ? [address] : ["0x0000000000000000000000000000000000000000"],
     query: { enabled: !!address, refetchInterval: 8_000 },
   });
 
-  // 2. Fetch Saldo Koin Native HAVEN L1 menggunakan useBalance
   const { data: nativeBalance } = useBalance({
     address: address as `0x${string}`,
     query: { enabled: !!address, refetchInterval: 8_000 },
   });
 
-  // 3. Check SovereignID HasIdentity
   const { data: hasIdentity } = useReadContract({
     address: CONTRACTS.SOVEREIGN_ID as `0x${string}`,
-    abi: SOVEREIGN_ID_ABI, functionName: "hasIdentity",
+    abi: SOVEREIGN_ID_ABI,
+    functionName: "hasIdentity",
     args: address ? [address] : ["0x0000000000000000000000000000000000000000"],
     query: { enabled: !!address, refetchInterval: 8_000 },
   });
 
   if (!mounted) return null;
 
-  const score = repData ? Number((repData as any)[0]) / 100 : 0;
-  const eventCount = repData ? Number((repData as any)[1]) : 0;
+  const repArr = repData as readonly [bigint, bigint, bigint] | undefined;
+  const score = repArr ? Number(repArr[0]) / 100 : 0;
+  const eventCount = repArr ? Number(repArr[2]) : 0;
 
-  // Format saldo koin native HAVEN
-  const havenFmt = nativeBalance
-    ? Number(nativeBalance.formatted).toLocaleString("en-US", { maximumFractionDigits: 2 })
-    : "0";
+  const scrollToDash = () => {
+    dashRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--void)" }}>
+    <div style={{
+      minHeight: "100vh",
+      background: "#000",
+      color: "#fff",
+      fontFamily: "'Georgia', 'Times New Roman', serif",
+    }}>
+      {/* Global CSS overrides for institutional theme */}
+      <style>{`
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: #000 !important; }
+        ::-webkit-scrollbar { width: 2px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
 
-      {/* ═══ Header ═══ */}
-      <header style={{
-        position: "sticky", top: 0, zIndex: 100,
-        height: "var(--hh)",
-        background: "rgba(3,8,14,0.80)",
-        backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)",
-        borderBottom: "1px solid var(--b0)",
-      }}>
-        <div className="header-container" style={{
-          maxWidth: "var(--mw)", margin: "0 auto",
-          height: "100%", padding: "0 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-        }}>
-          <Logo />
-          <div className="header-actions" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {isConnected && nativeBalance !== undefined && (
-              <div style={{
-                display: "flex", alignItems: "center", gap: "8px",
-                padding: "6px 14px", borderRadius: "var(--r1)",
-                background: "var(--go-dim)", border: "1px solid var(--go-edge)",
-              }}>
-                <span style={{
-                  fontFamily: "'JetBrains Mono',monospace",
-                  fontSize: "12px", fontWeight: 500, color: "var(--go)",
-                }}>
-                  {havenFmt}<span style={{ color: "rgba(255,189,89,0.5)", marginLeft: "5px" }}>HAVEN</span>
-                </span>
-              </div>
-            )}
-            <ConnectButton />
-          </div>
-        </div>
-      </header>
+        /* Override VaultStats to match monochrome theme */
+        .cyber-stat-card { border-color: rgba(255,255,255,0.06) !important; }
+        .cyber-label { color: rgba(255,255,255,0.35) !important; font-family: 'Georgia','Times New Roman',serif !important; letter-spacing: 0.15em !important; font-size: 9px !important; }
+        .cyber-value { font-family: 'Georgia','Times New Roman',serif !important; background: none !important; -webkit-text-fill-color: rgba(255,255,255,0.9) !important; color: rgba(255,255,255,0.9) !important; font-size: 28px !important; letter-spacing: -0.01em !important; }
 
-      {/* ═══ Hero ═══ */}
-      <section style={{
-        position: "relative", overflow: "hidden",
-        paddingTop: "96px", paddingBottom: "80px",
-      }}>
-        <ChainGrid />
-        <HeroOrbs />
+        /* Override RainbowKit connect button */
+        [data-rk] button {
+          background: #fff !important;
+          color: #000 !important;
+          border-radius: 0 !important;
+          font-family: 'Georgia','Times New Roman',serif !important;
+          letter-spacing: 0.12em !important;
+          font-size: 11px !important;
+        }
+        [data-rk] { --rk-colors-accentColor: #fff !important; --rk-colors-accentColorForeground: #000 !important; --rk-radii-connectButton: 0px !important; }
 
-        <div style={{
-          maxWidth: "var(--mw)", margin: "0 auto",
-          padding: "0 40px",
-          display: "flex", flexDirection: "column",
-          alignItems: "center", textAlign: "center",
-          gap: "26px", position: "relative", zIndex: 2,
-        }}>
-          {/* Pill badge */}
-          <div className="rise" style={{
-            display: "inline-flex", alignItems: "center", gap: "9px",
-            padding: "6px 16px", borderRadius: "99px",
-            background: "var(--g1)",
-            border: "1px solid var(--mi-edge)",
-          }}>
-            <span className="dot dot-mi" style={{ width: "6px", height: "6px" }} />
-            <span className="label" style={{ color: "var(--mi)", letterSpacing: "0.12em" }}>
-              Live on HAVEN Local L1 · SATIN Oracle
-            </span>
-          </div>
+        /* Animated underline for section links */
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-          {/* Headline */}
-          <h1 className="display rise rise-1" style={{ maxWidth: "640px" }}>
-            Proof of&nbsp;<br />
-            <span className="jewel-text">Beneficial Action.</span>
-          </h1>
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+          .masthead-meta { display: none !important; }
+          .masthead-sub { display: none !important; }
+          .inst-hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .inst-strat-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+          .inst-alloc-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+          .inst-acct-grid  { grid-template-columns: 1fr !important; gap: 32px !important; text-align: center !important; }
+          .inst-acct-grid > div { border-left: none !important; border-right: none !important; padding: 0 !important; }
+          .inst-padding    { padding: 60px 24px !important; }
+        }
+      `}</style>
 
-          {/* Sub */}
-          <p className="rise rise-2" style={{
-            fontSize: "16px", color: "var(--t1)",
-            maxWidth: "460px", lineHeight: 1.75, fontWeight: 400,
-          }}>
-            The world&apos;s first protocol where your most valuable asset is the number of lives
-            you&apos;ve changed — verified by AI, immortalized on-chain.
-          </p>
+      <Ticker />
+      <Masthead />
 
+      {/* Hero */}
+      <HeroSection onEnter={scrollToDash} />
 
-        </div>
-      </section>
+      {/* Live stats band */}
+      <MetricsBand />
 
-      {/* ═══ VaultStats ═══ */}
-      <VaultStats />
+      {/* Strategy / Allocation commented out for now as requested */}
 
-      {/* ═══ App (connected) ═══ */}
-      {isConnected ? (
-        <div className="main-content" style={{
-          maxWidth: "var(--mw)", margin: "0 auto",
-          padding: "48px 20px 120px",
-        }}>
-          {!hasIdentity && (
-            <div style={{ paddingTop: "40px", paddingBottom: "60px" }}>
-              <MintIdentityCard />
-            </div>
-          )}
-
-          {hasIdentity && (
-            <>
-              <style>{`
-            @media (max-width: 600px) {
-              .profile-card {
-                grid-template-columns: 1fr !important;
-                text-align: center !important;
-                justify-items: center !important;
-              }
-              .profile-balance {
-                text-align: center !important;
-                margin-top: 10px;
-                padding-top: 15px;
-                border-top: 1px solid rgba(255,255,255,0.05);
-                width: 100%;
-              }
-              .main-content { padding-top: 24px !important; }
-              .header-actions { display: none !important; } /* Hide balance in header on mobile to save space */
-            }
-          `}</style>
-              {/* User identity card */}
-              <div className="rise profile-card" style={{
-                display: "grid",
-                gridTemplateColumns: "auto 1fr auto",
-                alignItems: "center", gap: "20px",
-                padding: "18px 24px", borderRadius: "var(--r3)",
-                background: "linear-gradient(135deg, var(--vi-deep) 0%, var(--g1) 60%, var(--mi-deep) 100%)",
-                border: "1px solid var(--b0)", marginBottom: "32px",
-              }}>
-                {/* Avatar */}
-                <div style={{
-                  width: "42px", height: "42px", borderRadius: "12px",
-                  background: "linear-gradient(135deg, var(--vi-dim), var(--mi-dim))",
-                  border: "1px solid var(--vi-edge)",
-                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                }}>
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                    <circle cx="9" cy="5.5" r="2.8" stroke="var(--vi)" strokeWidth="1.5" />
-                    <path d="M2 16c0-3.87 3.13-7 7-7s7 3.13 7 7" stroke="var(--vi)" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                </div>
-
-                <div className="profile-info">
-                  <p className="label" style={{ marginBottom: "4px", wordBreak: "break-all" }}>
-                    {address!.slice(0, 10)}…{address!.slice(-10)}
-                  </p>
-                  <p style={{ fontSize: "14px", fontWeight: 700, color: "var(--t0)" }}>
-                    Impact Score:{" "}
-                    <span style={{
-                      fontFamily: "'JetBrains Mono',monospace",
-                      color: "var(--mi)",
-                      textShadow: "0 0 16px var(--mi-glow)",
-                    }}><AnimatedNumber value={score} /></span>
-                  </p>
-                </div>
-
-                <div className="profile-balance" style={{ textAlign: "right" }}>
-                  <p className="label" style={{ marginBottom: "4px" }}>HAVEN Balance</p>
-                  <p style={{
-                    fontFamily: "'JetBrains Mono',monospace",
-                    fontSize: "18px", fontWeight: 600,
-                    color: "var(--go)",
-                    textShadow: "0 0 16px var(--go-glow)",
-                  }}><AnimatedNumber value={nativeBalance ? Number(nativeBalance.formatted) : 0} isFloat={true} /></p>
-                </div>
-              </div>
-
-              {/* Tab Bar Container (Scrollable on Mobile) */}
-              <div className="tab-container" style={{
-                display: "flex",
-                borderBottom: "1px solid var(--b0)",
-                overflowX: "auto",
-                scrollbarWidth: "none", // Firefox
-                msOverflowStyle: "none", // IE
-              }}>
-                <style>{`.tab-container::-webkit-scrollbar { display: none; }`}</style>
-                {TABS.map((t) => {
-                  const active = tab === t.id;
-                  return (
-                    <button key={t.id} onClick={() => setTab(t.id)} style={{
-                      position: "relative",
-                      padding: "13px 20px",
-                      background: "transparent", border: "none", cursor: "pointer",
-                      fontSize: "13px",
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      fontWeight: active ? 700 : 400,
-                      color: active ? "var(--t0)" : "var(--t2)",
-                      transition: "color 0.15s",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0, // Prevent tabs from squishing on mobile
-                    }}>
-                      {t.label}
-                      {active && <span className="tab-underline" />}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div style={{ paddingTop: "40px", minHeight: "60vh" }}>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={tab}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -15 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                  >
-                    <ErrorBoundary context={tab}>
-                      {tab === "submit" && <SubmitImpactForm />}
-                      {tab === "profile" && <div style={{ maxWidth: "520px" }}><ReputationCard address={address!} reputationScore={score} /></div>}
-                      {tab === "stream" && <CommunityStream address={address!} reputationScore={score} />}
-                      {tab === "feed" && <ImpactFeed />}
-                      {tab === "badges" && <Badges address={address!} />}
-                      {tab === "leaderboard" && <Leaderboard />}
-                      {tab === "transfer" && <P2PTransfer address={address!} />}
-                      {tab === "governance" && <GovernancePanel reputationScore={score} eventCount={eventCount} />}
-                      {tab === "economy" && <EconomyDashboard />}
-                      {tab === "protocol" && <ProtocolStatus />}
-                    </ErrorBoundary>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </>
-          )}
-        </div>
-      ) : (
-        /* ─── Not connected ─── */
-        <div style={{
-          maxWidth: "var(--mw)", margin: "0 auto",
-          padding: "60px 40px 120px",
-          display: "flex", justifyContent: "center",
-        }}>
-          <div className="float" style={{
-            maxWidth: "420px", width: "100%",
-            padding: "48px 40px", borderRadius: "var(--r5)",
-            background: "var(--g1)", border: "1px solid var(--b0)",
-            display: "flex", flexDirection: "column",
-            alignItems: "center", gap: "24px", textAlign: "center",
-            position: "relative", overflow: "hidden",
-            boxShadow: "0 40px 80px rgba(0,0,0,0.4)",
-          }}>
-            {/* Inner glow */}
-            <div style={{
-              position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
-              width: "350px", height: "250px", borderRadius: "50%",
-              background: "radial-gradient(ellipse, rgba(124,106,255,0.1) 0%, transparent 70%)",
-              pointerEvents: "none",
-            }} />
-
-            {/* Icon */}
-            <div style={{
-              width: "56px", height: "56px", borderRadius: "16px",
-              background: "linear-gradient(135deg, var(--vi-dim), var(--mi-dim))",
-              border: "1px solid var(--vi-edge)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              position: "relative",
-              boxShadow: "0 0 24px var(--vi-glow)",
-            }}>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <rect x="3" y="10" width="16" height="12" rx="2.5" stroke="var(--vi)" strokeWidth="1.6" />
-                <path d="M7.5 10V8.5a3.5 3.5 0 017 0V10" stroke="var(--vi)" strokeWidth="1.6" strokeLinecap="round" />
-                <circle cx="11" cy="15.5" r="1.8" fill="var(--vi)" />
-              </svg>
-            </div>
-
-            <div>
-              <p style={{
-                fontFamily: "'Plus Jakarta Sans',sans-serif",
-                fontWeight: 700, fontSize: "18px", color: "var(--t0)", marginBottom: "9px",
-              }}>Connect to Start</p>
-              <p style={{ fontSize: "14px", color: "var(--t1)", lineHeight: 1.7 }}>
-                Connect your wallet to submit impact proofs, earn HAVEN tokens,
-                and build your on-chain Reputation Capital.
-              </p>
-            </div>
-
-            <ConnectButton />
-
-            {/* Feature row */}
-            <div style={{
-              display: "flex", gap: "16px",
-              paddingTop: "12px",
-              borderTop: "1px solid var(--b0)",
-              width: "100%", justifyContent: "center", flexWrap: "wrap",
-            }}>
-              {[
-                { icon: "🔮", text: "AI-Verified" },
-                { icon: "🔒", text: "ZK-Protected" },
-                { icon: "⛓️", text: "On-Chain" },
-              ].map(f => (
-                <div key={f.text} style={{
-                  display: "flex", alignItems: "center", gap: "6px",
-                }}>
-                  <span style={{ fontSize: "12px" }}>{f.icon}</span>
-                  <p className="label" style={{ color: "var(--t2)", letterSpacing: "0.06em" }}>{f.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Dashboard / Connect gate */}
+      <div ref={dashRef}>
+        {isConnected && address ? (
+          <Dashboard
+            address={address}
+            score={score}
+            nativeBalance={nativeBalance}
+            eventCount={eventCount}
+          />
+        ) : (
+          <ConnectGate />
+        )}
+      </div>
 
       {/* ═══ Footer ═══ */}
       <footer style={{
-        borderTop: "1px solid var(--b0)",
-        padding: "28px 40px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexWrap: "wrap", gap: "12px",
+        background: "#000",
+        borderTop: "3px solid rgba(255,255,255,0.12)",
+        padding: "40px 48px",
       }}>
-        <p className="label">© 2026 Haven Humanity Protocol</p>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <span className="dot dot-mi" style={{ width: "4px", height: "4px" }} />
-          <p className="label">SATIN Oracle · ZKP Shield · HAVEN Local Subnet</p>
+        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "32px" }}>
+            <div>
+              <p style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: "15px", letterSpacing: "0.2em",
+                color: "rgba(255,255,255,0.7)", textTransform: "uppercase",
+                marginBottom: "8px",
+              }}>Haven Humanity</p>
+              <p style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: "10px", letterSpacing: "0.15em",
+                color: "rgba(255,255,255,0.25)", textTransform: "uppercase",
+              }}>PoBA Protocol · v2.0.0 · Chain 777000</p>
+            </div>
+
+            <div style={{ display: "flex", gap: "48px" }}>
+              {["SATIN Oracle", "ZKP Shield", "HAVEN L1 Subnet"].map(s => (
+                <div key={s} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{
+                    width: "5px", height: "5px", borderRadius: "50%",
+                    background: "rgba(255,255,255,0.6)",
+                    boxShadow: "0 0 6px rgba(255,255,255,0.4)",
+                    animation: "livePulse 2.6s ease-in-out infinite",
+                  }} />
+                  <p style={{
+                    fontFamily: "'Georgia', 'Times New Roman', serif",
+                    fontSize: "10px", letterSpacing: "0.15em",
+                    color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
+                  }}>{s}</p>
+                </div>
+              ))}
+            </div>
+
+            <p style={{
+              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontSize: "10px", letterSpacing: "0.15em",
+              color: "rgba(255,255,255,0.2)", textTransform: "uppercase",
+              alignSelf: "flex-end",
+            }}>© 2026 Haven Humanity Protocol</p>
+          </div>
+
+          <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginTop: "32px" }} />
         </div>
       </footer>
+
+      <style>{`
+        @keyframes livePulse {
+          0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.6)}
+        }
+      `}</style>
     </div>
   );
 }
