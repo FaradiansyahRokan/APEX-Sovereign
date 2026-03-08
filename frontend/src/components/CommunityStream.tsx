@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useWriteContract, usePublicClient, useReadContract } from "wagmi";
+import NextImage from "next/image";
 import { pad } from "viem";
 import { CONTRACTS, ACTION_TYPES, URGENCY_LEVELS, getRank } from "../utils/constants";
 import { BENEVOLENCE_VAULT_ABI } from "../utils/abis";
@@ -122,7 +123,7 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
               background: "rgba(255,255,255,0.015)",
               marginBottom: "10px",
             }}>
-              "{entry.visual_description}"
+              &quot;{entry.visual_description}&quot;
             </p>
           )}
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" as const }}>
@@ -341,7 +342,7 @@ function VotePanel({
   // Voting open
   const phaseLabel = isChampionAudit ? "CHAMPION AUDIT"
     : vi.phase === 1 ? `CHAMPION ONLY · opens in ${Math.ceil(vi.phase2_in / 60)}m`
-    : "OPEN VOTE";
+      : "OPEN VOTE";
 
   return (
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
@@ -393,7 +394,7 @@ function VotePanel({
         <div style={{ display: "flex", gap: "8px" }}>
           {[
             { label: "Approve", vote: "approve" as const, borderOp: 0.2 },
-            { label: "Reject",  vote: "reject"  as const, borderOp: 0.08 },
+            { label: "Reject", vote: "reject" as const, borderOp: 0.08 },
           ].map(b => (
             <button key={b.vote} onClick={() => handleVote(b.vote)} disabled={voting} style={{
               flex: 1, padding: "10px",
@@ -467,9 +468,12 @@ function StreamCard({
                 onClick={() => setExpanded(true)}
                 style={{ cursor: "zoom-in", flexShrink: 0 }}
               >
-                <img
+                <NextImage
                   src={`data:image/jpeg;base64,${entry.image_base64}`}
                   alt="Evidence"
+                  width={72}
+                  height={72}
+                  unoptimized
                   style={{
                     width: "72px", height: "72px", objectFit: "cover",
                     display: "block",
@@ -565,10 +569,10 @@ function StreamCard({
           marginBottom: "14px",
         }}>
           {[
-            { label: "Impact",     value: entry.impact_score?.toFixed(1) ?? "—", suffix: "/100" },
+            { label: "Impact", value: entry.impact_score?.toFixed(1) ?? "—", suffix: "/100" },
             { label: "Confidence", value: `${((entry.ai_confidence ?? 0) * 100).toFixed(0)}`, suffix: "%" },
-            { label: "Reward",     value: entry.token_reward?.toFixed(2) ?? "—", suffix: " VELD" },
-            { label: "People",     value: entry.people_helped?.toString() ?? "—", suffix: "" },
+            { label: "Reward", value: entry.token_reward?.toFixed(2) ?? "—", suffix: " VELD" },
+            { label: "People", value: entry.people_helped?.toString() ?? "—", suffix: "" },
           ].map(s => (
             <div key={s.label}>
               <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "9px", color: "rgba(255,255,255,0.25)", marginBottom: "4px", letterSpacing: "0.1em" }}>
@@ -682,7 +686,7 @@ export default function CommunityStream({ address, reputationScore }: { address:
           {/* Filter */}
           <div style={{ display: "flex", gap: "2px" }}>
             {[
-              { key: "all",    label: "All" },
+              { key: "all", label: "All" },
               { key: "review", label: `Review (${reviewCount})` },
             ].map(f => (
               <button key={f.key}

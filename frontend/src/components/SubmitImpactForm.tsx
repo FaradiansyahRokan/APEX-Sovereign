@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAccount, useWriteContract, usePublicClient } from "wagmi";
+import NextImage from "next/image";
 import { pad } from "viem";
 import { BENEVOLENCE_VAULT_ABI } from "../utils/abis";
 import { CONTRACTS } from "../utils/constants";
@@ -489,7 +490,7 @@ export default function SubmitImpactForm() {
                       fontFamily: S, fontStyle: "italic", fontSize: "11px",
                       color: "rgba(255,255,255,0.4)", lineHeight: 1.7, marginTop: "8px",
                     }}>
-                      "{oracle.visual_description}"
+                      &quot;{oracle.visual_description}&quot;
                     </p>
                   )}
                 </div>
@@ -702,7 +703,10 @@ export default function SubmitImpactForm() {
           {previewUrl && !cameraActive && (
             <div style={{ padding: "0 24px 20px" }}>
               <div style={{ position: "relative", display: "inline-block" }}>
-                <img src={previewUrl} alt="Evidence preview"
+                <NextImage src={previewUrl} alt="Evidence preview"
+                  width={500}
+                  height={200}
+                  unoptimized
                   style={{
                     maxWidth: "100%", maxHeight: "200px", objectFit: "cover",
                     display: "block", border: "1px solid rgba(255,255,255,0.08)",
