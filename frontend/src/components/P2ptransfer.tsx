@@ -30,7 +30,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function P2PTransfer({ address }: { address: string }) {
-  const [to, setTo]         = useState("");
+  const [to, setTo] = useState("");
   const [amount, setAmount] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [history, setHistory] = useState<TxRecord[]>([]);
@@ -46,10 +46,10 @@ export default function P2PTransfer({ address }: { address: string }) {
   const balNum = nativeBal ? Number(nativeBal.formatted) : 0;
   const balFmt = balNum.toLocaleString("en-US", { maximumFractionDigits: 4 });
   const amtNum = Number(amount) || 0;
-  const validTo  = to.length > 0 && isAddress(to);
+  const validTo = to.length > 0 && isAddress(to);
   const validAmt = amtNum > 0 && amtNum < balNum;
-  const canSend  = validTo && validAmt && !isPending && !isConfirming;
-  const pct      = balNum > 0 ? Math.min((amtNum / balNum) * 100, 100) : 0;
+  const canSend = validTo && validAmt && !isPending && !isConfirming;
+  const pct = balNum > 0 ? Math.min((amtNum / balNum) * 100, 100) : 0;
   const statusErr = errMsg || sendError?.message;
 
   const handleSend = async () => {
@@ -86,7 +86,7 @@ export default function P2PTransfer({ address }: { address: string }) {
           <p style={{
             fontFamily: "'Plus Jakarta Sans',sans-serif",
             fontWeight: 800, fontSize: "22px", color: "#fff",
-          }}>Send APEX</p>
+          }}>Send VELD</p>
         </div>
 
         {/* Balance card */}
@@ -117,7 +117,7 @@ export default function P2PTransfer({ address }: { address: string }) {
                 color: "rgba(255,255,255,0.3)", marginLeft: "10px",
                 WebkitTextFillColor: "rgba(255,255,255,0.3)",
                 background: "none",
-              }}>APEX</span>
+              }}>VELD</span>
             </p>
             {/* Progress bar */}
             <div style={{ height: "4px", borderRadius: "2px", background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
@@ -177,7 +177,7 @@ export default function P2PTransfer({ address }: { address: string }) {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "9px" }}>
                 <label style={{ fontSize: "10px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.09em", fontFamily: "'JetBrains Mono',monospace" }}>
-                  Amount (APEX)
+                  Amount (VELD)
                 </label>
                 <div style={{ display: "flex", gap: "6px" }}>
                   {[25, 50, 100].map(p => (
@@ -225,7 +225,7 @@ export default function P2PTransfer({ address }: { address: string }) {
                   position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)",
                   fontFamily: "'JetBrains Mono',monospace", fontSize: "11px",
                   color: "rgba(255,189,89,0.6)", fontWeight: 700,
-                }}>APEX</span>
+                }}>VELD</span>
               </div>
               {amount && amtNum >= balNum && (
                 <p style={{ fontSize: "10px", color: "rgba(255,100,100,0.8)", marginTop: "6px", fontFamily: "'JetBrains Mono',monospace" }}>
@@ -274,10 +274,10 @@ export default function P2PTransfer({ address }: { address: string }) {
             >
               {isPending || isConfirming
                 ? <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                    <span style={{ display: "inline-block", width: "12px", height: "12px", borderRadius: "50%", border: "2px solid rgba(0,0,0,0.3)", borderTop: "2px solid #000", animation: "spin 0.8s linear infinite" }} />
-                    Broadcasting to L1…
-                  </span>
-                : "Send APEX Native →"
+                  <span style={{ display: "inline-block", width: "12px", height: "12px", borderRadius: "50%", border: "2px solid rgba(0,0,0,0.3)", borderTop: "2px solid #000", animation: "spin 0.8s linear infinite" }} />
+                  Broadcasting to L1…
+                </span>
+                : "Send VELD Native →"
               }
             </button>
           </div>
@@ -343,7 +343,7 @@ export default function P2PTransfer({ address }: { address: string }) {
                       WebkitTextFillColor: tx.status === "ok" ? "transparent" : undefined,
                       color: tx.status === "ok" ? "transparent" : "rgba(255,100,100,0.7)",
                     }}>
-                      {tx.status === "ok" ? "-" : ""}{tx.amount} APEX
+                      {tx.status === "ok" ? "-" : ""}{tx.amount} VELD
                     </p>
                     <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: "10px", color: "rgba(255,255,255,0.2)", marginTop: "3px" }}>
                       {new Date(tx.time).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
@@ -366,10 +366,10 @@ export default function P2PTransfer({ address }: { address: string }) {
             }}>Network Parameters</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
               {[
-                { k: "Network",    v: "APEX Local L1",      gradient: "linear-gradient(90deg,#00dfb2,#7c6aff)" },
-                { k: "Asset Type", v: "Native Gas Coin",    gradient: "linear-gradient(90deg,#7c6aff,#ff6eb4)" },
-                { k: "Consensus",  v: "Proof of Authority", gradient: "linear-gradient(90deg,#ff6eb4,#ffbd59)" },
-                { k: "Chain ID",   v: "6969",               gradient: "linear-gradient(90deg,#ffbd59,#00dfb2)" },
+                { k: "Network", v: "BridgeStone L1", gradient: "linear-gradient(90deg,#00dfb2,#7c6aff)" },
+                { k: "Asset Type", v: "Native Gas Coin", gradient: "linear-gradient(90deg,#7c6aff,#ff6eb4)" },
+                { k: "Consensus", v: "Proof of Authority", gradient: "linear-gradient(90deg,#ff6eb4,#ffbd59)" },
+                { k: "Chain ID", v: "777000", gradient: "linear-gradient(90deg,#ffbd59,#00dfb2)" },
               ].map((r, i, arr) => (
                 <div key={r.k} style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center",

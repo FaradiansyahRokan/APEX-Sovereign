@@ -17,13 +17,13 @@ module.exports = {
     },
 
     // ─── APEX NETWORK (L1 Sovereign) ─────────────────────────────────────────
-    apexnetwork_fuji: {
-  url: "http://127.0.0.1:9650/ext/bc/2J8FS94wi2HBQAiqcvVkJUeodDCHL3cRTPgcfgoFso5h8NSvaE/rpc",
-  chainId: 6969,
-  accounts: process.env.APEX_ADMIN_PRIVATE_KEY ? [process.env.APEX_ADMIN_PRIVATE_KEY] : [],
-  gasPrice: 25000000000,
-  gas: 8000000,
-},
+    stonebridge_fuji: {
+      url: "http://127.0.0.1:9654/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
+      chainId: 777000,
+      accounts: process.env.APEX_ADMIN_PRIVATE_KEY ? [process.env.APEX_ADMIN_PRIVATE_KEY] : [],
+      gasPrice: 25000000000,
+      gas: 8000000,
+    },
     // ─────────────────────────────────────────────────────────────────────────
 
     polygon_mumbai: {
@@ -44,7 +44,7 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      polygon:       process.env.POLYGONSCAN_API_KEY || "",
+      polygon: process.env.POLYGONSCAN_API_KEY || "",
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
     },
   },
@@ -54,9 +54,9 @@ module.exports = {
     token: "MATIC",
   },
   paths: {
-    sources:   "./src",
-    tests:     "./test",
-    cache:     "./cache",
+    sources: "./src",
+    tests: "./test",
+    cache: "./cache",
     artifacts: "./artifacts",
   },
 };

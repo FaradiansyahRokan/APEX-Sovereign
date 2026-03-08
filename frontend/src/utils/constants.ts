@@ -1,23 +1,23 @@
 export const CONTRACTS = {
   // L1 & L2 (Data Layer)
-  REPUTATION_LEDGER: "0x926351489F7E3686F8ed2A0eceA7BF45bbAd8A14",
-  SOVEREIGN_ID: "0x6f1fB5F02ff0069344609a3Dbfdad14994e143DF",
+  REPUTATION_LEDGER: "0xEEff17E284d64dcBFB0D3e5b8867F83a95EB44A5",
+  SOVEREIGN_ID: "0x6141aE1ee80fF18A239Fa427c2d6d65982602FaC",
 
   // L2 (Economy/Value Layer)
-  BENEVOLENCE_VAULT: "0x58f1c453BB8F6e862e04F6392826dd7Eb5618bA3",
-  SUPPLY_GOVERNOR: "0x66A9F0dF9d2407d91AB06f1E588D403C9Da827F7",
+  BENEVOLENCE_VAULT: "0x4B1301a72Da30c4ab3E0CaeFf40Ca28A0b416088",
+  SUPPLY_GOVERNOR: "0x5fEdD60933aF9410f9Fa1eAb14E50a414Aa680c4",
 
   // L7 (Macro Impact)
-  CRISIS_FUND: "0xCd98CeEdEEF3bf9f03E1A804a7Eb69ba2ED1Df78",
+  CRISIS_FUND: "0x28f8D147e76f0D88ccbf80B2FA10Eec7eE41C9C6",
 };
 
 
 export const APEX_CHAIN = {
-  id: 6969,
-  name: "APEXNETWORK",
+  id: 777000,
+  name: "BridgeStone",
   rpc: process.env.NEXT_PUBLIC_RPC_URL ||
-    "https://large-protocols-kick-nursing.trycloudflare.com/ext/bc/2J8FS94wi2HBQAiqcvVkJUeodDCHL3cRTPgcfgoFso5h8NSvaE/rpc",
-  symbol: "APEX",
+    "https://moves-score-payments-armor.trycloudflare.com/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
+  symbol: "VELD",
   decimals: 18,
 } as const;
 

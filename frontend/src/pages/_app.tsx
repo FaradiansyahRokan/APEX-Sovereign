@@ -9,12 +9,12 @@ import "../styles/globals.css";
 
 // Dynamic RPC/AppUrl detection for Mobile support
 const getDynamicConfig = () => {
-  if (typeof window === "undefined") return { rpc: process.env.NEXT_PUBLIC_RPC_URL || "http://127.0.0.1:9650", url: "http://localhost:3000" };
+  if (typeof window === "undefined") return { rpc: process.env.NEXT_PUBLIC_RPC_URL || "http://127.0.0.1:9654/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc", url: "http://localhost:3000" };
   const host = window.location.hostname;
   const protocol = window.location.protocol;
   const port = window.location.port ? `:${window.location.port}` : "";
 
-  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || `https://${host}/ext/bc/2J8FS94wi2HBQAiqcvVkJUeodDCHL3cRTPgcfgoFso5h8NSvaE/rpc`;
+  const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || `http://127.0.0.1:9654/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc`;
   const appUrl = `${protocol}//${host}${port}`;
 
   return { rpc: rpcUrl, url: appUrl };
@@ -23,12 +23,12 @@ const getDynamicConfig = () => {
 const dynamicCfg = getDynamicConfig();
 
 const apexNetwork = defineChain({
-  id: 6969,
-  name: "APEXNETWORK",
+  id: 777000,
+  name: "BridgeStone",
   nativeCurrency: {
     decimals: 18,
-    name: "APEX Token",
-    symbol: "APEX",
+    name: "VELD Token",
+    symbol: "VELD",
   },
   rpcUrls: {
     default: {
