@@ -22,7 +22,7 @@ const getDynamicConfig = () => {
 
 const dynamicCfg = getDynamicConfig();
 
-const apexNetwork = defineChain({
+const havenNetwork = defineChain({
   id: 777000,
   name: "BridgeStone",
   nativeCurrency: {
@@ -39,14 +39,14 @@ const apexNetwork = defineChain({
 });
 
 const wagmiConfig = getDefaultConfig({
-  appName: "APEX HUMANITY",
+  appName: "HAVEN HUMANITY",
   appUrl: dynamicCfg.url,
   // Use the verified project ID from your .env.local
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "07c91816e8fa370601f5530ffae69547",
-  chains: [apexNetwork],
+  chains: [havenNetwork],
   ssr: true,
   transports: {
-    [apexNetwork.id]: http(),
+    [havenNetwork.id]: http(),
   },
 });
 
@@ -56,7 +56,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <Head>
-        <title>APEX Humanity</title>
+        <title>HAVEN Humanity</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

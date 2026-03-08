@@ -1,11 +1,11 @@
 """
-APEX HUMANITY — Oracle ImpactEvaluator Unit Tests
+HAVEN HUMANITY — Oracle ImpactEvaluator Unit Tests
 pytest test suite  v1.2.0
 
 Coverage:
   - ImpactScoreCalculator: all ActionType × UrgencyLevel combinations
   - Score always in range [0.0, 100.0]
-  - Token reward cap at MAX_TOKEN_REWARD_APEX (100 APEX)
+  - Token reward cap at MAX_TOKEN_REWARD_HAVEN (100 HAVEN)
   - GPSAuthenticityChecker: valid coords, out-of-range, high-need zones
   - ComputerVisionVerifier._resize_image_bytes: output meets size constraints
   - Pedersen ZKP: valid proof, mismatched commitment, malformed hash
@@ -154,17 +154,17 @@ class TestImpactScoreCalculator:
 class TestTokenRewardCap:
 
     def test_max_token_reward_is_100(self):
-        """MAX_TOKEN_REWARD_APEX constant must be exactly 100.0."""
-        assert ImpactScoreCalculator.MAX_TOKEN_REWARD_APEX == 100.0
+        """MAX_TOKEN_REWARD_HAVEN constant must be exactly 100.0."""
+        assert ImpactScoreCalculator.MAX_TOKEN_REWARD_HAVEN == 100.0
 
     def test_token_reward_capped_at_100(self, calculator):
         """
-        With score=100.0, reward = 5 + (1.0^1.5)*45 = 50 APEX (< 100).
+        With score=100.0, reward = 5 + (1.0^1.5)*45 = 50 HAVEN (< 100).
         Even if the formula were to produce > 100, the cap kicks in.
         """
         score_normalized = 1.0
         token_reward = 5.0 + (score_normalized ** 1.5) * 45.0
-        capped = min(token_reward, ImpactScoreCalculator.MAX_TOKEN_REWARD_APEX)
+        capped = min(token_reward, ImpactScoreCalculator.MAX_TOKEN_REWARD_HAVEN)
         assert capped <= 100.0
 
     def test_token_reward_formula_at_extreme(self):
@@ -172,7 +172,7 @@ class TestTokenRewardCap:
         for score in [0.0, 30.0, 50.0, 75.0, 90.0, 100.0]:
             sn = score / 100.0
             raw = 5.0 + (sn ** 1.5) * 45.0
-            capped = min(raw, ImpactScoreCalculator.MAX_TOKEN_REWARD_APEX)
+            capped = min(raw, ImpactScoreCalculator.MAX_TOKEN_REWARD_HAVEN)
             assert capped <= 100.0
 
 

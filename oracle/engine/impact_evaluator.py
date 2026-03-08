@@ -1,10 +1,10 @@
 """
-APEX HUMANITY — SATIN Oracle Engine
+HAVEN HUMANITY — HAVEN Oracle Engine
 ====================================
 Sovereign Autonomous Trust & Impact Network (SATIN)
 Core Impact Evaluator for Proof of Beneficial Action (PoBA)
 
-Author: APEX HUMANITY Protocol
+Author: HAVEN HUMANITY Protocol
 Version: 1.1.0  — Security patch release
 Fixes:
   - _build_signing_hash now uses eth_abi.encode (abi.encode semantics) to match
@@ -127,7 +127,7 @@ class ZKProofBundle:
 class ImpactMetadata:
     """
     Canonical JSON schema for a single Impact Proof submission.
-    This object travels from the dApp → SATIN Oracle → Blockchain.
+    This object travels from the dApp → HAVEN Oracle → Blockchain.
     """
     # Identity
     event_id:              str
@@ -207,7 +207,7 @@ class ImpactScoreCalculator:
 
     MAX_EFFORT_HOURS      = 72.0   # cap effort bonus at 72 h
     NORMALIZATION_FACTOR  = 10.0
-    MAX_TOKEN_REWARD_APEX = 100.0  # v1.2.0 — hard cap per event (prevents extreme minting)
+    MAX_TOKEN_REWARD_HAVEN = 100.0  # v1.2.0 — hard cap per event (prevents extreme minting)
 
     def calculate(self, metadata: ImpactMetadata, ai_confidence: float) -> float:
         """Returns a normalized impact score from 0.0 to 100.0"""
@@ -611,7 +611,7 @@ class OracleSigner:
 # ---------------------------------------------------------------------------
 class ImpactEvaluator:
     """
-    SATIN Oracle — Master evaluator for Proof of Beneficial Action (PoBA).
+    HAVEN Oracle — Master evaluator for Proof of Beneficial Action (PoBA).
 
     Pipeline:
         1. GPS Authenticity Validation
@@ -726,8 +726,8 @@ class ImpactEvaluator:
         # Token pakai curve non-linear, max 50 GOOD per event
         score_normalized = impact_score / 100.0
         token_reward     = 5.0 + (score_normalized ** 1.5) * 45.0
-        # v1.2.0 FIX: hard cap at MAX_TOKEN_REWARD_APEX to prevent runaway minting
-        token_reward     = min(token_reward, self.score_calculator.MAX_TOKEN_REWARD_APEX)
+        # v1.2.0 FIX: hard cap at MAX_TOKEN_REWARD_HAVEN to prevent runaway minting
+        token_reward     = min(token_reward, self.score_calculator.MAX_TOKEN_REWARD_HAVEN)
         token_reward_wei = int(token_reward * 10 ** 18)  # convert to 18 decimals
 
         zk_proof_hash = _keccak256(
@@ -1029,7 +1029,7 @@ def create_impact_submission(
 
 
 # ===========================================================================
-# New API Classes — required by main.py (APEX Oracle Gateway)
+# New API Classes — required by main.py (HAVEN Oracle Gateway)
 # ===========================================================================
 
 @dataclass
@@ -1117,7 +1117,7 @@ class OraclePayload:
     status:          VerificationStatus
     impact_score:    float
     ai_confidence:   float              # FIX: always present and serialised
-    token_reward:    float              # APEX tokens (not wei)
+    token_reward:    float              # HAVEN tokens (not wei)
     oracle_address:  str
     zk_proof_hash:   str               # 0x-prefixed hex
     event_hash:      str               # hex (no 0x)
@@ -1219,12 +1219,12 @@ def _evaluate_evidence_bundle(
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     print("=" * 70)
-    print("  SATIN ENGINE — APEX HUMANITY Oracle  (Demo Run v1.1.0)")
+    print("  SATIN ENGINE — HAVEN HUMANITY Oracle  (Demo Run v1.1.0)")
     print("=" * 70)
 
     # Create a synthetic 200×200 test image
     dummy_image = np.ones((200, 200, 3), dtype=np.uint8) * 128
-    cv2.putText(dummy_image, "APEX", (40, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3)
+    cv2.putText(dummy_image, "HAVEN", (40, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3)
     _, img_encoded = cv2.imencode(".jpg", dummy_image)
     image_bytes = img_encoded.tobytes()
 

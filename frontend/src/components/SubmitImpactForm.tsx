@@ -8,7 +8,7 @@ import { CONTRACTS } from "../utils/constants";
 import { ENV } from "../utils/env";
 
 const ORACLE_URL = ENV.ORACLE_URL;
-const ORACLE_KEY = process.env.NEXT_PUBLIC_SATIN_API_KEY || "apex-dev-key";
+const ORACLE_KEY = ENV.HAVEN_ORACLE_KEY || "HAVEN_ROKAN_NJXBDSA_010011";
 
 type Step = "form" | "uploading" | "oracle" | "onchain" | "success";
 type CaptureMode = "camera" | "gallery" | null;
@@ -86,7 +86,7 @@ export default function SubmitImpactForm() {
     setCheckingPending(true);
     try {
       const res = await fetch(`${ORACLE_URL}/api/v1/stream`, {
-        headers: { "X-APEX-Oracle-Key": ORACLE_KEY },
+        headers: { "X-HAVEN-Oracle-Key": ORACLE_KEY },
       });
       const data = await res.json();
       const hasPending = data?.items?.some((item: any) =>
@@ -180,7 +180,7 @@ export default function SubmitImpactForm() {
     // Tiny, low-opacity text in the bottom-right corner.
     // Virtually invisible to the human eye but readable by oracle/forensics.
     const ts = new Date(now).toISOString(); // e.g. "2026-02-27T21:40:00.000Z"
-    const label = `APEX:${ts}`;
+    const label = `HAVEN:${ts}`;
     const fontSize = Math.max(10, Math.floor(canvas.width * 0.012));
     ctx.font = `${fontSize}px monospace`;
     ctx.globalAlpha = 0.18;
@@ -193,7 +193,7 @@ export default function SubmitImpactForm() {
 
     canvas.toBlob(blob => {
       if (!blob) return;
-      const captured = new File([blob], `apex-capture-${now}.jpg`, { type: "image/jpeg" });
+      const captured = new File([blob], `haven-capture-${now}.jpg`, { type: "image/jpeg" });
       setCaptureTimestamp(now);
       setFile(captured);
       setError("");
@@ -325,7 +325,7 @@ export default function SubmitImpactForm() {
 
       const resp = await fetch(`${ORACLE_URL}/api/v1/verify`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-APEX-Oracle-Key": ORACLE_KEY },
+        headers: { "Content-Type": "application/json", "X-HAVEN-Oracle-Key": ORACLE_KEY },
         body: JSON.stringify({
           ipfs_cid: cid, evidence_type: file ? "image" : "text",
           hash_sha256,
@@ -437,7 +437,7 @@ export default function SubmitImpactForm() {
                 {[
                   { label: "Impact Score", value: `${oracle.impact_score?.toFixed(1)}/100`, gradient: "linear-gradient(90deg,#00dfb2,#7c6aff)" },
                   { label: "AI Confidence", value: `${((oracle?.ai_confidence || 0) * 100).toFixed(1)}%`, gradient: "linear-gradient(90deg,#7c6aff,#ff6eb4)" },
-                  { label: "APEX Earned", value: `${oracle.token_reward?.toFixed(4)} APEX`, gradient: "linear-gradient(90deg,#ffbd59,#ff6eb4)" },
+                  { label: "HAVEN Earned", value: `${oracle.token_reward?.toFixed(4)} HAVEN`, gradient: "linear-gradient(90deg,#ffbd59,#ff6eb4)" },
                 ].map(s => (
                   <div key={s.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)" }}>{s.label}</p>
@@ -1238,7 +1238,7 @@ export default function SubmitImpactForm() {
           />
           <label htmlFor="tnc" style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)", lineHeight: 1.5, cursor: "pointer", userSelect: "none" }}>
             Saya bersumpah data ini <strong>asli dan jujur</strong>. Saya mengerti bahwa memanipulasi bukti (Photoshop, hapus EXIF, lokasi palsu) akan melukai komunitas dan
-            <span style={{ color: "rgba(255,80,80,0.8)" }}> dapat mengakibatkan PEMBLOKIRAN PERMANEN (Auto-Ban)</span> pada akun saya dari seluruh platform APEX.
+            <span style={{ color: "rgba(255,80,80,0.8)" }}> dapat mengakibatkan PEMBLOKIRAN PERMANEN (Auto-Ban)</span> pada akun saya dari seluruh platform HAVEN.
           </label>
         </div>
 

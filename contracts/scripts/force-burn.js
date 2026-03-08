@@ -2,16 +2,16 @@ const { ethers, network } = require("hardhat");
 
 async function main() {
     const [deployer] = await ethers.getSigners();
-    console.log("Simulating APEX burn with account:", deployer.address);
+    console.log("Simulating HAVEN burn with account:", deployer.address);
 
     const initialBalance = await ethers.provider.getBalance(deployer.address);
-    console.log("Account APEX balance:", ethers.formatEther(initialBalance));
+    console.log("Account HAVEN balance:", ethers.formatEther(initialBalance));
 
     // Address to burn (general burn address)
     const burnAddress = "0x000000000000000000000000000000000000dEaD";
-    const burnAmount = ethers.parseEther("24.0"); // 10 APEX
+    const burnAmount = ethers.parseEther("24.0"); // 10 HAVEN
 
-    console.log(`Burning 10 APEX native coins to ${burnAddress}...`);
+    console.log(`Burning 10 HAVEN native coins to ${burnAddress}...`);
 
     const tx = await deployer.sendTransaction({
         to: burnAddress,
@@ -23,7 +23,7 @@ async function main() {
     console.log("Burn successful!");
 
     const finalBalance = await ethers.provider.getBalance(deployer.address);
-    console.log("Final APEX balance:", ethers.formatEther(finalBalance));
+    console.log("Final HAVEN balance:", ethers.formatEther(finalBalance));
 }
 
 main()

@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — ZK Proof Generator
+HAVEN HUMANITY — ZK Proof Generator
 Simplified commitment scheme for beneficiary identity protection.
 Production: Replace with Circom circuits + snarkjs Groth16 proving.
 """
@@ -22,7 +22,7 @@ class ZKProof:
 
 class ZKProofGenerator:
     """
-    Zero-Knowledge Proof Generator for APEX HUMANITY.
+    Zero-Knowledge Proof Generator for HAVEN HUMANITY.
 
     The proof guarantees:
     ✅ A real, unique human beneficiary received aid
@@ -44,7 +44,7 @@ class ZKProofGenerator:
         }
     """
 
-    CIRCUIT_VERSION = "apex_impact_v1"
+    CIRCUIT_VERSION = "haven_impact_v1"
 
     def generate_proof(
         self,

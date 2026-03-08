@@ -1,5 +1,5 @@
 /**
- * APEX HUMANITY — SovereignID Tests
+ * HAVEN HUMANITY — SovereignID Tests
  * Hardhat + Chai test suite  v2.0.0
  * Includes: BiometricHash and Genesis Vouching Bypass
  */

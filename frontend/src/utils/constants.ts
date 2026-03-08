@@ -12,7 +12,7 @@ export const CONTRACTS = {
 };
 
 
-export const APEX_CHAIN = {
+export const HAVEN_CHAIN = {
   id: 777000,
   name: "BridgeStone",
   rpc: process.env.NEXT_PUBLIC_RPC_URL ||
@@ -44,7 +44,7 @@ export const REPUTATION_RANKS = [
   { rank: "GUARDIAN", threshold: 100, color: "blue", icon: "guardian", description: "Protector of the vulnerable" },
   { rank: "CHAMPION", threshold: 500, color: "purple", icon: "champion", description: "Champion of equity" },
   { rank: "SOVEREIGN", threshold: 2000, color: "gold", icon: "sovereign", description: "Sovereign of benevolence" },
-  { rank: "APEX", threshold: 10000, color: "rainbow", icon: "apex", description: "Apex of humanity" },
+  { rank: "HAVEN", threshold: 10000, color: "rainbow", icon: "haven", description: "Haven of humanity" },
 ];
 
 export const getRank = (score: number) => {

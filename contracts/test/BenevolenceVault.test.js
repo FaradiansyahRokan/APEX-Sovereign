@@ -1,5 +1,5 @@
 /**
- * APEX HUMANITY — BenevolenceVault Tests
+ * HAVEN HUMANITY — BenevolenceVault Tests
  * Hardhat + Chai test suite
  * v2.1.0 — Updated signPayload to use abi.encode (matching the contract fix)
  */

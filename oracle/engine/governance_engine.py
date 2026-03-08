@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — Governance Engine
+HAVEN HUMANITY — Governance Engine
 ====================================
 LAYER 4 — UNSEIZABLE GOVERNANCE
 
@@ -113,7 +113,7 @@ class GovernanceProposal:
 def calculate_voting_power(
     impact_events:  int,
     tenure_days:    int,
-    token_held_apex: float,
+    token_held_haven: float,
 ) -> float:
     """
     Quadratic Benevolence Voting:
@@ -126,7 +126,7 @@ def calculate_voting_power(
     """
     event_component  = math.sqrt(max(0, impact_events))
     tenure_bonus     = 1.0 + (tenure_days / 365.0) * 0.10
-    token_component  = math.sqrt(max(0.0, token_held_apex)) * 0.30
+    token_component  = math.sqrt(max(0.0, token_held_haven)) * 0.30
 
     power = event_component * tenure_bonus + token_component
     return round(power, 4)
@@ -246,7 +246,7 @@ class GovernanceEngine:
         vote_for:        bool,
         impact_events:   int,
         tenure_days:     int,
-        token_held_apex: float,
+        token_held_haven: float,
     ) -> dict:
         """Cast a quadratic benevolence vote."""
         if impact_events < MIN_IMPACT_TO_VOTE:
@@ -266,7 +266,7 @@ class GovernanceEngine:
         if voter in p.voters:
             raise ValueError("You have already voted on this proposal.")
 
-        power = calculate_voting_power(impact_events, tenure_days, token_held_apex)
+        power = calculate_voting_power(impact_events, tenure_days, token_held_haven)
         if vote_for:
             p.votes_for += power
         else:
@@ -310,14 +310,14 @@ class GovernanceEngine:
         self,
         impact_events:   int,
         tenure_days:     int,
-        token_held_apex: float,
+        token_held_haven: float,
     ) -> dict:
-        power = calculate_voting_power(impact_events, tenure_days, token_held_apex)
+        power = calculate_voting_power(impact_events, tenure_days, token_held_haven)
         return {
             "voting_power":    power,
             "impact_events":   impact_events,
             "tenure_days":     tenure_days,
-            "token_held_apex": token_held_apex,
+            "token_held_haven": token_held_haven,
             "formula":         "sqrt(events) × (1 + tenure/365 × 0.1) + sqrt(tokens) × 0.3",
         }
 

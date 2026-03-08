@@ -5,12 +5,12 @@ import { useAccount, useBalance } from "wagmi";
 import { ENV } from "../utils/env";
 
 const ORACLE_API = ENV.ORACLE_URL;
-const API_KEY = ENV.SATIN_API_KEY || "apex-dev-key-change-in-prod";
+const API_KEY = ENV.HAVEN_ORACLE_KEY || "HAVEN_ROKAN_NJXBDSA_010011";
 
 function hFetch(path: string, opts?: RequestInit) {
     return fetch(`${ORACLE_API}${path}`, {
         ...opts,
-        headers: { "X-APEX-Oracle-Key": API_KEY, "Content-Type": "application/json", ...opts?.headers },
+        headers: { "X-HAVEN-Oracle-Key": API_KEY, "Content-Type": "application/json", ...opts?.headers },
     });
 }
 
@@ -79,14 +79,16 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
         query: { enabled: !!address, refetchInterval: 8_000 },
     });
 
-    const loadProposals = useCallback(async () => {
+    const fetchProposals = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await hFetch("/api/v1/governance/proposals");
+            const res = await fetch(`${ENV.ORACLE_URL}/api/v1/governance/proposals`, {
+                headers: { "X-HAVEN-Oracle-Key": ENV.HAVEN_ORACLE_KEY }
+            });
             const data = await res.json();
             setProposals(data.proposals || []);
-        } catch {
-            setError("Failed to load proposals");
+        } catch (err) {
+            console.error("Failed to fetch proposals", err);
         } finally {
             setLoading(false);
         }
@@ -109,9 +111,9 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
     }, [address, eventCount, nativeBalance, setVotingPower, setLoading]);
 
     useEffect(() => {
-        loadProposals();
+        fetchProposals();
         loadVotingPower();
-    }, [loadProposals, loadVotingPower]);
+    }, [fetchProposals, loadVotingPower]);
 
     async function castVote(proposalId: string, voteFor: boolean) {
         if (!address) return;
@@ -126,14 +128,14 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
                     vote_for: voteFor,
                     impact_events: eventCount,
                     tenure_days: 0,
-                    token_held_apex: tokenHeld,
+                    token_held_haven: tokenHeld,
                 }),
             });
             if (!r.ok) {
                 const e = await r.json();
                 alert(e.detail || "Vote failed");
             } else {
-                await loadProposals();
+                await fetchProposals();
             }
         } catch {
             alert("Vote failed — oracle connection error");
@@ -165,7 +167,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
             } else {
                 setShowForm(false);
                 setFormData({ title: "", description: "", type: "parameter_change" });
-                await loadProposals();
+                await fetchProposals();
             }
         } catch {
             alert("Proposal creation failed — oracle connection error");

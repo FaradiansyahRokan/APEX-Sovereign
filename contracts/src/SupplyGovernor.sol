@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 /**
  * ╔══════════════════════════════════════════════════════════════════════════╗
- * ║          APEX HUMANITY — SupplyGovernor.sol                             ║
+ * ║          HAVEN HUMANITY — SupplyGovernor.sol                             ║
  * ║          Layer 2: Living Economy / Tokenomics v1.0.0                    ║
  * ║                                                                          ║
  * ║  Dynamic mint cap = f(global_suffering_index) × BASE_SUPPLY             ║

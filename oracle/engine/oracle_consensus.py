@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — Sovereign Oracle Network (SON) Consensus
+HAVEN HUMANITY — Sovereign Oracle Network (SON) Consensus
 ==========================================================
 LAYER 5 — DECENTRALIZED ORACLE NETWORK (SON)
 
@@ -52,7 +52,7 @@ SCORE_SUBMIT_TTL    = 3600   # individual score submission TTL (1 hour)
 class OracleNode:
     node_id:        str
     wallet_address: str
-    stake_apex:     float   # tokens staked as bond
+    stake_haven:     float   # tokens staked as bond
     tier:           str     = "candidate"  # candidate|active|trusted|senior
     outlier_count:  int     = 0
     total_scores:   int     = 0
@@ -64,7 +64,7 @@ class OracleNode:
         return {
             "node_id":        self.node_id,
             "wallet_address": self.wallet_address,
-            "stake_apex":     round(self.stake_apex, 4),
+            "stake_haven":     round(self.stake_haven, 4),
             "tier":           self.tier,
             "outlier_count":  self.outlier_count,
             "total_scores":   self.total_scores,
@@ -141,12 +141,12 @@ class OracleNodeRegistry:
     def _index_key(self) -> str:
         return "satin:son:nodes_index"
 
-    def register(self, wallet: str, stake_apex: float) -> OracleNode:
+    def register(self, wallet: str, stake_haven: float) -> OracleNode:
         """Register a new oracle node."""
         node = OracleNode(
             node_id        = str(uuid.uuid4()),
             wallet_address = wallet.lower(),
-            stake_apex     = stake_apex,
+            stake_haven     = stake_haven,
         )
         self._save_node(node)
         logger.info(f"[SON] Node registered: {node.node_id} wallet={wallet}")
@@ -197,7 +197,7 @@ class OracleNodeRegistry:
         data = json.dumps({
             "node_id":        n.node_id,
             "wallet_address": n.wallet_address,
-            "stake_apex":     n.stake_apex,
+            "stake_haven":     n.stake_haven,
             "tier":           n.tier,
             "outlier_count":  n.outlier_count,
             "total_scores":   n.total_scores,
@@ -302,5 +302,5 @@ class OracleConsensus:
             "nodes":             [n.to_dict() for n in active_nodes],
         }
 
-    def register_node(self, wallet: str, stake_apex: float) -> OracleNode:
-        return self._registry.register(wallet, stake_apex)
+    def register_node(self, wallet: str, stake_haven: float) -> OracleNode:
+        return self._registry.register(wallet, stake_haven)

@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — Proof of Benevolence (PoB) Engine
+HAVEN HUMANITY — Proof of Benevolence (PoB) Engine
 ===================================================
 LAYER 1 — PROOF OF BENEVOLENCE (PoB)
 Architecture Bible: PoB = PoPhysical × PoContext × PoNetwork

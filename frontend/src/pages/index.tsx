@@ -108,7 +108,7 @@ function Logo() {
           fontFamily: "'Plus Jakarta Sans', sans-serif",
           fontWeight: 800, fontSize: "13.5px",
           letterSpacing: "0.06em", color: "var(--t0)", lineHeight: 1,
-        }}>APEX HUMANITY</p>
+        }}>HAVEN HUMANITY</p>
         <p className="label" style={{ marginTop: "3px", letterSpacing: "0.1em" }}>PoBA Protocol · v2</p>
       </div>
     </div>
@@ -158,7 +158,7 @@ export default function Home() {
     query: { enabled: !!address, refetchInterval: 8_000 },
   });
 
-  // 2. Fetch Saldo Koin Native APEX L1 menggunakan useBalance
+  // 2. Fetch Saldo Koin Native HAVEN L1 menggunakan useBalance
   const { data: nativeBalance } = useBalance({
     address: address as `0x${string}`,
     query: { enabled: !!address, refetchInterval: 8_000 },
@@ -177,8 +177,8 @@ export default function Home() {
   const score = repData ? Number((repData as any)[0]) / 100 : 0;
   const eventCount = repData ? Number((repData as any)[1]) : 0;
 
-  // Format saldo koin native APEX
-  const apexFmt = nativeBalance
+  // Format saldo koin native HAVEN
+  const havenFmt = nativeBalance
     ? Number(nativeBalance.formatted).toLocaleString("en-US", { maximumFractionDigits: 2 })
     : "0";
 
@@ -210,7 +210,7 @@ export default function Home() {
                   fontFamily: "'JetBrains Mono',monospace",
                   fontSize: "12px", fontWeight: 500, color: "var(--go)",
                 }}>
-                  {apexFmt}<span style={{ color: "rgba(255,189,89,0.5)", marginLeft: "5px" }}>APEX</span>
+                  {havenFmt}<span style={{ color: "rgba(255,189,89,0.5)", marginLeft: "5px" }}>HAVEN</span>
                 </span>
               </div>
             )}
@@ -243,7 +243,7 @@ export default function Home() {
           }}>
             <span className="dot dot-mi" style={{ width: "6px", height: "6px" }} />
             <span className="label" style={{ color: "var(--mi)", letterSpacing: "0.12em" }}>
-              Live on APEX Local L1 · SATIN Oracle
+              Live on HAVEN Local L1 · SATIN Oracle
             </span>
           </div>
 
@@ -338,7 +338,7 @@ export default function Home() {
                 </div>
 
                 <div className="profile-balance" style={{ textAlign: "right" }}>
-                  <p className="label" style={{ marginBottom: "4px" }}>APEX Balance</p>
+                  <p className="label" style={{ marginBottom: "4px" }}>HAVEN Balance</p>
                   <p style={{
                     fontFamily: "'JetBrains Mono',monospace",
                     fontSize: "18px", fontWeight: 600,
@@ -452,7 +452,7 @@ export default function Home() {
                 fontWeight: 700, fontSize: "18px", color: "var(--t0)", marginBottom: "9px",
               }}>Connect to Start</p>
               <p style={{ fontSize: "14px", color: "var(--t1)", lineHeight: 1.7 }}>
-                Connect your wallet to submit impact proofs, earn APEX tokens,
+                Connect your wallet to submit impact proofs, earn HAVEN tokens,
                 and build your on-chain Reputation Capital.
               </p>
             </div>
@@ -490,10 +490,10 @@ export default function Home() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
         flexWrap: "wrap", gap: "12px",
       }}>
-        <p className="label">© 2026 Apex Humanity Protocol</p>
+        <p className="label">© 2026 Haven Humanity Protocol</p>
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <span className="dot dot-mi" style={{ width: "4px", height: "4px" }} />
-          <p className="label">SATIN Oracle · ZKP Shield · APEX Local Subnet</p>
+          <p className="label">SATIN Oracle · ZKP Shield · HAVEN Local Subnet</p>
         </div>
       </footer>
     </div>

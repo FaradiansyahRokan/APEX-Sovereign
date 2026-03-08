@@ -1,5 +1,5 @@
-// ─── APEX HUMANITY — ABIs v2.0 ───────────────────────────────────────────────
-// Diambil langsung dari Hardhat artifact setelah deploy ke APEX Network
+// ─── HAVEN HUMANITY — ABIs v2.0 ───────────────────────────────────────────────
+// Diambil langsung dari Hardhat artifact setelah deploy ke HAVEN Network
 // BenevolenceVault v2.0: Native Token Minting via NativeMinter Precompile
 // GOOD coin langsung di-mint ke wallet volunteer sebagai native L1 coin
 
@@ -196,7 +196,7 @@ export const REPUTATION_LEDGER_ABI = [
   { inputs: [], name: "KEEPER_ROLE", outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }], stateMutability: "view", type: "function" },
 ] as const;
 
-// ── IMPACT_TOKEN_ABI — Kosong (v2.0: APEX = native coin, bukan ERC-20) ──────────
+// ── IMPACT_TOKEN_ABI — Kosong (v2.0: HAVEN = native coin, bukan ERC-20) ──────────
 export const IMPACT_TOKEN_ABI = [] as const;
 
 // ── SovereignID ABI ───────────────────────────────────────────────────────────

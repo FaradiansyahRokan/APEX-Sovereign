@@ -16,11 +16,11 @@ module.exports = {
       url: "http://127.0.0.1:8545",
     },
 
-    // ─── APEX NETWORK (L1 Sovereign) ─────────────────────────────────────────
+    // ─── HAVEN NETWORK (L1 Sovereign) ─────────────────────────────────────────
     stonebridge_fuji: {
       url: "http://127.0.0.1:9654/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
       chainId: 777000,
-      accounts: process.env.APEX_ADMIN_PRIVATE_KEY ? [process.env.APEX_ADMIN_PRIVATE_KEY] : [],
+      accounts: process.env.HAVEN_ADMIN_PRIVATE_KEY ? [process.env.HAVEN_ADMIN_PRIVATE_KEY] : [],
       gasPrice: 25000000000,
       gas: 8000000,
     },

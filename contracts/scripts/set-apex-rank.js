@@ -3,9 +3,9 @@ const hre = require("hardhat");
 async function main() {
     const [admin] = await hre.ethers.getSigners();
 
-    // Alamat Dompet yang mau di-cheat / diangkat pangkatnya jadi APEX
+    // Alamat Dompet yang mau di-cheat / diangkat pangkatnya jadi HAVEN
     const targetAddress = "0x5Ff3fB480640e727E1B49304c4300c1949738079";
-    const bonusScore = 1500000; // Skor minimal APEX adalah 10,000
+    const bonusScore = 1500000; // Skor minimal HAVEN adalah 10,000
 
     console.log("🔥 Menginisialisasi Jalur Belakang Admin...");
     const ledgerAddress = process.env.REPUTATION_LEDGER_ADDRESS;
@@ -24,7 +24,7 @@ async function main() {
     }
 
     // 2. Beri Skor (Update Reputation)
-    console.log(`⚡ Mengirimkan ${bonusScore} poin reputasi (Pangkat APEX) ke ${targetAddress}...`);
+    console.log(`⚡ Mengirimkan ${bonusScore} poin reputasi (Pangkat HAVEN) ke ${targetAddress}...`);
 
     // Kita bikin event hash "dummy" / palsu khusus admin, harus unik tiap kali jalanin
     const adminEventHash = hre.ethers.id("ADMIN_CHEAT_CODE_" + Date.now());
@@ -32,7 +32,7 @@ async function main() {
     const txUpdate = await ledger.updateReputation(targetAddress, bonusScore, adminEventHash, { gasLimit: 2000000 });
     await txUpdate.wait();
 
-    console.log(`🎉 SUKSES! Target ${targetAddress} sekarang resmi berpangkat APEX (Skor: ${bonusScore}).`);
+    console.log(`🎉 SUKSES! Target ${targetAddress} sekarang resmi berpangkat HAVEN (Skor: ${bonusScore}).`);
 }
 
 main().catch((error) => {

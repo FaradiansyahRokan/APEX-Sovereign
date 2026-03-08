@@ -4,10 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { ENV } from "../utils/env";
 
 const ORACLE_API = ENV.ORACLE_URL;
-const API_KEY = ENV.SATIN_API_KEY || "apex-dev-key-change-in-prod";
+const API_KEY = ENV.HAVEN_ORACLE_KEY || "HAVEN_ROKAN_NJXBDSA_010011";
 
 function hFetch(path: string) {
-    return fetch(`${ORACLE_API}${path}`, { headers: { "X-APEX-Oracle-Key": API_KEY } });
+    return fetch(`${ORACLE_API}${path}`, { headers: { "X-HAVEN-Oracle-Key": API_KEY } });
 }
 
 interface Phase {
@@ -153,7 +153,7 @@ export default function ProtocolStatus() {
                     Protocol Status
                 </h2>
                 <p style={{ fontSize: "12px", color: "var(--t2)" }}>
-                    APEX Humanity Protocol Architecture — 8 Layers, 6 Deployment Phases
+                    HAVEN Humanity Protocol Architecture — 8 Layers, 6 Deployment Phases
                 </p>
             </div>
 

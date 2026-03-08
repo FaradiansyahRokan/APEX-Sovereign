@@ -1,5 +1,5 @@
 /**
- * APEX HUMANITY — ErrorBoundary Component
+ * HAVEN HUMANITY — ErrorBoundary Component
  *
  * React class-based error boundary that catches render/lifecycle errors
  * in any child subtree and renders a graceful fallback UI.
@@ -38,7 +38,7 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, info: ErrorInfo) {
-        console.error("[APEX ErrorBoundary]", error, info);
+        console.error("[HAVEN ErrorBoundary]", error, info);
         this.props.onError?.(error, info);
     }
 
@@ -90,7 +90,7 @@ class ErrorBoundary extends Component<Props, State> {
     }
 }
 
-// ── Inline styles (glassmorphism — matches APEX design system) ───────────────
+// ── Inline styles (glassmorphism — matches HAVEN design system) ───────────────
 
 const styles: Record<string, React.CSSProperties> = {
     overlay: {

@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — Living Economy Engine
+HAVEN HUMANITY — Living Economy Engine
 ======================================
 LAYER 2 — TOKENOMIK "LIVING ECONOMY"
 
@@ -267,7 +267,7 @@ def compute_velocity(volunteering_events: int) -> VelocityResult:
 
 class LivingEconomyEngine:
     """
-    Master interface for APEX Living Economy calculations.
+    Master interface for HAVEN Living Economy calculations.
     Called from main.py economy endpoints and optionally from verify pipeline.
     """
 

@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 /**
  * ╔══════════════════════════════════════════════════════════════════════════╗
- * ║          APEX HUMANITY — ReputationLedger.sol                           ║
+ * ║          HAVEN HUMANITY — ReputationLedger.sol                           ║
  * ║                                                                          ║
  * ║  v1.1.0 — Governance rank update:                                       ║
  * ║    • updateRanks() allows DAO / keeper to push sorted ranks on-chain    ║

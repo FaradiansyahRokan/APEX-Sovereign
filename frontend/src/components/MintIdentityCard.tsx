@@ -48,7 +48,7 @@ export default function MintIdentityCard() {
             <div className="rise" style={{ padding: "24px", borderRadius: "16px", background: "var(--go-dim)", border: "1px solid var(--go)", textAlign: "center" }}>
                 <h3 style={{ color: "var(--go)", marginBottom: "10px" }}>Identity Minted Successfully!</h3>
                 <p style={{ color: "var(--t1)" }}>Tx Hash: {hash?.slice(0, 10)}...{hash?.slice(-8)}</p>
-                <button onClick={() => window.location.reload()} style={{ marginTop: "16px", padding: "8px 16px", borderRadius: "8px", background: "var(--go)", color: "var(--void)", border: "none", cursor: "pointer", fontWeight: "bold" }}>Enter APEX Humanity</button>
+                <button onClick={() => window.location.reload()} style={{ marginTop: "16px", padding: "8px 16px", borderRadius: "8px", background: "var(--go)", color: "var(--void)", border: "none", cursor: "pointer", fontWeight: "bold" }}>Enter HAVEN Humanity</button>
             </div>
         );
     }
@@ -60,7 +60,7 @@ export default function MintIdentityCard() {
         }}>
             <h2 style={{ color: "var(--t0)", marginBottom: "16px", fontSize: "1.25rem", fontWeight: 700 }}>Initialize SovereignID</h2>
             <p style={{ color: "var(--t2)", marginBottom: "20px", fontSize: "14px", lineHeight: "1.5" }}>
-                To participate in the APEX Economy, you must solidify your digital personhood on-chain via our Social Graph Sybil-resistance mechanism.
+                To participate in the HAVEN Economy, you must solidify your digital personhood on-chain via our Social Graph Sybil-resistance mechanism.
             </p>
 
             <div style={{ marginBottom: "16px" }}>

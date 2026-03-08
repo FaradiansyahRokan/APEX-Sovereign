@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — Behavioral Fingerprint Module
+HAVEN HUMANITY — Behavioral Fingerprint Module
 ==============================================
 Lapisan Anti-Sybil: Temporal Behavioral Fingerprinting
 

@@ -1,7 +1,7 @@
 ============================= test session starts =============================
-platform win32 -- Python 3.13.7, pytest-8.2.2, pluggy-1.6.0 -- E:\BELAJAR\BLOCKCHAIN\apex-humanity\oracle\.venv\Scripts\python.exe
+platform win32 -- Python 3.13.7, pytest-8.2.2, pluggy-1.6.0 -- E:\BELAJAR\BLOCKCHAIN\haven-humanity\oracle\.venv\Scripts\python.exe
 cachedir: .pytest_cache
-rootdir: E:\BELAJAR\BLOCKCHAIN\apex-humanity\oracle
+rootdir: E:\BELAJAR\BLOCKCHAIN\haven-humanity\oracle
 plugins: anyio-4.4.0, asyncio-0.23.7
 asyncio: mode=Mode.STRICT
 collecting ... collected 50 items
@@ -163,7 +163,7 @@ WARNING  satin.oracle:impact_evaluator.py:480 No private key provided — generati
 WARNING  satin.oracle:impact_evaluator.py:847 [ZKP] Pedersen commitment mismatch: claimed=0x1 derived=0x10acf39866b102b0b8d85b74b7a78bb6e24fb1f3ca4c49244
 ============================== warnings summary ===============================
 .venv\Lib\site-packages\websockets\legacy\__init__.py:6
-  E:\BELAJAR\BLOCKCHAIN\apex-humanity\oracle\.venv\Lib\site-packages\websockets\legacy\__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+  E:\BELAJAR\BLOCKCHAIN\haven-humanity\oracle\.venv\Lib\site-packages\websockets\legacy\__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
     warnings.warn(  # deprecated in 14.0 - 2024-11-09
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html

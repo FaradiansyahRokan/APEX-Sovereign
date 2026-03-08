@@ -6,7 +6,7 @@ async function main() {
   const balance = await ethers.provider.getBalance(deployer.address);
 
   console.log("╔═══════════════════════════════════════════════════════╗");
-  console.log("║     APEX HUMANITY — Contract Deployment v2.0          ║");
+  console.log("║     HAVEN HUMANITY — Contract Deployment v2.0          ║");
   console.log("║     Native Token Minting (GOOD = L1 Coin)             ║");
   console.log("╚═══════════════════════════════════════════════════════╝");
   console.log("Deployer: ", deployer.address);
@@ -72,7 +72,7 @@ async function main() {
     CrisisFund: await crisisFund.getAddress(),
     OracleAddress: deployer.address,
     DeployedAt: new Date().toISOString(),
-    Network: "apex_local",
+    Network: "haven_local",
     ChainId: (await ethers.provider.getNetwork()).chainId.toString(),
     Note: "Full 8-Layer Protocol Deployment - 5 Core Contracts",
   };
@@ -85,7 +85,7 @@ async function main() {
   fs.writeFileSync("./deployed-addresses.json", JSON.stringify(addresses, null, 2));
   console.log("\n📁 Addresses saved to ./deployed-addresses.json");
   console.log("\n⚠️  PENTING: Update oracle address di BenevolenceVault setelah oracle server jalan:");
-  console.log("   npx hardhat run scripts/set-oracle.js --network apex_local");
+  console.log("   npx hardhat run scripts/set-oracle.js --network haven_local");
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

@@ -1,10 +1,10 @@
 """
-APEX HUMANITY — Civilization Resilience Engine
+HAVEN HUMANITY — Civilization Resilience Engine
 ================================================
 LAYER 6 — CIVILIZATION-LEVEL RESILIENCE
 
 Architecture Bible:
-    "APEX harus survive Internet outage, AGI attack, dan 100 tahun dari sekarang."
+    "HAVEN harus survive Internet outage, AGI attack, dan 100 tahun dari sekarang."
 
 Fitur Utama:
   1. Offline Queue       — submission saat internet mati disimpan lokal, sync saat online

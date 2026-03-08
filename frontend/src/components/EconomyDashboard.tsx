@@ -3,7 +3,7 @@
 /**
  * EconomyDashboard.tsx  v3.0.0
  * 
- * APEX is a native coin on Avalanche subnet (Fuji testnet),
+ * HAVEN is a native coin on Avalanche subnet (Fuji testnet),
  * minted via the NativeMinter precompile (0x02000001).
  * There is NO ERC-20 totalSupply(). All supply data comes from:
  *
@@ -24,12 +24,12 @@ import { ENV } from "../utils/env";
 
 //  Config 
 const ORACLE_API = ENV.ORACLE_URL;
-const API_KEY = ENV.SATIN_API_KEY || "apex-dev-key-change-in-prod";
+const API_KEY = ENV.HAVEN_ORACLE_KEY || "haven-dev-key-change-in-prod";
 const DEAD_ADDR = "0x000000000000000000000000000000000000dEaD" as const;
 
 function hFetch(path: string) {
     return fetch(`${ORACLE_API}${path}`, {
-        headers: { "X-APEX-Oracle-Key": API_KEY },
+        headers: { "X-HAVEN-Oracle-Key": API_KEY },
     });
 }
 
@@ -322,7 +322,7 @@ function SupplyProgressBar({ current, max, userShare, userBalance, phase }: {
                     </span>
 
                     <p style={{ fontSize: "16px", fontWeight: 700, color: "var(--t0)", fontFamily: "'JetBrains Mono', monospace", marginTop: "2px" }}>
-                        {current.toLocaleString("en-US", { maximumFractionDigits: 2 })} / {max.toLocaleString("en-US", { maximumFractionDigits: 0 })} APEX
+                        {current.toLocaleString("en-US", { maximumFractionDigits: 2 })} / {max.toLocaleString("en-US", { maximumFractionDigits: 0 })} HAVEN
                     </p>
                 </div>
                 <div style={{ textAlign: "right" }}>
@@ -331,7 +331,7 @@ function SupplyProgressBar({ current, max, userShare, userBalance, phase }: {
                     </span>
                     <p style={{ fontSize: "14px", fontWeight: 700, color: "var(--t0)", marginTop: "6px" }}>{userShare.toFixed(4)}%</p>
                     <p style={{ fontSize: "11px", color: "var(--t2)", marginTop: "2px" }}>
-                        {userBalance.toLocaleString("en-US", { maximumFractionDigits: 4 })} APEX
+                        {userBalance.toLocaleString("en-US", { maximumFractionDigits: 4 })} HAVEN
                     </p>
                 </div>
             </div>
@@ -392,7 +392,7 @@ function VolunteerHolderPanel({ dist, loading, error, connectedAddress, totalMin
                 <div style={{ textAlign: "right" }}>
                     <p style={{ fontSize: "11px", color: "var(--t2)" }}>In active wallets</p>
                     <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "14px", fontWeight: 700, color: "var(--mi)" }}>
-                        {dist.distributed_supply.toLocaleString("en-US", { maximumFractionDigits: 2 })} APEX
+                        {dist.distributed_supply.toLocaleString("en-US", { maximumFractionDigits: 2 })} HAVEN
                     </p>
                 </div>
             </div>
@@ -408,10 +408,10 @@ function VolunteerHolderPanel({ dist, loading, error, connectedAddress, totalMin
                 </div>
                 <div style={{ display: "flex", gap: "16px", marginTop: "6px" }}>
                     <span style={{ fontSize: "10px", color: "var(--t2)" }}>
-                        Active: {dist.distributed_supply.toLocaleString("en-US", { maximumFractionDigits: 2 })} APEX
+                        Active: {dist.distributed_supply.toLocaleString("en-US", { maximumFractionDigits: 2 })} HAVEN
                     </span>
                     <span style={{ fontSize: "10px", color: "var(--t2)", opacity: 0.5 }}>
-                        Other: {unaccounted.toLocaleString("en-US", { maximumFractionDigits: 2 })} APEX
+                        Other: {unaccounted.toLocaleString("en-US", { maximumFractionDigits: 2 })} HAVEN
                     </span>
                 </div>
             </div>
@@ -486,7 +486,7 @@ export default function EconomyDashboard() {
 
     // The sum of all discovered volunteer wallet balances
     const activeWalletBalances = dist?.distributed_supply || 0;
-    const globalEcosystemBalance = activeWalletBalances; // This is the total native APEX in circulation according to our scan
+    const globalEcosystemBalance = activeWalletBalances; // This is the total native HAVEN in circulation according to our scan
 
 
     // The user wants the main tracker to be globalEcosystemBalance.
@@ -547,7 +547,7 @@ export default function EconomyDashboard() {
                         )}
                     </div>
                     <p style={{ fontSize: "12px", color: "var(--t2)" }}>
-                        Layer 2 Living Economy  Native APEX coin  NativeMinter Precompile  mint cap = f(global suffering index)  base_rate
+                        Layer 2 Living Economy  Native HAVEN coin  NativeMinter Precompile  mint cap = f(global suffering index)  base_rate
                     </p>
                 </div>
 
@@ -556,14 +556,14 @@ export default function EconomyDashboard() {
 
                 {/* Row 1: 4 main supply metrics */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "12px" }}>
-                    <MetricCard label="Global Ecosystem Balance" value={`${globalEcosystemBalance.toLocaleString("en-US", { maximumFractionDigits: 4 })} APEX`} sub="All Active Wallet Holdings" color="var(--mi)" />
-                    <MetricCard label="Total Lifetime Minted" value={`${effMinted.toLocaleString("en-US", { maximumFractionDigits: 4 })} APEX`} sub="Minted via Protocol Vault" color="var(--t1)" />
-                    <MetricCard label="Burned (0xdead)" value={`${effBurned.toLocaleString("en-US", { maximumFractionDigits: 4 })} APEX`} sub={`${deflPct.toFixed(2)}% deflation`} color="#6bff9e" />
+                    <MetricCard label="Global Ecosystem Balance" value={`${globalEcosystemBalance.toLocaleString("en-US", { maximumFractionDigits: 4 })} HAVEN`} sub="All Active Wallet Holdings" color="var(--mi)" />
+                    <MetricCard label="Total Lifetime Minted" value={`${effMinted.toLocaleString("en-US", { maximumFractionDigits: 4 })} HAVEN`} sub="Minted via Protocol Vault" color="var(--t1)" />
+                    <MetricCard label="Burned (0xdead)" value={`${effBurned.toLocaleString("en-US", { maximumFractionDigits: 4 })} HAVEN`} sub={`${deflPct.toFixed(2)}% deflation`} color="#6bff9e" />
                 </div>
 
                 {/* Row 2: 3 secondary metrics */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "24px" }}>
-                    <MetricCard label="Vault Balance" value={totalMinted !== null ? `${totalMinted.toLocaleString("en-US", { maximumFractionDigits: 4 })} APEX` : "--"} sub="Funds available in Vault" color="var(--mi)" />
+                    <MetricCard label="Vault Balance" value={totalMinted !== null ? `${totalMinted.toLocaleString("en-US", { maximumFractionDigits: 4 })} HAVEN` : "--"} sub="Funds available in Vault" color="var(--mi)" />
                     <MetricCard label="Burn Rate / 30d" value={`${burnRate.toFixed(4)} /day`} sub={flywheel?.velocity?.flywheel_health?.replace(/_/g, " ")} color="var(--go)" />
                     <MetricCard label="Active Volunteers" value={(totalParticipants || 0).toLocaleString()} sub="Registered on ReputationLedger" color="var(--t1)" />
                 </div>
@@ -574,7 +574,7 @@ export default function EconomyDashboard() {
                 {/* Economy Grid */}
                 {mintCap && (
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
-                        <MetricCard label="Annual Mint Cap" value={`${(maxAnnualCap / 1e6).toFixed(2)}M APEX`} sub={`Phase: ${mintCap.phase}`} color="var(--vi)" />
+                        <MetricCard label="Annual Mint Cap" value={`${(maxAnnualCap / 1e6).toFixed(2)}M HAVEN`} sub={`Phase: ${mintCap.phase}`} color="var(--vi)" />
                         <MetricCard label="Deflation Pressure" value={`${(mintCap.deflation_pressure * 100).toFixed(2)}%`} sub="from idle token decay" color={mintCap.deflation_pressure > 0.3 ? "#6bff9e" : "var(--t1)"} />
                     </div>
                 )}

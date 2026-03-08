@@ -1,5 +1,5 @@
 /**
- * APEX HUMANITY — ReputationLedger Tests
+ * HAVEN HUMANITY — ReputationLedger Tests
  * Hardhat + Chai test suite  v1.2.0
  *
  * Coverage:

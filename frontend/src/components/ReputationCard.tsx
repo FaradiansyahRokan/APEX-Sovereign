@@ -52,7 +52,7 @@ const RankHologram = ({ iconStr }: { iconStr: string }) => {
         </>
       );
       break;
-    case "apex":
+    case "haven":
     default:
       svgContent = (
         <>
@@ -78,13 +78,13 @@ const IconEnergyCore = () => (
     <div className="energy-ambient-glow" />
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <defs>
-        <linearGradient id="apexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="havenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#ffbd59" />
           <stop offset="100%" stopColor="#ff6eb4" />
         </linearGradient>
       </defs>
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="url(#apexGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#apexGrad)" opacity="0.4" className="svg-pulse-fast" />
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="url(#havenGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#havenGrad)" opacity="0.4" className="svg-pulse-fast" />
     </svg>
   </div>
 );
@@ -115,7 +115,7 @@ export default function ReputationCard({ address, reputationScore }: Props) {
     query: { refetchInterval: 8_000 },
   });
 
-  const { data: apexBalance } = useBalance({
+  const { data: havenBalance } = useBalance({
     address: address as `0x${string}`,
     query: { refetchInterval: 8_000 },
   });
@@ -132,8 +132,8 @@ export default function ReputationCard({ address, reputationScore }: Props) {
   const events = rep ? Number((rep as any)[1]) : 0;
   const lastUpd = rep ? Number((rep as any)[2]) : 0;
 
-  const apexFmt = apexBalance
-    ? Number(apexBalance.formatted).toLocaleString("en-US", { maximumFractionDigits: 4 })
+  const havenFmt = havenBalance
+    ? Number(havenBalance.formatted).toLocaleString("en-US", { maximumFractionDigits: 4 })
     : "0";
 
   const history = (hist as any[]) ?? [];
@@ -209,7 +209,7 @@ export default function ReputationCard({ address, reputationScore }: Props) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
             {[
               { label: "Events Completed", value: events.toString(), gradient: "linear-gradient(135deg,#00dfb2,#7c6aff)", glow: "rgba(0,223,178,0.2)" },
-              { label: "APEX Balance", value: apexFmt, gradient: "linear-gradient(135deg,#ffbd59,#ff6eb4)", glow: "rgba(255,189,89,0.2)" },
+              { label: "HAVEN Balance", value: havenFmt, gradient: "linear-gradient(135deg,#ffbd59,#ff6eb4)", glow: "rgba(255,189,89,0.2)" },
             ].map(s => (
               <div key={s.label} style={{
                 padding: "14px", borderRadius: "12px",
@@ -275,27 +275,27 @@ export default function ReputationCard({ address, reputationScore }: Props) {
             }}>
               <div style={{ fontSize: "11px", fontWeight: 800, color: "#ffbd59", letterSpacing: "0.1em" }}>
                 <span style={{ display: "inline-block", marginRight: "6px", verticalAlign: "middle" }}><IconEnergyCore /></span>
-                APEX OF HUMANITY — MAX RANK
+                HAVEN OF HUMANITY — MAX RANK
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* ── APEX Balance card ── */}
+      {/* ── HAVEN Balance card ── */}
       <div className="cyber-card-hover" style={{ ...glassCard }}>
         <div style={{ height: "2px", background: "linear-gradient(90deg,#ffbd59,#ff6eb4,transparent)" }} />
         <div style={{ padding: "18px 22px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.4)", marginBottom: "7px", textTransform: "uppercase", letterSpacing: "0.09em" }}>
-              Native APEX Balance
+              Native HAVEN Balance
             </p>
             <p style={{
               fontFamily: "'JetBrains Mono',monospace", fontSize: "28px", fontWeight: 700,
               background: "linear-gradient(135deg,#ffbd59,#ff6eb4)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
               letterSpacing: "-0.02em", lineHeight: 1,
-            }}>{apexFmt}</p>
+            }}>{havenFmt}</p>
             <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.3)", marginTop: "6px" }}>
               Native L1 coin · gas & transactions
             </p>

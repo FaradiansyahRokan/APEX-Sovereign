@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — SATIN Oracle API Gateway
+HAVEN HUMANITY — HAVEN Oracle API Gateway
 FastAPI server exposing the ImpactEvaluator and all 8 Protocol Layers.
 
 v2.0.0 — 8-Layer Architecture Implementasi Penuh:
@@ -86,8 +86,8 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("satin.api")
 
-ORACLE_API_KEY = os.getenv("ORACLE_API_KEY", "apex-dev-key-change-in-prod")
-API_KEY_HEADER = APIKeyHeader(name="X-APEX-Oracle-Key", auto_error=True)
+ORACLE_API_KEY = os.getenv("ORACLE_API_KEY", "haven-dev-key-change-in-prod")
+API_KEY_HEADER = APIKeyHeader(name="X-HAVEN-Oracle-Key", auto_error=True)
 
 RATE_LIMIT_VERIFY = os.getenv("RATE_LIMIT_VERIFY", "5/minute")
 limiter           = Limiter(key_func=get_remote_address)
@@ -107,7 +107,7 @@ resilience_engine  = ResilienceEngine(redis_client)
 flywheel_engine    = FlywheelEngine(redis_client)
 
 app = FastAPI(
-    title       = "APEX HUMANITY — SATIN Oracle API",
+    title       = "HAVEN HUMANITY — HAVEN Oracle API",
     description = "AI Oracle for Proof of Beneficial Action (PoBA) verification",
     version     = "2.0.0",
     docs_url    = "/docs",
@@ -123,7 +123,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 async def _startup_validation():
     private_key = os.getenv("ORACLE_PRIVATE_KEY", "")
     api_key_val = os.getenv("ORACLE_API_KEY", "")
-    DEFAULT_KEY = "apex-dev-key-change-in-prod"
+    DEFAULT_KEY = "haven-dev-key-change-in-prod"
     warnings_found = []
     if not private_key:
         warnings_found.append(
@@ -309,7 +309,7 @@ def _build_community_claim_payload(stream_entry: dict) -> tuple[dict, dict]:
         "expires_at":      expires_at,
         "score_breakdown": {
             "community_approved": impact_score,
-            "note": f"Fixed minimum grade — community endorsed. Reward: {token_reward} APEX",
+            "note": f"Fixed minimum grade — community endorsed. Reward: {token_reward} HAVEN",
         },
         "signature": {"v": sig["v"], "r": sig["r"], "s": sig["s"]},
     }
@@ -318,7 +318,7 @@ def _build_community_claim_payload(stream_entry: dict) -> tuple[dict, dict]:
         "tokenRewardWei":     str(token_reward_wei),
         "beneficiaryAddress": volunteer_addr,
     }
-    log.info(f"[CLAIM] Community payload built for {event_id}: score={impact_score}, reward={token_reward} APEX")
+    log.info(f"[CLAIM] Community payload built for {event_id}: score={impact_score}, reward={token_reward} HAVEN")
     return payload_dict, contract_args
 
 
@@ -358,7 +358,7 @@ async def health():
 @app.get("/api/v1/challenge", summary="Get Photo Challenge Nonce")
 async def get_challenge(api_key: str = Security(verify_api_key)) -> Dict[str, Any]:
     now        = int(time.time())
-    code       = f"APEX-{secrets.randbelow(9000) + 1000}"
+    code       = f"HAVEN-{secrets.randbelow(9000) + 1000}"
     expires_at = now + 600
     redis_client.setex(f"satin:challenge:{code}", 600, expires_at)
     log.info(f"[CHALLENGE] Issued: {code}")
@@ -739,13 +739,13 @@ async def verify_impact(
         penalized_norm = payload.impact_score / 100.0
         payload.token_reward = round(
             min(5.0 + (penalized_norm ** 1.5) * 45.0,
-                evaluator.score_calculator.MAX_TOKEN_REWARD_APEX),
+                evaluator.score_calculator.MAX_TOKEN_REWARD_HAVEN),
             4
         )
         log.info(
             f"[SCORE_ADJUST] auth_penalty={total_authenticity_penalty:.2%} "
             f"crisis_multi={crisis_multiplier:.2f}× chain=+{chain_bonus:.0%} "
-            f"→ Final Score={payload.impact_score:.2f} | reward={payload.token_reward} APEX"
+            f"→ Final Score={payload.impact_score:.2f} | reward={payload.token_reward} HAVEN"
         )
 
     processing_ms = round((time.perf_counter() - t_start) * 1000, 2)
@@ -820,9 +820,9 @@ async def verify_impact(
         parent_event_id   = body.parent_event_id if hasattr(body, "parent_event_id") and body.parent_event_id else None
     )
 
-    # ── Mint APEX tokens if directly approved (No community review needed) ──────
+    # ── Mint HAVEN tokens if directly approved (No community review needed) ──────
     if not needs_review:
-        flywheel_engine.record_mint(amount_apex=payload.token_reward, event_id=payload.event_id)
+        flywheel_engine.record_mint(amount_haven=payload.token_reward, event_id=payload.event_id)
 
     return {
         **_payload_to_dict(payload),
@@ -926,7 +926,7 @@ async def cast_stream_vote(body: StreamVoteRequest, api_key: str = Security(veri
         raise HTTPException(status_code=409, detail=f"Voting concluded: {vd['outcome']}.")
 
     reputation_score = body.reputation_score
-    _rpc_url     = os.getenv("APEX_RPC_URL", "")
+    _rpc_url     = os.getenv("HAVEN_RPC_URL", "")
     _ledger_addr = os.getenv("REPUTATION_LEDGER_ADDRESS", "")
     if _rpc_url and _ledger_addr:
         try:
@@ -984,7 +984,7 @@ async def cast_stream_vote(body: StreamVoteRequest, api_key: str = Security(veri
                 # REKORD MINT ke Flywheel Engine
                 if "token_reward" in payload_dict:
                     flywheel_engine.record_mint(
-                        amount_apex=payload_dict["token_reward"],
+                        amount_haven=payload_dict["token_reward"],
                         event_id=eid
                     )
             except Exception as ce:
@@ -1030,7 +1030,7 @@ async def get_claim(event_id: str, api_key: str = Security(verify_api_key)) -> D
             # REKORD MINT ke Flywheel Engine fallback
             if "token_reward" in payload_dict:
                 flywheel_engine.record_mint(
-                    amount_apex=payload_dict["token_reward"],
+                    amount_haven=payload_dict["token_reward"],
                     event_id=event_id
                 )
                 
@@ -1045,7 +1045,7 @@ async def get_claim(event_id: str, api_key: str = Security(verify_api_key)) -> D
 async def oracle_info(_: str = Depends(verify_api_key)) -> Dict[str, Any]:
     return {
         "oracle_address":      evaluator._signer.oracle_address,
-        "protocol":            "APEX HUMANITY — SATIN v2.0.0",
+        "protocol":            "HAVEN HUMANITY — SATIN v2.0.0",
         "supported_actions":   [a.value for a in ActionType],
         "rate_limit":          RATE_LIMIT_VERIFY,
         "allowed_origins":     ALLOWED_ORIGINS,
@@ -1184,7 +1184,7 @@ class VoteRequest(BaseModel):
     vote_for:        bool
     impact_events:   int
     tenure_days:     int     = 0
-    token_held_apex: float   = 0.0
+    token_held_haven: float   = 0.0
 
 @app.get("/api/v1/governance/proposals")
 async def get_proposals(_: str = Depends(verify_api_key)):
@@ -1218,7 +1218,7 @@ async def cast_vote(body: VoteRequest, _: str = Depends(verify_api_key)):
             vote_for        = body.vote_for,
             impact_events   = body.impact_events,
             tenure_days     = body.tenure_days,
-            token_held_apex = body.token_held_apex,
+            token_held_haven = body.token_held_haven,
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -1240,7 +1240,7 @@ async def voting_power(
 
 class NodeRegisterRequest(BaseModel):
     wallet_address: str
-    stake_apex:     float
+    stake_haven:     float
 
 class NodeScoreRequest(BaseModel):
     event_id:    str
@@ -1256,9 +1256,9 @@ async def oracle_network_status(_: str = Depends(verify_api_key)):
 @app.post("/api/v1/oracle/node/register")
 async def register_oracle_node(body: NodeRegisterRequest, _: str = Depends(verify_api_key)):
     """Register as an oracle node (requires minimum stake)."""
-    if body.stake_apex < 1000:
-        raise HTTPException(status_code=400, detail="Minimum stake: 1000 APEX to register as oracle node.")
-    node = oracle_consensus.register_node(body.wallet_address, body.stake_apex)
+    if body.stake_haven < 1000:
+        raise HTTPException(status_code=400, detail="Minimum stake: 1000 HAVEN to register as oracle node.")
+    node = oracle_consensus.register_node(body.wallet_address, body.stake_haven)
     return node.to_dict()
 
 @app.post("/api/v1/oracle/node/submit-score")
@@ -1321,7 +1321,7 @@ async def get_sdg_alignment(action_type: str, _: str = Depends(verify_api_key)):
 
 class DonateBurnRequest(BaseModel):
     donor_address: str
-    amount_apex:   float
+    amount_haven:   float
     target_sdg:    Optional[int] = None
 
 @app.get("/api/v1/economy/flywheel")
@@ -1331,12 +1331,12 @@ async def flywheel_state(_: str = Depends(verify_api_key)):
 
 @app.post("/api/v1/economy/donate-burn")
 async def donate_burn(body: DonateBurnRequest, _: str = Depends(verify_api_key)):
-    """Burn APEX tokens as a donation to humanity. Earns 5% reflex bonus."""
-    if body.amount_apex <= 0:
-        raise HTTPException(status_code=400, detail="amount_apex must be > 0")
+    """Burn HAVEN tokens as a donation to humanity. Earns 5% reflex bonus."""
+    if body.amount_haven <= 0:
+        raise HTTPException(status_code=400, detail="amount_haven must be > 0")
     return flywheel_engine.record_donation_burn(
         donor_addr  = body.donor_address,
-        amount_apex = body.amount_apex,
+        amount_haven = body.amount_haven,
         target_sdg  = body.target_sdg,
     )
 
@@ -1349,8 +1349,8 @@ PROTOCOL_ROADMAP = [
     {
         "phase":       "genesis",
         "name":        "Genesis",
-        "description": "Local Subnet deploy, SATIN Oracle v1, first 1000 volunteers",
-        "milestones":  ["Local APEX Subnet", "SATIN Oracle", "BenevolenceVault", "ReputationLedger"],
+        "description": "Local Subnet deploy, HAVEN Oracle v1, first 1000 volunteers",
+        "milestones":  ["Local HAVEN Subnet", "HAVEN Oracle", "BenevolenceVault", "ReputationLedger"],
         "target_year": 2026,
         "status":      "active",
     },

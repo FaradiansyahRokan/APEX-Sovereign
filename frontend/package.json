@@ -1,7 +1,7 @@
 {
-  "name": "apex-humanity-dapp",
+  "name": "haven-humanity-dapp",
   "version": "1.0.0",
-  "description": "APEX HUMANITY — Sovereign Benevolence Protocol dApp",
+  "description": "HAVEN HUMANITY — Sovereign Benevolence Protocol dApp",
   "private": true,
   "scripts": {
     "dev": "next dev",

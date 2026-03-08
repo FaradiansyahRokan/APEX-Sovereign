@@ -9,8 +9,8 @@ import { ENV } from "../utils/env";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ── ENV (synced with SubmitImpactForm.tsx v2.0) ───────────────────────────────
-const ORACLE_URL = process.env.NEXT_PUBLIC_ORACLE_URL || ENV.ORACLE_URL;
-const ORACLE_KEY = process.env.NEXT_PUBLIC_SATIN_API_KEY || "apex-dev-key";
+const ORACLE_URL = ENV.ORACLE_URL;
+const ORACLE_KEY = ENV.HAVEN_ORACLE_KEY || "HAVEN_ROKAN_NJXBDSA_010011";
 const POLL_MS = 15_000;
 
 // ── Types (synced with backend v2.0 stream_entry + vote_info) ─────────────────
@@ -378,7 +378,7 @@ function VotingPanel({
     setClaiming(true); setMsg("");
     try {
       const res = await fetch(`${ORACLE_URL}/api/v1/vote/claim/${entry.event_id}`, {
-        headers: { "X-APEX-Oracle-Key": ORACLE_KEY },
+        headers: { "X-HAVEN-Oracle-Key": ORACLE_KEY },
       });
       if (!res.ok) {
         const d = await res.json();
@@ -417,9 +417,9 @@ function VotingPanel({
   const handleVote = async (vote: "approve" | "reject") => {
     setVoting(true);
     try {
-      const res = await fetch(`${ORACLE_URL}/api/v1/vote`, {
+      const res = await fetch(`${ENV.ORACLE_URL}/api/v1/vote`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-APEX-Oracle-Key": ORACLE_KEY },
+        headers: { "Content-Type": "application/json", "X-HAVEN-Oracle-Key": ENV.HAVEN_ORACLE_KEY },
         body: JSON.stringify({
           event_id: entry.event_id,
           voter_address: address,
@@ -772,7 +772,7 @@ function StreamCard({
         }}>
           {[
             { label: "Score", value: `${entry.impact_score}/100`, grad: `linear-gradient(90deg, ${C.teal}, ${C.purple})` },
-            { label: "Reward", value: `${(entry.token_reward ?? 0).toFixed(2)} APEX`, grad: `linear-gradient(90deg, ${C.amber}, ${C.pink})` },
+            { label: "Reward", value: `${(entry.token_reward ?? 0).toFixed(2)} HAVEN`, grad: `linear-gradient(90deg, ${C.amber}, ${C.pink})` },
             { label: "Effort", value: `${entry.effort_hours}h`, grad: `linear-gradient(90deg, ${C.purple}, ${C.pink})` },
             { label: "Helped", value: `${entry.people_helped}`, grad: `linear-gradient(90deg, ${C.teal}, ${C.purple})` },
           ].map(s => (
@@ -860,7 +860,7 @@ export default function CommunityStream({
   const fetchStream = useCallback(async () => {
     try {
       const res = await fetch(`${ORACLE_URL}/api/v1/stream`, {
-        headers: { "X-APEX-Oracle-Key": ORACLE_KEY },
+        headers: { "X-HAVEN-Oracle-Key": ORACLE_KEY },
       });
       if (res.ok) {
         const data = await res.json();

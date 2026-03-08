@@ -279,7 +279,7 @@ export default function ImpactFeed() {
                     fontSize: "12px", fontWeight: 700,
                     background: "linear-gradient(90deg,#ffbd59,#ff6eb4)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>+{ev.tokenReward.toFixed(2)} APEX</span>
+                  }}>+{ev.tokenReward.toFixed(2)} HAVEN</span>
                   <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.2)", fontFamily: "'JetBrains Mono',monospace" }}>
                     #{ev.blockNumber.toString()}
                   </span>

@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — SATIN Parameter Integrity Validator
+HAVEN HUMANITY — SATIN Parameter Integrity Validator
 ====================================================
 v2.0.0 — Deep Description-vs-Visual Cross-Examination Engine
 
@@ -481,7 +481,7 @@ class ParameterValidator:
         # Image wajib ada
         if not image_bytes:
             result.hard_block(
-                "Bukti visual (foto) wajib ada untuk verifikasi APEX. "
+                "Bukti visual (foto) wajib ada untuk verifikasi HAVEN. "
                 "Tidak ada gambar yang diterima."
             )
             return result
@@ -1216,5 +1216,5 @@ def run_full_validation_with_image(
 
 
 if __name__ == "__main__":
-    print("APEX ParameterValidator v2.0 — 3-Phase Cross-Examination Engine")
+    print("HAVEN ParameterValidator v2.0 — 3-Phase Cross-Examination Engine")
     print(f"AI Status: {'READY' if _LOCAL_AI.available else 'OFFLINE — run: ollama pull llava'}")

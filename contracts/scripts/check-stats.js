@@ -15,9 +15,9 @@ async function main() {
     try {
         const [deposited, distributed, verified, balance] = await vault.getStats();
         console.log("Vault Stats:");
-        console.log(` - Total Distributed: ${hre.ethers.formatEther(distributed)} APEX`);
+        console.log(` - Total Distributed: ${hre.ethers.formatEther(distributed)} HAVEN`);
         console.log(` - Events Verified: ${verified}`);
-        console.log(` - Vault Balance: ${hre.ethers.formatEther(balance)} APEX`);
+        console.log(` - Vault Balance: ${hre.ethers.formatEther(balance)} HAVEN`);
     } catch (e) {
         console.log("Error reading Vault stats:", e.message);
     }

@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — Macro Economy Flywheel Engine
+HAVEN HUMANITY — Macro Economy Flywheel Engine
 ===============================================
 LAYER 7 — MACROECONOMICS & REAL-WORLD IMPACT
 
@@ -7,15 +7,15 @@ Architecture Bible:
     "Setiap token yang beredar adalah bukti bahwa seseorang telah membantu."
 
 Closed-Loop Economic Flywheel:
-    Real Action → APEX earned → 3 possible uses:
-        A) Donasi ke Crisis Fund → BURN → deflation → nilai APEX naik
-        B) Bayar gas fee → circulates in APEX network economy
+    Real Action → HAVEN earned → 3 possible uses:
+        A) Donasi ke Crisis Fund → BURN → deflation → nilai HAVEN naik
+        B) Bayar gas fee → circulates in HAVEN network economy
         C) Governance vote → locked temporarily → less circulating supply
 
 Flywheel Cycle (4 steps):
     1. Action      : Volunteer melakukan kebaikan nyata
-    2. Earn        : SATIN Oracle mint APEX sesuai impact score
-    3. Deploy      : APEX dipakai (donate/hold/vote/transfer)
+    2. Earn        : HAVEN Oracle mint HAVEN sesuai impact score
+    3. Deploy      : HAVEN dipakai (donate/hold/vote/transfer)
     4. Reflex      : Setiap penggunaan meningkatkan demand → nilai naik
 
 Triple Velocity Engine:
@@ -49,7 +49,7 @@ MAX_BURN_EVENTS_TRACKED = 10000
 class BurnEvent:
     event_id:     str
     donor_addr:   str
-    amount_apex:  float    # tokens burned
+    amount_haven:  float    # tokens burned
     target_sdg:   Optional[int]   # UN SDG goal this donation targets
     timestamp:    float
 
@@ -57,7 +57,7 @@ class BurnEvent:
         return {
             "event_id":    self.event_id,
             "donor_addr":  self.donor_addr,
-            "amount_apex": round(self.amount_apex, 4),
+            "amount_haven": round(self.amount_haven, 4),
             "target_sdg":  self.target_sdg,
             "timestamp":   int(self.timestamp),
         }
@@ -80,9 +80,9 @@ class BurnTracker:
         self._r.lpush(self._key(), json.dumps(donation.to_dict()))
         self._r.ltrim(self._key(), 0, MAX_BURN_EVENTS_TRACKED - 1)
         # Accumulate total
-        self._r.incrbyfloat(self._total_key(), donation.amount_apex)
+        self._r.incrbyfloat(self._total_key(), donation.amount_haven)
         logger.info(
-            f"[Flywheel] Burn recorded: {donation.amount_apex:.2f} APEX "
+            f"[Flywheel] Burn recorded: {donation.amount_haven:.2f} HAVEN "
             f"by {donation.donor_addr} → SDG {donation.target_sdg}"
         )
 
@@ -101,13 +101,13 @@ class BurnTracker:
         return result
 
     def get_burn_rate_30d(self) -> float:
-        """Average APEX burned per day over the last 30 days."""
+        """Average HAVEN burned per day over the last 30 days."""
         burns = self.get_recent_burns(limit=MAX_BURN_EVENTS_TRACKED)
         cutoff = time.time() - FLYWHEEL_HISTORY_WINDOW
         recent = [b for b in burns if b.get("timestamp", 0) >= cutoff]
         if not recent:
             return 0.0
-        total = sum(b.get("amount_apex", 0) for b in recent)
+        total = sum(b.get("amount_haven", 0) for b in recent)
         return round(total / 30, 4)
 
 
@@ -119,8 +119,8 @@ class BurnTracker:
 class VelocitySnapshot:
     """Snapshot of token velocity across 3 channels."""
     circulation_velocity: float  # transactions/day (all chain activity)
-    donation_velocity:    float  # APEX burned/day (donations)
-    governance_velocity:  float  # APEX locked in governance/day
+    donation_velocity:    float  # HAVEN burned/day (donations)
+    governance_velocity:  float  # HAVEN locked in governance/day
 
     @property
     def flywheel_health(self) -> str:
@@ -153,7 +153,7 @@ class FlywheelState:
     total_donated:         float
     circulating_supply:    float
     deflation_pct:         float    # burned / minted × 100
-    burn_rate_30d:         float    # APEX burned per day
+    burn_rate_30d:         float    # HAVEN burned per day
     velocity:              VelocitySnapshot
     recent_burns:          List[dict] = field(default_factory=list)
 
@@ -178,7 +178,7 @@ class FlywheelState:
 class FlywheelEngine:
     """
     Master Layer 7 Macro Economy Flywheel interface.
-    Tracks the full APEX token lifecycle from mint→earn→spend→burn.
+    Tracks the full HAVEN token lifecycle from mint→earn→spend→burn.
     """
 
     def __init__(self, redis_client):
@@ -197,35 +197,35 @@ class FlywheelEngine:
 
     # ── Record Events ────────────────────────────────────────────────────────────
 
-    def record_mint(self, amount_apex: float, event_id: str):
+    def record_mint(self, amount_haven: float, event_id: str):
         """Called by oracle after each successful verification."""
-        self._r.incrbyfloat(self._total_minted_key(), amount_apex)
-        logger.debug(f"[Flywheel] Mint +{amount_apex:.4f} APEX for event {event_id}")
+        self._r.incrbyfloat(self._total_minted_key(), amount_haven)
+        logger.debug(f"[Flywheel] Mint +{amount_haven:.4f} HAVEN for event {event_id}")
 
     def record_donation_burn(
         self,
         donor_addr:  str,
-        amount_apex: float,
+        amount_haven: float,
         target_sdg:  Optional[int] = None,
         event_id:    Optional[str] = None,
     ) -> dict:
-        """Record a donation that burns APEX tokens."""
+        """Record a donation that burns HAVEN tokens."""
         import uuid
         burn_event = BurnEvent(
             event_id    = event_id or str(uuid.uuid4()),
             donor_addr  = donor_addr.lower(),
-            amount_apex = amount_apex,
+            amount_haven = amount_haven,
             target_sdg  = target_sdg,
             timestamp   = time.time(),
         )
         self._burn_tracker.record_burn(burn_event)
-        self._r.incrbyfloat(self._total_donated_key(), amount_apex)
+        self._r.incrbyfloat(self._total_donated_key(), amount_haven)
 
         # Reflex bonus: 5% returned to donor (via oracle signature)
-        reflex = round(amount_apex * 0.05, 6)
+        reflex = round(amount_haven * 0.05, 6)
         return {
             "burned":              True,
-            "amount_burned":       round(amount_apex, 4),
+            "amount_burned":       round(amount_haven, 4),
             "reflex_bonus_earned": reflex,
             "target_sdg":          target_sdg,
         }

@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — Crisis Zone Oracle
+HAVEN HUMANITY — Crisis Zone Oracle
 ====================================
 Layer 6 (Lapisan Geo): Geo-Fenced Scarcity Zones
 
@@ -142,7 +142,7 @@ def _fetch_reliefweb_crises() -> list[CrisisEvent]:
     import urllib.parse
     import time
 
-    RELIEFWEB_URL = "https://api.reliefweb.int/v1/disasters?appname=apex-humanity&filter[field]=status&filter[value]=current&limit=10&fields[include][]=name&fields[include][]=country&fields[include][]=type&fields[include][]=glide"
+    RELIEFWEB_URL = "https://api.reliefweb.int/v1/disasters?appname=haven-humanity&filter[field]=status&filter[value]=current&limit=10&fields[include][]=name&fields[include][]=country&fields[include][]=type&fields[include][]=glide"
     events = []
 
     def _geocode_country(country_name: str) -> tuple[float, float]:
@@ -151,7 +151,7 @@ def _fetch_reliefweb_crises() -> list[CrisisEvent]:
             return 0.0, 0.0
         try:
             url = f"https://nominatim.openstreetmap.org/search?country={urllib.parse.quote(country_name)}&format=json&limit=1"
-            req = urllib.request.Request(url, headers={'User-Agent': 'ApexHumanity-Oracle/1.0'})
+            req = urllib.request.Request(url, headers={'User-Agent': 'HavenHumanity-Oracle/1.0'})
             with urllib.request.urlopen(req, timeout=5) as r:
                 data = json.loads(r.read().decode("utf-8"))
                 if data:

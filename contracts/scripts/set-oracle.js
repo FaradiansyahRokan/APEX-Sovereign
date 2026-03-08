@@ -1,8 +1,8 @@
 /**
- * APEX HUMANITY — Set Oracle Address
+ * HAVEN HUMANITY — Set Oracle Address
  * 
  * Run AFTER oracle server is running:
- *   npx hardhat run scripts/set-oracle.js --network apex_local
+ *   npx hardhat run scripts/set-oracle.js --network haven_local
  *
  * What it does:
  *   1. Reads oracle_address from GET /health on the oracle server
@@ -16,7 +16,7 @@ const fs = require("fs");
 
 // ── Config ────────────────────────────────────────────────────────────────────
 const ORACLE_URL = process.env.NEXT_PUBLIC_ORACLE_URL || "http://localhost:8000";
-const API_KEY = process.env.NEXT_PUBLIC_SATIN_API_KEY || process.env.ORACLE_API_KEY || "apex-dev-key-change-in-prod";
+const API_KEY = process.env.NEXT_PUBLIC_SATIN_API_KEY || process.env.ORACLE_API_KEY || "haven-dev-key-change-in-prod";
 
 // Load deployed addresses
 let VAULT_ADDRESS;
@@ -32,7 +32,7 @@ try {
 async function main() {
   const [admin] = await ethers.getSigners();
   console.log("╔═══════════════════════════════════════════════════════╗");
-  console.log("║     APEX HUMANITY — Set Oracle Address                ║");
+  console.log("║     HAVEN HUMANITY — Set Oracle Address                ║");
   console.log("╚═══════════════════════════════════════════════════════╝");
   console.log(`Admin:          ${admin.address}`);
   console.log(`BenevolenceVault: ${VAULT_ADDRESS}`);

@@ -3,11 +3,9 @@
 // and use the correct names from .env.local
 
 export const ENV = {
-    ORACLE_URL: process.env.NEXT_PUBLIC_ORACLE_URL,
-    SATIN_API_KEY: process.env.NEXT_PUBLIC_SATIN_API_KEY || "",
-
-    CHAIN_ID: Number(process.env.NEXT_PUBLIC_CHAIN_ID) || 777000,
-    RPC_URL: process.env.NEXT_PUBLIC_RPC_URL || "https://moves-score-payments-armor.trycloudflare.com/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
+    ORACLE_URL: process.env.NEXT_PUBLIC_ORACLE_URL || "https://communication-app-harper-load.trycloudflare.com",
+    HAVEN_ORACLE_KEY: process.env.NEXT_PUBLIC_HAVEN_ORACLE_KEY || "HAVEN_ROKAN_NJXBDSA_010011",
+    RPC_URL: process.env.NEXT_PUBLIC_RPC_URL || "http://127.0.0.1:9654/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
     NETWORK_NAME: process.env.NEXT_PUBLIC_NETWORK_NAME || "BridgeStone",
     WALLETCONNECT_PROJECT_ID: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
 

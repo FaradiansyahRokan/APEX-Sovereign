@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 /**
- * APEX HUMANITY — SovereignID.sol
+ * HAVEN HUMANITY — SovereignID.sol
  * Soulbound Digital Identity NFT (inspired by ERC-5114 / ERC-4973).
  * Each wallet can hold exactly ONE SovereignID.
  * It cannot be transferred, sold, or delegated — it IS the person.

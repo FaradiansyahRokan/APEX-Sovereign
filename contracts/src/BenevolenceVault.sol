@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 /**
  * ╔══════════════════════════════════════════════════════════════════════════╗
- * ║          APEX HUMANITY — BenevolenceVault.sol                           ║
+ * ║          HAVEN HUMANITY — BenevolenceVault.sol                           ║
  * ║          Sovereign Benevolence Protocol  v2.1.0                         ║
  * ║                                                                          ║
  * ║  v2.0.0 — Native Token Minting via Avalanche NativeMinter Precompile   ║
@@ -174,7 +174,7 @@ contract BenevolenceVault is AccessControl, ReentrancyGuard, Pausable {
         _usedEventIds[eventId]  = true;
         _usedNonces[nonceHash]  = true;
 
-        // ── Mint APEX native coin to volunteer ────────────────────────────────
+        // ── Mint HAVEN native coin to volunteer ────────────────────────────────
         NATIVE_MINTER.mintNativeCoin(volunteerAddress, tokenRewardWei);
 
         // ── Update Reputation Ledger ──────────────────────────────────────────

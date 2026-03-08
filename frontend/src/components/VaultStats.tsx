@@ -41,7 +41,7 @@ const IconVolunteers = () => (
   </svg>
 );
 
-const IconApex = () => (
+const IconHaven = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <path className="svg-draw" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="url(#grad3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     <path className="svg-glow-core" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#grad3)" opacity="0.3" />
@@ -60,7 +60,7 @@ const IconImpact = () => (
 const STAT_STYLES = [
   { colors: ["#00dfb2", "#7c6aff"], glow: "rgba(0,223,178,0.25)", icon: <IconVerified /> },
   { colors: ["#7c6aff", "#ff6eb4"], glow: "rgba(124,106,255,0.25)", icon: <IconVolunteers /> },
-  { colors: ["#ffbd59", "#ff6eb4"], glow: "rgba(255,189,89,0.25)", icon: <IconApex /> },
+  { colors: ["#ffbd59", "#ff6eb4"], glow: "rgba(255,189,89,0.25)", icon: <IconHaven /> },
   { colors: ["#7c6aff", "#00dfb2"], glow: "rgba(124,106,255,0.2)", icon: <IconImpact /> },
 ];
 
@@ -79,7 +79,7 @@ export default function VaultStats() {
   const stats = [
     { label: "Events Verified", value: vault ? Number(vault[2]) : null, dec: 0 },
     { label: "Volunteers", value: global ? Number(global[0]) : null, dec: 0 },
-    { label: "APEX Distributed", value: vault ? Number(formatUnits(vault[1], 18)) : null, dec: 2 },
+    { label: "HAVEN Distributed", value: vault ? Number(formatUnits(vault[1], 18)) : null, dec: 2 },
     { label: "Total Impact", value: global ? Number(global[1]) / 100 : null, dec: 0 },
   ];
 

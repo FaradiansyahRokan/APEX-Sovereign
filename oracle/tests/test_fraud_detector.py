@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — FraudDetector Unit Tests
+HAVEN HUMANITY — FraudDetector Unit Tests
 pytest test suite  v2.0.0
 
 Coverage:

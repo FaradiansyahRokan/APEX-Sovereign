@@ -5,7 +5,7 @@ async function main() {
   const minterAddress = "0x0200000000000000000000000000000000000001";
 
   // Alamat Vault lu yang baru
-  const vaultAddress = "0x58f1c453BB8F6e862e04F6392826dd7Eb5618bA3";
+  const vaultAddress = "0x4B1301a72Da30c4ab3E0CaeFf40Ca28A0b416088";
 
   // ABI khusus buat ngasih akses Enabled
   const MinterABI = ["function setEnabled(address addr) external"];
@@ -26,7 +26,7 @@ async function main() {
   const tx = await minterContract.setEnabled(vaultAddress);
   await tx.wait();
 
-  console.log("🔥 SUKSES! Vault sekarang punya izin resmi untuk mencetak APEX L1!");
+  console.log("🔥 SUKSES! Vault sekarang punya izin resmi untuk mencetak HAVEN L1!");
 }
 
 main().catch((error) => {

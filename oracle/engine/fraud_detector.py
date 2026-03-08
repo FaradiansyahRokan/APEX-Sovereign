@@ -1,5 +1,5 @@
 """
-APEX HUMANITY — SATIN Oracle: Fraud & Sybil Detection Module
+HAVEN HUMANITY — HAVEN Oracle: Fraud & Sybil Detection Module
 =============================================================
 v2.0.0 — Data Integrity Update
 
