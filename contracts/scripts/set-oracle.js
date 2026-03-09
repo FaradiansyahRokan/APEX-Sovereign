@@ -26,7 +26,7 @@ try {
 } catch {
   // Fallback to env or hardcoded from constants.ts
   VAULT_ADDRESS = process.env.BENEVOLENCE_VAULT_ADDRESS ||
-    "0x58f1c453BB8F6e862e04F6392826dd7Eb5618bA3";
+    "0x7E550F089B91Ccb233266Cc25b1C5Cff97730422";
 }
 
 async function main() {

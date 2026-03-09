@@ -1,8 +1,8 @@
 const hre = require("hardhat");
 
 async function main() {
-    const vaultAddr = "0x58f1c453BB8F6e862e04F6392826dd7Eb5618bA3";
-    const ledgerAddr = "0x926351489F7E3686F8ed2A0eceA7BF45bbAd8A14";
+    const vaultAddr = "0x7E550F089B91Ccb233266Cc25b1C5Cff97730422";
+    const ledgerAddr = "0xBfD647E7DA80be6c9ACc74c1B29B610871923825";
 
     const Vault = await hre.ethers.getContractFactory("BenevolenceVault");
     const vault = Vault.attach(vaultAddr);

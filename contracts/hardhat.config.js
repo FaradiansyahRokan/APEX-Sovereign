@@ -18,8 +18,8 @@ module.exports = {
 
     // ─── HAVEN NETWORK (L1 Sovereign) ─────────────────────────────────────────
     stonebridge_fuji: {
-      url: "http://127.0.0.1:9654/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
-      chainId: 777000,
+      url: "http://127.0.0.1:9650/ext/bc/2N6ekKdQUxdUFxFp8x6xPSXLod3a3sXzQiEWjVepbtXPFa4Uej/rpc",
+      chainId: 666999,
       accounts: process.env.HAVEN_ADMIN_PRIVATE_KEY ? [process.env.HAVEN_ADMIN_PRIVATE_KEY] : [],
       gasPrice: 25000000000,
       gas: 8000000,
