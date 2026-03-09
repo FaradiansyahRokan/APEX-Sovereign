@@ -1,9 +1,19 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function LandingPage() {
   const router = useRouter();
   const goToApp = () => router.push("/app");
+
+  // Force light theme on landing page, restore dark when leaving
+  useEffect(() => {
+    const prev = document.documentElement.getAttribute("data-theme") || "dark";
+    document.documentElement.setAttribute("data-theme", "light");
+    return () => {
+      document.documentElement.setAttribute("data-theme", prev);
+    };
+  }, []);
 
   return (
     <>
@@ -215,9 +225,9 @@ export default function LandingPage() {
       {/* SECURITY */}
       <section className="lp-security">
         <div className="lp-security-inner">
-          <div className="lp-sec-header" style={{ borderBottomColor: "rgba(253,250,246,0.07)" }}>
+          <div className="lp-sec-header" style={{ borderBottomColor: "rgba(253,250,246,0.15)" }}>
             <h2 className="lp-sec-title" style={{ color: "var(--bone)" }}>Security <em style={{ color: "var(--silver)" }}>Architecture</em></h2>
-            <span className="lp-label-caps">Multi-Layer Defence</span>
+            <span className="lp-label-caps" style={{ color: "var(--stone)" }}>Multi-Layer Defence</span>
           </div>
           <div className="lp-security-grid">
             {[["Anti-Sybil", "SovereignID System", "Social graph vouching requires three verified community attestations. Biometric hash binding prevents wallet rotation attacks."], ["Fraud Detection", "Multi-Vector Analysis", "Perceptual hashing detects duplicate images. ELA identifies manipulation. Screenshot classifiers block fabricated evidence."], ["Oracle Security", "Decentralised Network", "SATIN Oracle nodes require 1,000 VELD stake. Consensus scoring aggregates multiple node verdicts. Byzantine fault tolerance through outlier rejection."], ["Smart Contracts", "Formal Verification", "Solidity 0.8.20 with reentrancy guards and access control. Oracle signature verification prevents replay attacks."], ["Cryptography", "ZK Proof System", "Each impact event receives a unique zk-proof hash binding volunteer address, event ID, impact score, and token reward."], ["Governance", "Timelock Architecture", "All parameter changes execute after 30-day timelock. Emergency proposals require supermajority. Multisig treasury controls."]].map(([l, t, b]) => (
@@ -285,7 +295,7 @@ export default function LandingPage() {
                 <div key={k}><div className="lp-cd-label">{k}</div><div className="lp-cd-val">{v}</div></div>
               ))}
             </div>
-            <div style={{ marginTop: "40px", paddingTop: "32px", borderTop: "1px solid rgba(253,250,246,0.1)" }}>
+            <div style={{ marginTop: "40px", paddingTop: "32px", borderTop: "1px solid rgba(253,250,246,0.12)" }}>
               <div className="lp-label-caps" style={{ color: "var(--stone)", marginBottom: "16px" }}>Ready to participate?</div>
               <button onClick={goToApp} className="lp-access-btn">Access the Protocol</button>
             </div>
