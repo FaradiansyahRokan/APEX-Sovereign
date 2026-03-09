@@ -18,7 +18,7 @@ const getDynamicConfig = () => {
   const protocol = window.location.protocol;
   const port     = window.location.port ? `:${window.location.port}` : "";
   return {
-    rpc: process.env.NEXT_PUBLIC_RPC_URL || "http://127.0.0.1:9654/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
+    rpc: process.env.NEXT_PUBLIC_RPC_URL || "https://answer-hansen-understand-built.trycloudflare.com/ext/bc/Yxdrh1Sof5JoTTn66vQjNLdvf7JMYvwMMYUWrjAJBphQ2W9qs/rpc",
     url: `${protocol}//${host}${port}`,
   };
 };
