@@ -17,7 +17,7 @@ export const HAVEN_CHAIN = {
   name: "BridgeStone",
   rpc: process.env.NEXT_PUBLIC_RPC_URL ||
     "https://answer-hansen-understand-built.trycloudflare.com/ext/bc/Yxdrh1Sof5JoTTn66vQjNLdvf7JMYvwMMYUWrjAJBphQ2W9qs/rpc",
-  symbol: "GOOD",
+  symbol: "STC",
   decimals: 18,
 } as const;
 
