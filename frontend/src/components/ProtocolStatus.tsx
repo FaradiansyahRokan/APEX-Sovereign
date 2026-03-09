@@ -30,9 +30,9 @@ function PhaseCard({ phase, isCurrent }: { phase: Phase; isCurrent: boolean }) {
   return (
     <div style={{
       padding: "28px",
-      border: `1px solid rgba(255,255,255,${isCurrent ? 0.15 : 0.06})`,
-      borderTop: `${isCurrent ? "2px" : "1px"} solid rgba(255,255,255,${isCurrent ? 0.5 : 0.06})`,
-      background: isCurrent ? "rgba(255,255,255,0.025)" : "rgba(255,255,255,0.008)",
+      border: isCurrent ? "1px solid var(--hv-border3)" : "1px solid var(--hv-border)",
+      borderTop: isCurrent ? "2px solid var(--hv-border-str)" : "1px solid var(--hv-border)",
+      background: isCurrent ? "var(--hv-t5)" : "var(--hv-t5)",
       position: "relative",
       transition: "border-color 0.2s",
     }}>
@@ -44,10 +44,10 @@ function PhaseCard({ phase, isCurrent }: { phase: Phase; isCurrent: boolean }) {
         }}>
           <div style={{
             width: "5px", height: "5px", borderRadius: "50%",
-            background: "rgba(255,255,255,0.6)",
+            background: "var(--hv-surf2)",
             animation: "psLive 2.6s ease-in-out infinite",
           }} />
-          <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.2em", color: "rgba(255,255,255,0.3)" }}>
+          <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.2em", color: "var(--hv-t4)" }}>
             CURRENT
           </span>
         </div>
@@ -57,9 +57,9 @@ function PhaseCard({ phase, isCurrent }: { phase: Phase; isCurrent: boolean }) {
       <div style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "10px" }}>
         <span style={{
           fontFamily: S, fontStyle: "italic", fontSize: "10px",
-          color: "rgba(255,255,255,0.3)", letterSpacing: "0.2em", textTransform: "uppercase",
+          color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
         }}>{STATUS_LABEL[phase.status]}</span>
-        <span style={{ fontFamily: M, fontSize: "11px", color: "rgba(255,255,255,0.25)" }}>
+        <span style={{ fontFamily: M, fontSize: "11px", color: "var(--hv-t4)" }}>
           {phase.target_year}
         </span>
       </div>
@@ -67,13 +67,13 @@ function PhaseCard({ phase, isCurrent }: { phase: Phase; isCurrent: boolean }) {
       <h3 style={{
         fontFamily: S, fontWeight: 400,
         fontSize: isCurrent ? "20px" : "17px",
-        color: isCurrent ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.65)",
+        color: isCurrent ? "var(--hv-text)" : "var(--hv-t2)",
         marginBottom: "8px",
       }}>{phase.name}</h3>
 
       <p style={{
         fontFamily: S, fontStyle: "italic", fontSize: "12px",
-        color: "rgba(255,255,255,0.4)", lineHeight: 1.75, marginBottom: "16px",
+        color: "var(--hv-t4)", lineHeight: 1.75, marginBottom: "16px",
       }}>{phase.description}</p>
 
       {/* Milestones */}
@@ -82,8 +82,8 @@ function PhaseCard({ phase, isCurrent }: { phase: Phase; isCurrent: boolean }) {
           <span key={m} style={{
             fontFamily: S, fontStyle: "italic", fontSize: "10px",
             padding: "4px 10px",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "rgba(255,255,255,0.35)",
+            border: "1px solid var(--hv-border)",
+            color: "var(--hv-t4)",
           }}>
             {m}
           </span>
@@ -100,27 +100,27 @@ function LayerRow({ layer, isLast }: { layer: LayerStatus; isLast: boolean }) {
       display: "grid", gridTemplateColumns: "36px 1fr auto",
       alignItems: "center", gap: "16px",
       padding: "14px 0",
-      borderBottom: isLast ? "none" : "1px solid rgba(255,255,255,0.05)",
+      borderBottom: isLast ? "none" : "1px solid var(--hv-border)",
     }}>
       <span style={{
         fontFamily: M, fontSize: "10px",
-        color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em",
+        color: "var(--hv-t4)", letterSpacing: "0.1em",
       }}>{layer.id}</span>
 
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <div style={{
           width: "4px", height: "4px", borderRadius: "50%", flexShrink: 0,
-          background: isActive ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.15)",
+          background: isActive ? "var(--hv-t2)" : "var(--hv-t4)",
         }} />
         <span style={{
           fontFamily: S, fontSize: "13px",
-          color: isActive ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.35)",
+          color: isActive ? "var(--hv-text)" : "var(--hv-t3)",
         }}>{layer.name}</span>
       </div>
 
       <span style={{
         fontFamily: S, fontStyle: "italic", fontSize: "10px",
-        color: `rgba(255,255,255,${isActive ? 0.6 : 0.2})`,
+        color: isActive ? "var(--hv-t2)" : "var(--hv-t5)",
         letterSpacing: "0.08em",
       }}>{layer.status}</span>
     </div>
@@ -152,7 +152,7 @@ export default function ProtocolStatus() {
 
   if (loading) return (
     <div style={{ padding: "80px 0", textAlign: "center" }}>
-      <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "rgba(255,255,255,0.25)" }}>
+      <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "var(--hv-t4)" }}>
         Retrieving protocol data…
       </p>
     </div>
@@ -168,23 +168,23 @@ export default function ProtocolStatus() {
         <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
           }}>§ Architecture & Roadmap</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
         </div>
-        <h2 style={{ fontFamily: S, fontWeight: 400, fontSize: "30px", color: "#fff", marginBottom: "6px" }}>
+        <h2 style={{ fontFamily: S, fontWeight: 400, fontSize: "30px", color: "var(--hv-text)", marginBottom: "6px" }}>
           Protocol Status
         </h2>
-        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>
-          HAVEN Humanity Protocol — 8 Layers, 6 Deployment Phases
+        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "13px", color: "var(--hv-t4)" }}>
+          HAVEN Humanity Protocol 8 Layers, 6 Deployment Phases
         </p>
       </div>
 
       {/* Quick stats */}
       <div style={{
         display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-        borderTop: "2px solid #fff",
-        borderLeft: "1px solid rgba(255,255,255,0.08)",
+        borderTop: "2px solid var(--hv-rule)",
+        borderLeft: "1px solid var(--hv-border)",
         marginBottom: "48px",
       }}>
         {[
@@ -194,14 +194,14 @@ export default function ProtocolStatus() {
         ].map((s, i) => (
           <div key={s.label} style={{
             padding: "24px 20px",
-            borderRight: "1px solid rgba(255,255,255,0.08)",
+            borderRight: "1px solid var(--hv-border)",
           }}>
             <p style={{
               fontFamily: S, fontStyle: "italic", fontSize: "10px",
-              color: "rgba(255,255,255,0.3)", letterSpacing: "0.12em",
+              color: "var(--hv-t4)", letterSpacing: "0.12em",
               textTransform: "uppercase", marginBottom: "8px",
             }}>{s.label}</p>
-            <p style={{ fontFamily: M, fontSize: "18px", color: "rgba(255,255,255,0.85)" }}>{s.value}</p>
+            <p style={{ fontFamily: M, fontSize: "18px", color: "var(--hv-t2)" }}>{s.value}</p>
           </div>
         ))}
       </div>
@@ -211,14 +211,14 @@ export default function ProtocolStatus() {
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "4px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.15em", textTransform: "uppercase",
           }}>Architecture Layers</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
         </div>
 
         <div style={{
-          border: "1px solid rgba(255,255,255,0.07)",
-          borderTop: "2px solid rgba(255,255,255,0.2)",
+          border: "1px solid var(--hv-border)",
+          borderTop: "2px solid var(--hv-border3)",
           padding: "0 24px",
         }}>
           {layers.map((l, i) => (
@@ -232,9 +232,9 @@ export default function ProtocolStatus() {
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.15em", textTransform: "uppercase",
           }}>Deployment Roadmap</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useWriteContract, usePublicClient, useReadContract } from "wagmi";
+import { usePublicClient, useReadContract } from "wagmi";
+import { useSigner } from "@/contexts/SignerContext";
+import { ethers } from "ethers";
 import NextImage from "next/image";
 import { pad } from "viem";
 import { CONTRACTS, ACTION_TYPES, URGENCY_LEVELS, getRank } from "../utils/constants";
@@ -47,9 +49,9 @@ function Tag({ children, opacity = 0.5 }: { children: React.ReactNode; opacity?:
   return (
     <span style={{
       fontFamily: S, fontStyle: "italic", fontSize: "9px",
-      color: `rgba(255,255,255,${opacity})`,
+      color: opacity >= 0.8 ? "var(--hv-text)" : opacity >= 0.5 ? "var(--hv-t2)" : "var(--hv-t3)",
       padding: "3px 8px",
-      border: `1px solid rgba(255,255,255,${opacity * 0.4})`,
+      border: opacity >= 0.8 ? "1px solid var(--hv-border3)" : "1px solid var(--hv-border)",
       letterSpacing: "0.07em", whiteSpace: "nowrap" as const,
     }}>{children}</span>
   );
@@ -60,17 +62,17 @@ function ScoreDial({ value, max = 100 }: { value: number; max?: number }) {
   const opacity = value >= 70 ? 0.9 : value >= 40 ? 0.55 : 0.3;
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-      <p style={{ fontFamily: M, fontSize: "20px", color: `rgba(255,255,255,${opacity})`, lineHeight: 1 }}>
+      <p style={{ fontFamily: M, fontSize: "20px", color: opacity >= 0.8 ? "var(--hv-text)" : opacity >= 0.5 ? "var(--hv-t2)" : "var(--hv-t3)", lineHeight: 1 }}>
         {value.toFixed(0)}
       </p>
-      <div style={{ width: "32px", height: "1px", background: "rgba(255,255,255,0.06)", position: "relative" }}>
+      <div style={{ width: "32px", height: "1px", background: "var(--hv-surf2)", position: "relative" }}>
         <div style={{
           position: "absolute", left: 0, top: 0, bottom: 0,
-          width: `${pct}%`, background: `rgba(255,255,255,${opacity})`,
+          width: `${pct}%`, background: "var(--hv-text)",
           transition: "width 0.6s ease",
         }} />
       </div>
-      <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "8px", color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em" }}>
+      <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "8px", color: "var(--hv-t4)", letterSpacing: "0.1em" }}>
         / {max}
       </p>
     </div>
@@ -92,35 +94,35 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
 
   return (
     <div style={{
-      border: "1px solid rgba(255,255,255,0.07)",
-      borderTop: "1px solid rgba(255,255,255,0.12)",
-      background: "rgba(255,255,255,0.01)",
+      border: "1px solid var(--hv-border)",
+      borderTop: "1px solid var(--hv-border2)",
+      background: "var(--hv-bg2)",
       padding: "20px",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
         <span style={{
           fontFamily: S, fontSize: "9px", fontStyle: "italic",
-          color: "rgba(255,255,255,0.3)", letterSpacing: "0.18em", textTransform: "uppercase",
+          color: "var(--hv-t4)", letterSpacing: "0.18em", textTransform: "uppercase",
         }}>3-Phase AI Cross-Examination</span>
-        <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
+        <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
       </div>
 
-      {/* Phase 1 — Visual witness */}
+      {/* Phase 1 Visual witness */}
       {hasPhase1 && (
-        <div style={{ marginBottom: "16px", paddingBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+        <div style={{ marginBottom: "16px", paddingBottom: "16px", borderBottom: "1px solid var(--hv-border)" }}>
           <p style={{
             fontFamily: S, fontSize: "9px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em",
+            color: "var(--hv-t4)", letterSpacing: "0.15em",
             textTransform: "uppercase", marginBottom: "10px",
-          }}>Phase I — Visual Witness</p>
+          }}>Phase I Visual Witness</p>
 
           {entry.visual_description && (
             <p style={{
               fontFamily: S, fontStyle: "italic", fontSize: "12px",
-              color: "rgba(255,255,255,0.5)", lineHeight: 1.75,
+              color: "var(--hv-t3)", lineHeight: 1.75,
               padding: "12px 16px",
-              border: "1px solid rgba(255,255,255,0.06)",
-              background: "rgba(255,255,255,0.015)",
+              border: "1px solid var(--hv-border)",
+              background: "var(--hv-bg2)",
               marginBottom: "10px",
             }}>
               &quot;{entry.visual_description}&quot;
@@ -134,32 +136,32 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
         </div>
       )}
 
-      {/* Phase 2 — Cross-examination */}
+      {/* Phase 2 Cross-examination */}
       {hasPhase2 && (
-        <div style={{ marginBottom: "16px", paddingBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+        <div style={{ marginBottom: "16px", paddingBottom: "16px", borderBottom: "1px solid var(--hv-border)" }}>
           <p style={{
             fontFamily: S, fontSize: "9px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em",
+            color: "var(--hv-t4)", letterSpacing: "0.15em",
             textTransform: "uppercase", marginBottom: "10px",
-          }}>Phase II — Claim Cross-Examination</p>
+          }}>Phase II Claim Cross-Examination</p>
 
           <div style={{ display: "flex", gap: "24px", alignItems: "flex-start", flexWrap: "wrap" as const }}>
             <div>
-              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginBottom: "4px" }}>
+              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)", marginBottom: "4px" }}>
                 Verdict
               </p>
               <p style={{
                 fontFamily: S, fontSize: "13px",
-                color: `rgba(255,255,255,${verdictOpacity})`,
+                color: verdictOpacity >= 0.7 ? "var(--hv-text)" : verdictOpacity >= 0.4 ? "var(--hv-t2)" : "var(--hv-t4)",
               }}>
                 {verdict.charAt(0).toUpperCase() + verdict.slice(1)}
               </p>
             </div>
             <div>
-              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginBottom: "4px" }}>
+              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)", marginBottom: "4px" }}>
                 Claim Accuracy
               </p>
-              <p style={{ fontFamily: M, fontSize: "14px", color: `rgba(255,255,255,${accPct >= 70 ? 0.8 : accPct >= 40 ? 0.5 : 0.3})` }}>
+              <p style={{ fontFamily: M, fontSize: "14px", color: accPct >= 70 ? "var(--hv-t2)" : accPct >= 40 ? "var(--hv-t3)" : "var(--hv-t4)" }}>
                 {accPct}%
               </p>
             </div>
@@ -168,7 +170,7 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
           {entry.llm_reason && (
             <p style={{
               fontFamily: S, fontStyle: "italic", fontSize: "11px",
-              color: "rgba(255,255,255,0.35)", lineHeight: 1.7, marginTop: "10px",
+              color: "var(--hv-t4)", lineHeight: 1.7, marginTop: "10px",
             }}>
               {entry.llm_reason}
             </p>
@@ -179,36 +181,36 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
               {entry.discrepancies.map((d, i) => (
                 <p key={i} style={{
                   fontFamily: S, fontStyle: "italic", fontSize: "10px",
-                  color: "rgba(255,255,255,0.3)", lineHeight: 1.6,
-                }}>— {d}</p>
+                  color: "var(--hv-t4)", lineHeight: 1.6,
+                }}>{d}</p>
               ))}
             </div>
           )}
         </div>
       )}
 
-      {/* Phase 3 — Integrity score */}
+      {/* Phase 3 Integrity score */}
       {hasPhase3 && (
         <div>
           <p style={{
             fontFamily: S, fontSize: "9px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em",
+            color: "var(--hv-t4)", letterSpacing: "0.15em",
             textTransform: "uppercase", marginBottom: "10px",
-          }}>Phase III — Integrity Synthesis</p>
+          }}>Phase III Integrity Synthesis</p>
 
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <p style={{
               fontFamily: M, fontSize: "24px",
-              color: `rgba(255,255,255,${integ >= 0.7 ? 0.9 : integ >= 0.4 ? 0.55 : 0.3})`,
+              color: integ >= 0.7 ? "var(--hv-text)" : integ >= 0.4 ? "var(--hv-t2)" : "var(--hv-t4)",
             }}>{(integ * 100).toFixed(0)}</p>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)", position: "relative" }}>
+            <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)", position: "relative" }}>
               <div style={{
                 position: "absolute", left: 0, top: 0, bottom: 0,
-                width: `${integ * 100}%`, background: "#fff",
+                width: `${integ * 100}%`, background: "var(--hv-action-bg)",
                 transition: "width 0.8s ease",
               }} />
             </div>
-            <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>
+            <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)" }}>
               / 100
             </p>
           </div>
@@ -222,7 +224,7 @@ function CrossExamPanel({ entry }: { entry: StreamEntry }) {
 function VotePanel({
   entry, address, reputationScore, onVoted,
 }: { entry: StreamEntry; address: string; reputationScore: number; onVoted: () => void }) {
-  const { writeContractAsync } = useWriteContract();
+  const { signer } = useSigner();
   const publicClient = usePublicClient();
   const [voting, setVoting] = useState(false);
   const [claiming, setClaiming] = useState(false);
@@ -248,23 +250,21 @@ function VotePanel({
       if (!res.ok) { const d = await res.json(); setMsg(typeof d.detail === "string" ? d.detail : "Payload not ready, try again."); return; }
       const real = await res.json();
       const ca = real.contract_args;
-      const hash = await writeContractAsync({
-        address: CONTRACTS.BENEVOLENCE_VAULT as `0x${string}`,
-        abi: BENEVOLENCE_VAULT_ABI, functionName: "releaseReward",
-        args: [
-          pad(`0x${real.event_id.replace(/-/g, "")}` as `0x${string}`, { size: 32 }),
-          address as `0x${string}`,
-          (ca.beneficiaryAddress ?? address) as `0x${string}`,
-          BigInt(ca.impactScoreScaled), BigInt(ca.tokenRewardWei),
-          pad(`0x${real.zk_proof_hash.replace("0x", "")}` as `0x${string}`, { size: 32 }),
-          pad(`0x${real.event_hash.replace("0x", "")}` as `0x${string}`, { size: 32 }),
-          real.nonce, BigInt(real.expires_at),
-          Number(real.signature.v), real.signature.r as `0x${string}`, real.signature.s as `0x${string}`,
-        ],
-        gas: 800000n,
-      });
-      if (publicClient) await publicClient.waitForTransactionReceipt({ hash });
-      setClaimTx(hash); setMsg("Reward successfully claimed"); onVoted();
+      if (!signer) throw new Error("No signer available");
+      const contract = new ethers.Contract(CONTRACTS.BENEVOLENCE_VAULT, BENEVOLENCE_VAULT_ABI, signer);
+      const tx = await contract.releaseReward(
+        pad(`0x${real.event_id.replace(/-/g, "")}` as `0x${string}`, { size: 32 }),
+        address as `0x${string}`,
+        (ca.beneficiaryAddress ?? address) as `0x${string}`,
+        BigInt(ca.impactScoreScaled), BigInt(ca.tokenRewardWei),
+        pad(`0x${real.zk_proof_hash.replace("0x", "")}` as `0x${string}`, { size: 32 }),
+        pad(`0x${real.event_hash.replace("0x", "")}` as `0x${string}`, { size: 32 }),
+        real.nonce, BigInt(real.expires_at),
+        Number(real.signature.v), real.signature.r as `0x${string}`, real.signature.s as `0x${string}`,
+        { gasLimit: 800000n }
+      );
+      if (publicClient) await publicClient.waitForTransactionReceipt({ hash: tx.hash as `0x${string}` });
+      setClaimTx(tx.hash); setMsg("Reward successfully claimed"); onVoted();
     } catch (e: any) { setMsg(e.message?.slice(0, 120) || "Claim failed"); }
     finally { setClaiming(false); }
   };
@@ -295,34 +295,34 @@ function VotePanel({
       <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
         style={{
           padding: "16px",
-          border: `1px solid rgba(255,255,255,${approved ? 0.15 : 0.06})`,
-          borderTop: `2px solid rgba(255,255,255,${approved ? 0.4 : 0.1})`,
-          background: "rgba(255,255,255,0.01)",
+          border: approved ? "1px solid var(--hv-border3)" : "1px solid var(--hv-border)",
+          borderTop: approved ? "2px solid var(--hv-border-str)" : "2px solid var(--hv-border2)",
+          background: "var(--hv-bg2)",
         }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
           <p style={{
             fontFamily: S, fontSize: "13px",
-            color: `rgba(255,255,255,${approved ? 0.85 : 0.4})`,
+            color: approved ? "var(--hv-t2)" : "var(--hv-t3)",
           }}>
             Community {vi.outcome.charAt(0).toUpperCase() + vi.outcome.slice(1)}
           </p>
-          <p style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.25)" }}>
+          <p style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t4)" }}>
             {vi.approve} / {vi.reject}
           </p>
         </div>
 
         {approved && isOwner && (
           isProcessed || claimTx ? (
-            <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "rgba(255,255,255,0.4)", textAlign: "center" }}>
+            <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "var(--hv-t4)", textAlign: "center" }}>
               Reward claimed
             </p>
           ) : msg ? (
-            <p style={{ fontFamily: S, fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{msg}</p>
+            <p style={{ fontFamily: S, fontSize: "12px", color: "var(--hv-t3)" }}>{msg}</p>
           ) : (
             <button onClick={handleClaim} disabled={claiming} style={{
               width: "100%", padding: "12px",
-              background: claiming ? "rgba(255,255,255,0.04)" : "#fff",
-              border: "none", color: claiming ? "rgba(255,255,255,0.2)" : "#000",
+              background: claiming ? "var(--hv-surf)" : "var(--hv-action-bg)",
+              border: "none", color: claiming ? "var(--hv-t4)" : "var(--hv-action-text)",
               fontFamily: S, fontSize: "11px", letterSpacing: "0.18em", textTransform: "uppercase",
               cursor: claiming ? "not-allowed" : "pointer",
             }}>
@@ -331,7 +331,7 @@ function VotePanel({
           )
         )}
         {claimTx && (
-          <p style={{ fontFamily: M, fontSize: "9px", color: "rgba(255,255,255,0.3)", marginTop: "8px" }}>
+          <p style={{ fontFamily: M, fontSize: "9px", color: "var(--hv-t4)", marginTop: "8px" }}>
             Tx: {claimTx.slice(0, 20)}…
           </p>
         )}
@@ -348,14 +348,14 @@ function VotePanel({
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
       style={{
         padding: "16px",
-        border: "1px solid rgba(255,255,255,0.1)",
-        background: "rgba(255,255,255,0.015)",
+        border: "1px solid var(--hv-border2)",
+        background: "var(--hv-bg2)",
       }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>
+        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "var(--hv-t3)" }}>
           Pending Community Review
         </p>
-        <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.15em", color: "rgba(255,255,255,0.3)" }}>
+        <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.15em", color: "var(--hv-t4)" }}>
           {phaseLabel}
         </span>
       </div>
@@ -363,17 +363,17 @@ function VotePanel({
       {/* Vote progress bar */}
       {vi.total > 0 && (
         <div style={{ marginBottom: "12px" }}>
-          <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", position: "relative" }}>
+          <div style={{ height: "1px", background: "var(--hv-surf2)", position: "relative" }}>
             <div style={{
               position: "absolute", left: 0, top: 0, bottom: 0,
-              width: `${approveP}%`, background: "rgba(255,255,255,0.6)", transition: "width 0.5s",
+              width: `${approveP}%`, background: "var(--hv-surf2)", transition: "width 0.5s",
             }} />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
-            <span style={{ fontFamily: M, fontSize: "9px", color: "rgba(255,255,255,0.3)" }}>
+            <span style={{ fontFamily: M, fontSize: "9px", color: "var(--hv-t4)" }}>
               {vi.approve} approve
             </span>
-            <span style={{ fontFamily: M, fontSize: "9px", color: "rgba(255,255,255,0.3)" }}>
+            <span style={{ fontFamily: M, fontSize: "9px", color: "var(--hv-t4)" }}>
               {vi.reject} reject
             </span>
           </div>
@@ -381,13 +381,13 @@ function VotePanel({
       )}
 
       {msg ? (
-        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "rgba(255,255,255,0.55)" }}>{msg}</p>
+        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "var(--hv-t3)" }}>{msg}</p>
       ) : isOwner ? (
-        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.25)", textAlign: "center" }}>
+        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "var(--hv-t4)", textAlign: "center" }}>
           Awaiting community deliberation…
         </p>
       ) : hasVoted ? (
-        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.4)", textAlign: "center" }}>
+        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "var(--hv-t4)", textAlign: "center" }}>
           Your vote has been recorded.
         </p>
       ) : canVote ? (
@@ -399,14 +399,14 @@ function VotePanel({
             <button key={b.vote} onClick={() => handleVote(b.vote)} disabled={voting} style={{
               flex: 1, padding: "10px",
               background: "transparent",
-              border: `1px solid rgba(255,255,255,${b.borderOp})`,
-              color: `rgba(255,255,255,${voting ? 0.2 : 0.6})`,
+              border: "1px solid var(--hv-border2)",
+              color: voting ? "var(--hv-t4)" : "var(--hv-t2)",
               fontFamily: S, fontStyle: "italic", fontSize: "11px",
               letterSpacing: "0.08em",
               cursor: voting ? "not-allowed" : "pointer",
               transition: "all 0.12s",
             }}
-              onMouseEnter={e => { if (!voting) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)"; }}
+              onMouseEnter={e => { if (!voting) (e.currentTarget as HTMLButtonElement).style.background = "var(--hv-surf)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
             >
               {voting ? "…" : b.label}
@@ -414,9 +414,9 @@ function VotePanel({
           ))}
         </div>
       ) : (
-        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.25)" }}>
+        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)" }}>
           {isChampionAudit
-            ? "Restricted — Champion designation required (score ≥ 500)."
+            ? "Restricted Champion designation required (score ≥ 500)."
             : `Champion-only phase. Opens to all voters in ${Math.ceil(vi.phase2_in / 60)} minutes.`}
         </p>
       )}
@@ -437,9 +437,9 @@ function StreamCard({
 
   return (
     <motion.div layout style={{
-      border: `1px solid rgba(255,255,255,${flagged ? 0.12 : 0.06})`,
-      borderTop: `2px solid rgba(255,255,255,${flagged ? 0.3 : 0.08})`,
-      background: flagged ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.008)",
+      border: flagged ? "1px solid var(--hv-border2)" : "1px solid var(--hv-border)",
+      borderTop: flagged ? "2px solid var(--hv-border3)" : "2px solid var(--hv-border)",
+      background: flagged ? "var(--hv-t5)" : "var(--hv-t5)",
     }}>
       <div style={{ padding: "20px" }}>
 
@@ -454,7 +454,7 @@ function StreamCard({
               <Tag opacity={0.35}>{entry.integrity_warnings!.length} flag{entry.integrity_warnings!.length > 1 ? "s" : ""}</Tag>
             )}
           </div>
-          <span style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.2)", flexShrink: 0 }}>
+          <span style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t4)", flexShrink: 0 }}>
             {timeAgo(entry.submitted_at)}
           </span>
         </div>
@@ -477,7 +477,7 @@ function StreamCard({
                   style={{
                     width: "72px", height: "72px", objectFit: "cover",
                     display: "block",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    border: "1px solid var(--hv-border)",
                     transition: "opacity 0.2s",
                   }}
                   onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.opacity = "0.75"; }}
@@ -506,14 +506,14 @@ function StreamCard({
                       onClick={e => e.stopPropagation()}
                       style={{
                         maxWidth: "100%", maxHeight: "88vh", objectFit: "contain",
-                        border: "1px solid rgba(255,255,255,0.12)",
+                        border: "1px solid var(--hv-border2)",
                       }}
                     />
                     <button onClick={() => setExpanded(false)} style={{
                       position: "absolute", top: "24px", right: "24px",
                       width: "36px", height: "36px",
-                      background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
-                      color: "rgba(255,255,255,0.7)", fontSize: "14px",
+                      background: "var(--hv-surf2)", border: "1px solid var(--hv-border2)",
+                      color: "var(--hv-t2)", fontSize: "14px",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       cursor: "pointer",
                     }}>✕</button>
@@ -524,22 +524,22 @@ function StreamCard({
           ) : (
             <div style={{
               width: "72px", height: "72px", flexShrink: 0,
-              border: "1px solid rgba(255,255,255,0.06)",
-              background: "rgba(255,255,255,0.01)",
+              border: "1px solid var(--hv-border)",
+              background: "var(--hv-bg2)",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <div style={{ width: "20px", height: "20px", background: "rgba(255,255,255,0.04)" }} />
+              <div style={{ width: "20px", height: "20px", background: "var(--hv-surf)" }} />
             </div>
           )}
 
           {/* Text content */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.2)", marginBottom: "6px" }}>
+            <p style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t4)", marginBottom: "6px" }}>
               {entry.volunteer_address.slice(0, 10)}…{entry.volunteer_address.slice(-8)}
             </p>
             <p style={{
               fontFamily: S, fontSize: "13px",
-              color: "rgba(255,255,255,0.65)", lineHeight: 1.7, marginBottom: "10px",
+              color: "var(--hv-t2)", lineHeight: 1.7, marginBottom: "10px",
             }}>
               {(entry.description?.length ?? 0) > 140
                 ? entry.description.slice(0, 140) + "…"
@@ -548,13 +548,13 @@ function StreamCard({
             {/* Event ID */}
             <div style={{
               padding: "5px 10px",
-              border: "1px dashed rgba(255,255,255,0.06)",
+              border: "1px dashed var(--hv-border)",
               display: "flex", justifyContent: "space-between", gap: "8px",
             }}>
-              <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "9px", color: "rgba(255,255,255,0.2)" }}>
+              <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "9px", color: "var(--hv-t4)" }}>
                 Event ID
               </span>
-              <span style={{ fontFamily: M, fontSize: "9px", color: "rgba(255,255,255,0.3)", userSelect: "all", cursor: "copy" }}>
+              <span style={{ fontFamily: M, fontSize: "9px", color: "var(--hv-t4)", userSelect: "all", cursor: "copy" }}>
                 {entry.event_id}
               </span>
             </div>
@@ -564,7 +564,7 @@ function StreamCard({
         {/* Stats row */}
         <div style={{
           display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
+          borderTop: "1px solid var(--hv-border)",
           paddingTop: "16px", gap: "8px",
           marginBottom: "14px",
         }}>
@@ -575,11 +575,11 @@ function StreamCard({
             { label: "People", value: entry.people_helped?.toString() ?? "—", suffix: "" },
           ].map(s => (
             <div key={s.label}>
-              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "9px", color: "rgba(255,255,255,0.25)", marginBottom: "4px", letterSpacing: "0.1em" }}>
+              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "9px", color: "var(--hv-t4)", marginBottom: "4px", letterSpacing: "0.1em" }}>
                 {s.label}
               </p>
-              <p style={{ fontFamily: M, fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>
-                {s.value}<span style={{ fontSize: "9px", color: "rgba(255,255,255,0.3)" }}>{s.suffix}</span>
+              <p style={{ fontFamily: M, fontSize: "13px", color: "var(--hv-t2)" }}>
+                {s.value}<span style={{ fontSize: "9px", color: "var(--hv-t4)" }}>{s.suffix}</span>
               </p>
             </div>
           ))}
@@ -589,13 +589,13 @@ function StreamCard({
         <button onClick={() => setShowExam(e => !e)} style={{
           background: "transparent", border: "none", cursor: "pointer",
           fontFamily: S, fontStyle: "italic", fontSize: "11px",
-          color: "rgba(255,255,255,0.35)", letterSpacing: "0.06em",
+          color: "var(--hv-t4)", letterSpacing: "0.06em",
           padding: "0 0 4px",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          borderBottom: "1px solid var(--hv-border)",
           transition: "color 0.12s",
         }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.65)"; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.35)"; }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--hv-t2)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "var(--hv-t3)"; }}
         >
           {showExam ? "Conceal" : "Reveal"} AI analysis
         </button>
@@ -657,27 +657,27 @@ export default function CommunityStream({ address, reputationScore }: { address:
         <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
           }}>§ Community Record</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <div style={{
               width: "5px", height: "5px", borderRadius: "50%",
-              background: "rgba(255,255,255,0.5)",
+              background: "var(--hv-surf2)",
               animation: "csFeed 2.6s ease-in-out infinite",
             }} />
-            <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.3)" }}>LIVE</span>
+            <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.18em", color: "var(--hv-t4)" }}>LIVE</span>
           </div>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h2 style={{ fontFamily: S, fontWeight: 400, fontSize: "30px", color: "#fff", marginBottom: "6px" }}>
+            <h2 style={{ fontFamily: S, fontWeight: 400, fontSize: "30px", color: "var(--hv-text)", marginBottom: "6px" }}>
               {entries.length.toLocaleString()}
-              <span style={{ fontSize: "18px", color: "rgba(255,255,255,0.3)", fontStyle: "italic" }}> submissions on record</span>
+              <span style={{ fontSize: "18px", color: "var(--hv-t4)", fontStyle: "italic" }}> submissions on record</span>
             </h2>
             {reviewCount > 0 && (
-              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>
+              <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "13px", color: "var(--hv-t4)" }}>
                 {reviewCount} pending community review
               </p>
             )}
@@ -694,13 +694,13 @@ export default function CommunityStream({ address, reputationScore }: { address:
                 style={{
                   padding: "8px 16px",
                   background: filter === f.key ? "#fff" : "transparent",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: filter === f.key ? "#000" : "rgba(255,255,255,0.45)",
+                  border: "1px solid var(--hv-border2)",
+                  color: filter === f.key ? "var(--hv-action-text)" : "var(--hv-t3)",
                   fontFamily: S, fontStyle: "italic", fontSize: "11px",
                   letterSpacing: "0.08em", cursor: "pointer",
                   transition: "all 0.12s",
                 }}
-                onMouseEnter={e => { if (filter !== f.key) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)"; }}
+                onMouseEnter={e => { if (filter !== f.key) (e.currentTarget as HTMLButtonElement).style.background = "var(--hv-surf)"; }}
                 onMouseLeave={e => { if (filter !== f.key) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
               >
                 {f.label}
@@ -713,19 +713,19 @@ export default function CommunityStream({ address, reputationScore }: { address:
       {/* Feed */}
       {loading ? (
         <div style={{ padding: "80px 0", textAlign: "center" }}>
-          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "rgba(255,255,255,0.25)" }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "var(--hv-t4)" }}>
             Retrieving community submissions…
           </p>
         </div>
       ) : visible.length === 0 ? (
         <div style={{
           padding: "64px 40px", textAlign: "center",
-          border: "1px solid rgba(255,255,255,0.06)",
+          border: "1px solid var(--hv-border)",
         }}>
-          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "16px", color: "rgba(255,255,255,0.25)", marginBottom: "8px" }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "16px", color: "var(--hv-t4)", marginBottom: "8px" }}>
             {filter === "review" ? "No submissions pending review." : "The record is empty."}
           </p>
-          <p style={{ fontFamily: S, fontSize: "12px", color: "rgba(255,255,255,0.15)" }}>
+          <p style={{ fontFamily: S, fontSize: "12px", color: "var(--hv-t5)" }}>
             Submit your first impact proof to initialise the community ledger.
           </p>
         </div>

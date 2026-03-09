@@ -45,30 +45,30 @@ class ErrorBoundary extends Component<Props, State> {
       }}>
         <div style={{
           maxWidth: "520px", width: "100%",
-          border: "1px solid rgba(255,255,255,0.12)",
-          borderTop: "2px solid rgba(255,255,255,0.4)",
-          background: "rgba(255,255,255,0.02)",
+          border: "1px solid var(--hv-border2)",
+          borderTop: "2px solid var(--hv-border-str)",
+          background: "var(--hv-bg2)",
           padding: "32px",
         }}>
           {/* Header */}
           <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "24px" }}>
             <span style={{
               fontFamily: S, fontSize: "10px", fontStyle: "italic",
-              color: "rgba(255,255,255,0.3)", letterSpacing: "0.2em", textTransform: "uppercase",
+              color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
             }}>System Notice</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+            <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
           </div>
 
           <h3 style={{
             fontFamily: S, fontWeight: 400, fontSize: "20px",
-            color: "rgba(255,255,255,0.85)", marginBottom: "10px",
+            color: "var(--hv-t2)", marginBottom: "10px",
           }}>
-            {context} — Render Error
+            {context} Render Error
           </h3>
 
           <p style={{
             fontFamily: S, fontStyle: "italic", fontSize: "13px",
-            color: "rgba(255,255,255,0.4)", lineHeight: 1.7, marginBottom: "20px",
+            color: "var(--hv-t4)", lineHeight: 1.7, marginBottom: "20px",
           }}>
             An unexpected error occurred within this component. This is likely a
             transient issue. You may attempt to recover or reload the page.
@@ -77,14 +77,14 @@ class ErrorBoundary extends Component<Props, State> {
           {/* Error trace */}
           <div style={{
             padding: "16px",
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.07)",
+            background: "var(--hv-bg2)",
+            border: "1px solid var(--hv-border)",
             marginBottom: "24px",
             overflowX: "auto",
           }}>
             <p style={{
               fontFamily: M, fontSize: "11px",
-              color: "rgba(255,255,255,0.4)", wordBreak: "break-word",
+              color: "var(--hv-t4)", wordBreak: "break-word",
               lineHeight: 1.6,
             }}>{message}</p>
           </div>
@@ -93,7 +93,7 @@ class ErrorBoundary extends Component<Props, State> {
           <div style={{ display: "flex", gap: "12px" }}>
             <button onClick={this.handleRetry} style={{
               flex: 1, padding: "12px",
-              background: "#fff", border: "none", color: "#000",
+              background: "var(--hv-action-bg)", border: "none", color: "var(--hv-action-text)",
               fontFamily: S, fontSize: "11px", letterSpacing: "0.15em",
               textTransform: "uppercase", cursor: "pointer",
               transition: "opacity 0.15s",
@@ -106,13 +106,13 @@ class ErrorBoundary extends Component<Props, State> {
             <button onClick={() => window.location.reload()} style={{
               flex: 1, padding: "12px",
               background: "transparent",
-              border: "1px solid rgba(255,255,255,0.12)",
-              color: "rgba(255,255,255,0.5)",
+              border: "1px solid var(--hv-border2)",
+              color: "var(--hv-t3)",
               fontFamily: S, fontSize: "11px", letterSpacing: "0.15em",
               textTransform: "uppercase", cursor: "pointer",
               transition: "all 0.15s",
             }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "var(--hv-surf)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
             >
               Reload Page

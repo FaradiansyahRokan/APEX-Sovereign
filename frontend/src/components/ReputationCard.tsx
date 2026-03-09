@@ -10,7 +10,7 @@ const S = "Georgia, 'Times New Roman', serif";
 const M = "'JetBrains Mono', monospace";
 
 const ruled: React.CSSProperties = {
-  borderTop: "1px solid rgba(255,255,255,0.08)",
+  borderTop: "1px solid var(--hv-border)",
   paddingTop: "20px",
   paddingBottom: "20px",
 };
@@ -23,11 +23,11 @@ function FieldRow({ label, value }: { label: string; value: string }) {
     }}>
       <span style={{
         fontFamily: S, fontSize: "11px", fontStyle: "italic",
-        color: "rgba(255,255,255,0.35)",
+        color: "var(--hv-t4)",
       }}>{label}</span>
       <span style={{
         fontFamily: M, fontSize: "13px",
-        color: "rgba(255,255,255,0.8)",
+        color: "var(--hv-t2)",
         letterSpacing: "0.03em",
       }}>{value}</span>
     </div>
@@ -80,12 +80,12 @@ export default function ReputationCard({ address, reputationScore }: Props) {
 
       {/* ── Hero card ── */}
       <div style={{
-        background: "rgba(255,255,255,0.025)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "var(--hv-surf)",
+        border: "1px solid var(--hv-border)",
         position: "relative", overflow: "hidden",
       }}>
         {/* Heavy top rule */}
-        <div style={{ height: "2px", background: "#fff" }} />
+        <div style={{ height: "2px", background: "var(--hv-action-bg)" }} />
 
         <div style={{ padding: "32px 28px" }}>
 
@@ -93,39 +93,39 @@ export default function ReputationCard({ address, reputationScore }: Props) {
           <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "28px" }}>
             <span style={{
               fontFamily: S, fontSize: "9px", fontStyle: "italic",
-              color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em",
+              color: "var(--hv-t4)", letterSpacing: "0.2em",
               textTransform: "uppercase",
             }}>Reputation Profile</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.07)" }} />
+            <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
           </div>
 
-          {/* Score — large display */}
+          {/* Score large display */}
           <div style={{ marginBottom: "28px" }}>
             <p style={{
               fontFamily: S, fontSize: "9px", letterSpacing: "0.2em",
-              color: "rgba(255,255,255,0.3)", textTransform: "uppercase",
+              color: "var(--hv-t4)", textTransform: "uppercase",
               marginBottom: "8px",
             }}>Impact Score</p>
             <p style={{
               fontFamily: M, fontSize: "56px", fontWeight: 400,
-              color: "#fff", letterSpacing: "-0.04em", lineHeight: 1,
+              color: "var(--hv-text)", letterSpacing: "-0.04em", lineHeight: 1,
             }}>{score.toLocaleString("en-US", { maximumFractionDigits: 0 })}</p>
             <p style={{
               fontFamily: S, fontSize: "12px", fontStyle: "italic",
-              color: "rgba(255,255,255,0.4)", marginTop: "6px",
-            }}>Designation: <em style={{ color: "rgba(255,255,255,0.75)" }}>{rank.rank}</em></p>
+              color: "var(--hv-t4)", marginTop: "6px",
+            }}>Designation: <em style={{ color: "var(--hv-t2)" }}>{rank.rank}</em></p>
           </div>
 
           {/* Address */}
           <div style={{ ...ruled }}>
             <p style={{
               fontFamily: S, fontSize: "9px", letterSpacing: "0.2em",
-              color: "rgba(255,255,255,0.25)", textTransform: "uppercase",
+              color: "var(--hv-t4)", textTransform: "uppercase",
               marginBottom: "6px",
             }}>Wallet Address</p>
             <p style={{
               fontFamily: M, fontSize: "11px",
-              color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em",
+              color: "var(--hv-t3)", letterSpacing: "0.04em",
               wordBreak: "break-all",
             }}>{address}</p>
           </div>
@@ -141,27 +141,27 @@ export default function ReputationCard({ address, reputationScore }: Props) {
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
               <span style={{
                 fontFamily: S, fontSize: "11px", fontStyle: "italic",
-                color: "rgba(255,255,255,0.35)",
+                color: "var(--hv-t4)",
               }}>
                 {next ? `Progress to ${next.rank}` : "Maximum Designation"}
               </span>
               <span style={{
                 fontFamily: M, fontSize: "11px",
-                color: "rgba(255,255,255,0.5)",
+                color: "var(--hv-t3)",
               }}>{pct.toFixed(1)}%</span>
             </div>
-            {/* Progress bar — ruled style */}
-            <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", position: "relative" }}>
+            {/* Progress bar ruled style */}
+            <div style={{ height: "1px", background: "var(--hv-surf2)", position: "relative" }}>
               <div style={{
                 position: "absolute", left: 0, top: 0, bottom: 0,
-                width: `${pct}%`, background: "#fff",
+                width: `${pct}%`, background: "var(--hv-action-bg)",
                 transition: "width 1s cubic-bezier(0.4,0,0.2,1)",
               }} />
             </div>
             {next && (
               <p style={{
                 fontFamily: S, fontSize: "10px", fontStyle: "italic",
-                color: "rgba(255,255,255,0.25)", marginTop: "6px",
+                color: "var(--hv-t4)", marginTop: "6px",
               }}>
                 {(next.threshold - score).toLocaleString()} points remaining
               </p>
@@ -173,17 +173,17 @@ export default function ReputationCard({ address, reputationScore }: Props) {
       {/* ── Recent Activity ── */}
       {recent.length > 0 && (
         <div style={{
-          background: "rgba(255,255,255,0.015)",
-          border: "1px solid rgba(255,255,255,0.06)",
+          background: "var(--hv-bg2)",
+          border: "1px solid var(--hv-border)",
           borderTop: "none",
         }}>
           <div style={{ padding: "24px 28px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
               <span style={{
                 fontFamily: S, fontSize: "9px", fontStyle: "italic",
-                color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+                color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
               }}>Activity Log</span>
-              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
+              <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
             </div>
 
             {recent.map((e: any, i: number) => {
@@ -196,13 +196,13 @@ export default function ReputationCard({ address, reputationScore }: Props) {
                 <div key={i} style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center",
                   paddingTop: "12px", paddingBottom: "12px",
-                  borderTop: i > 0 ? "1px solid rgba(255,255,255,0.04)" : undefined,
+                  borderTop: i > 0 ? "1px solid var(--hv-border)" : undefined,
                   opacity: 1 - i * 0.12,
                 }}>
-                  <span style={{ fontFamily: S, fontSize: "12px", fontStyle: "italic", color: "rgba(255,255,255,0.4)" }}>
+                  <span style={{ fontFamily: S, fontSize: "12px", fontStyle: "italic", color: "var(--hv-t4)" }}>
                     {d}
                   </span>
-                  <span style={{ fontFamily: M, fontSize: "13px", color: "rgba(255,255,255,0.75)" }}>
+                  <span style={{ fontFamily: M, fontSize: "13px", color: "var(--hv-t2)" }}>
                     +{(pts / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} pts
                   </span>
                 </div>
@@ -211,7 +211,7 @@ export default function ReputationCard({ address, reputationScore }: Props) {
 
             <p style={{
               fontFamily: S, fontSize: "10px", fontStyle: "italic",
-              color: "rgba(255,255,255,0.2)", marginTop: "16px",
+              color: "var(--hv-t4)", marginTop: "16px",
               textAlign: "right",
             }}>
               {history.length} total events on-chain
@@ -224,15 +224,15 @@ export default function ReputationCard({ address, reputationScore }: Props) {
       {events === 0 && (
         <div style={{
           padding: "48px 28px", textAlign: "center",
-          border: "1px solid rgba(255,255,255,0.05)",
+          border: "1px solid var(--hv-border)",
           borderTop: "none",
-          background: "rgba(255,255,255,0.01)",
+          background: "var(--hv-bg2)",
         }}>
           <p style={{
             fontFamily: S, fontSize: "15px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", marginBottom: "8px",
+            color: "var(--hv-t4)", marginBottom: "8px",
           }}>No activity on record.</p>
-          <p style={{ fontFamily: S, fontSize: "11px", color: "rgba(255,255,255,0.15)" }}>
+          <p style={{ fontFamily: S, fontSize: "11px", color: "var(--hv-t5)" }}>
             Submit your first impact proof to initialise your reputation ledger.
           </p>
         </div>

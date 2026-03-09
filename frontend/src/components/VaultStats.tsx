@@ -55,22 +55,22 @@ export default function VaultStats() {
   return (
     <div style={{ position: "relative" }}>
       {/* Heavy top rule */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "#fff" }} />
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "var(--hv-action-bg)" }} />
 
       <div className="vs-grid" style={{
         display: "grid",
         gridTemplateColumns: "repeat(4, 1fr)",
-        borderLeft: "1px solid rgba(255,255,255,0.08)",
+        borderLeft: "1px solid var(--hv-border)",
       }}>
         {stats.map((s, i) => {
           const meta = STATS_META[i];
           return (
             <div key={s.label} style={{
               padding: "36px 32px 32px",
-              borderRight: "1px solid rgba(255,255,255,0.08)",
+              borderRight: "1px solid var(--hv-border)",
               position: "relative",
             }}
-              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.015)"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = "var(--hv-bg2)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
             >
               {/* Roman numeral tag */}
@@ -80,26 +80,26 @@ export default function VaultStats() {
               }}>
                 <span style={{
                   fontFamily: S, fontSize: "10px", fontStyle: "italic",
-                  color: "rgba(255,255,255,0.2)", letterSpacing: "0.05em",
+                  color: "var(--hv-t4)", letterSpacing: "0.05em",
                 }}>{meta.roman}</span>
-                <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
+                <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
                 <span style={{
                   fontFamily: M, fontSize: "8px",
-                  color: "rgba(255,255,255,0.2)", letterSpacing: "0.2em",
+                  color: "var(--hv-t4)", letterSpacing: "0.2em",
                 }}>{meta.abbr}</span>
               </div>
 
               {/* Label */}
               <p style={{
                 fontFamily: S, fontSize: "10px", fontStyle: "italic",
-                color: "rgba(255,255,255,0.35)", letterSpacing: "0.06em",
+                color: "var(--hv-t4)", letterSpacing: "0.06em",
                 marginBottom: "10px",
               }}>{s.label}</p>
 
               {/* Value */}
               <p style={{
                 fontFamily: M, fontSize: "30px", fontWeight: 400,
-                color: s.value !== null ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.12)",
+                color: s.value !== null ? "var(--hv-text)" : "var(--hv-t5)",
                 letterSpacing: "-0.03em", lineHeight: 1,
               }}>
                 {s.value !== null

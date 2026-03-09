@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useBalance, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
-import { parseEther, isAddress } from "viem";
+import { useBalance } from "wagmi";
+import { useSigner } from "@/contexts/SignerContext";
+import { ethers } from "ethers";
+import { isAddress } from "viem";
 
 interface TxRecord { to: string; amount: string; time: number; status: "ok" | "err"; }
 
@@ -12,11 +14,11 @@ const M = "'JetBrains Mono', monospace";
 const fieldStyle: React.CSSProperties = {
   width: "100%",
   padding: "14px 16px",
-  background: "rgba(255,255,255,0.02)",
-  border: "1px solid rgba(255,255,255,0.1)",
+  background: "var(--hv-bg2)",
+  border: "1px solid var(--hv-border2)",
   borderRadius: "0",
   fontFamily: M, fontSize: "12px",
-  color: "rgba(255,255,255,0.85)",
+  color: "var(--hv-t2)",
   outline: "none",
   transition: "border-color 0.15s",
   boxSizing: "border-box" as const,
@@ -26,16 +28,21 @@ function Label({ text }: { text: string }) {
   return (
     <p style={{
       fontFamily: S, fontSize: "10px", fontStyle: "italic",
-      letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)",
+      letterSpacing: "0.1em", color: "var(--hv-t4)",
       marginBottom: "8px",
     }}>{text}</p>
   );
 }
 
 export default function P2PTransfer({ address }: { address: string }) {
+  const { signer, isReady: signerReady } = useSigner();
   const [to, setTo]       = useState("");
   const [amount, setAmount] = useState("");
   const [errMsg, setErrMsg] = useState("");
+  const [isPending, setIsPending] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [txHash, setTxHash] = useState<string | undefined>(undefined);
   const [history, setHistory] = useState<TxRecord[]>([]);
 
   const { data: nativeBal, refetch } = useBalance({
@@ -43,33 +50,40 @@ export default function P2PTransfer({ address }: { address: string }) {
     query: { refetchInterval: 6_000 },
   });
 
-  const { data: hash, sendTransaction, isPending, error: sendError } = useSendTransaction();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
+  const [sendError, setSendError] = useState<Error | null>(null);
+  const hash = txHash;
 
   const balNum = nativeBal ? Number(nativeBal.formatted) : 0;
   const balFmt = balNum.toLocaleString("en-US", { maximumFractionDigits: 4 });
   const amtNum = Number(amount) || 0;
   const validTo = to.length > 0 && isAddress(to);
   const validAmt = amtNum > 0 && amtNum < balNum;
-  const canSend = validTo && validAmt && !isPending && !isConfirming;
+  const canSend = validTo && validAmt && !isPending && !isConfirming && signerReady;
   const pct = balNum > 0 ? Math.min((amtNum / balNum) * 100, 100) : 0;
   const statusErr = errMsg || sendError?.message;
 
   const handleSend = async () => {
-    if (!canSend) return;
-    setErrMsg("");
+    if (!canSend || !signer) return;
+    setErrMsg(""); setSendError(null); setIsSuccess(false);
+    setIsPending(true);
     try {
-      sendTransaction({ to: to as `0x${string}`, value: parseEther(amount) });
+      const tx = await signer.sendTransaction({
+        to: to as `0x${string}`,
+        value: ethers.parseEther(amount),
+      });
+      setTxHash(tx.hash);
+      setIsPending(false); setIsConfirming(true);
+      await tx.wait();
+      setIsConfirming(false); setIsSuccess(true);
+      setHistory(h => [{ to, amount, time: Date.now(), status: "ok" }, ...h.slice(0, 9)]);
+      setTo(""); setAmount(""); refetch();
     } catch (e: any) {
-      setErrMsg(e.message?.slice(0, 120) || "Transfer failed");
+      setIsPending(false); setIsConfirming(false);
+      const msg = e.message?.slice(0, 120) || "Transfer failed";
+      setErrMsg(msg); setSendError(e);
       setHistory(h => [{ to, amount, time: Date.now(), status: "err" }, ...h.slice(0, 9)]);
     }
   };
-
-  if (isSuccess && !history.find(h => h.status === "ok" && h.time > Date.now() - 5000)) {
-    setHistory(h => [{ to, amount, time: Date.now(), status: "ok" }, ...h.slice(0, 9)]);
-    setTo(""); setAmount(""); refetch();
-  }
 
   return (
     <div>
@@ -78,17 +92,17 @@ export default function P2PTransfer({ address }: { address: string }) {
         <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
           }}>§ Capital Transfer</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
         </div>
         <h2 style={{
           fontFamily: S, fontWeight: 400, fontSize: "30px",
-          color: "#fff", letterSpacing: "0.01em",
+          color: "var(--hv-text)", letterSpacing: "0.01em",
         }}>Peer-to-Peer Settlement</h2>
         <p style={{
           fontFamily: S, fontStyle: "italic", fontSize: "13px",
-          color: "rgba(255,255,255,0.35)", marginTop: "6px",
+          color: "var(--hv-t4)", marginTop: "6px",
         }}>Direct native token transfer on the HAVEN L1 network</p>
       </div>
 
@@ -99,39 +113,39 @@ export default function P2PTransfer({ address }: { address: string }) {
           {/* Balance display */}
           <div style={{
             padding: "28px",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderTop: "2px solid #fff",
+            border: "1px solid var(--hv-border2)",
+            borderTop: "2px solid var(--hv-rule)",
             marginBottom: "24px",
           }}>
             <p style={{
               fontFamily: S, fontSize: "10px", fontStyle: "italic",
-              color: "rgba(255,255,255,0.3)", letterSpacing: "0.12em",
+              color: "var(--hv-t4)", letterSpacing: "0.12em",
               marginBottom: "10px",
             }}>Available Balance</p>
             <p style={{
               fontFamily: M, fontSize: "40px",
-              color: "#fff", letterSpacing: "-0.03em", lineHeight: 1,
+              color: "var(--hv-text)", letterSpacing: "-0.03em", lineHeight: 1,
             }}>
               {balFmt}
               <span style={{
                 fontFamily: S, fontStyle: "italic", fontSize: "16px",
-                color: "rgba(255,255,255,0.4)", marginLeft: "10px",
+                color: "var(--hv-t4)", marginLeft: "10px",
               }}>VELD</span>
             </p>
 
             {/* Amount allocation bar */}
             {amtNum > 0 && (
               <div style={{ marginTop: "16px" }}>
-                <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", position: "relative" }}>
+                <div style={{ height: "1px", background: "var(--hv-surf2)", position: "relative" }}>
                   <div style={{
                     position: "absolute", left: 0, top: 0, bottom: 0,
-                    width: `${pct}%`, background: "#fff",
+                    width: `${pct}%`, background: "var(--hv-action-bg)",
                     transition: "width 0.3s ease",
                   }} />
                 </div>
                 <p style={{
                   fontFamily: S, fontSize: "10px", fontStyle: "italic",
-                  color: "rgba(255,255,255,0.3)", marginTop: "6px",
+                  color: "var(--hv-t4)", marginTop: "6px",
                 }}>
                   {pct.toFixed(1)}% of balance allocated
                 </p>
@@ -149,13 +163,13 @@ export default function P2PTransfer({ address }: { address: string }) {
                 placeholder="0x…"
                 style={{
                   ...fieldStyle,
-                  borderColor: to && !validTo ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)",
+                  borderColor: to && !validTo ? "var(--hv-t4)" : "var(--hv-t5)",
                 }}
-                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
-                onBlur={e => { e.target.style.borderColor = to && !validTo ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)"; }}
+                onFocus={e => { e.target.style.borderColor = "var(--hv-border-str)"; }}
+                onBlur={e => { e.target.style.borderColor = to && !validTo ? "var(--hv-t4)" : "var(--hv-t5)"; }}
               />
               {to && !validTo && (
-                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.4)", marginTop: "6px" }}>
+                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)", marginTop: "6px" }}>
                   Invalid wallet address
                 </p>
               )}
@@ -171,8 +185,8 @@ export default function P2PTransfer({ address }: { address: string }) {
                 min="0"
                 step="0.0001"
                 style={fieldStyle}
-                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
-                onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
+                onFocus={e => { e.target.style.borderColor = "var(--hv-border-str)"; }}
+                onBlur={e => { e.target.style.borderColor = "var(--hv-border3)"; }}
               />
               {/* Quick amounts */}
               <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
@@ -182,19 +196,19 @@ export default function P2PTransfer({ address }: { address: string }) {
                     style={{
                       padding: "5px 10px",
                       background: "transparent",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.45)",
+                      border: "1px solid var(--hv-border2)",
+                      color: "var(--hv-t3)",
                       fontFamily: S, fontStyle: "italic", fontSize: "10px",
                       cursor: "pointer",
                       transition: "all 0.12s",
                     }}
                     onMouseEnter={ev => {
-                      (ev.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)";
-                      (ev.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.8)";
+                      (ev.currentTarget as HTMLButtonElement).style.background = "var(--hv-surf2)";
+                      (ev.currentTarget as HTMLButtonElement).style.color = "var(--hv-t2)";
                     }}
                     onMouseLeave={ev => {
                       (ev.currentTarget as HTMLButtonElement).style.background = "transparent";
-                      (ev.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.45)";
+                      (ev.currentTarget as HTMLButtonElement).style.color = "var(--hv-t3)";
                     }}
                   >
                     {p}%
@@ -207,12 +221,12 @@ export default function P2PTransfer({ address }: { address: string }) {
             {statusErr && (
               <div style={{
                 padding: "12px 16px",
-                border: "1px solid rgba(255,255,255,0.15)",
-                background: "rgba(255,255,255,0.02)",
+                border: "1px solid var(--hv-border2)",
+                background: "var(--hv-bg2)",
               }}>
                 <p style={{
                   fontFamily: S, fontStyle: "italic", fontSize: "11px",
-                  color: "rgba(255,255,255,0.5)",
+                  color: "var(--hv-t3)",
                 }}>Error: {statusErr.slice(0, 100)}</p>
               </div>
             )}
@@ -223,15 +237,15 @@ export default function P2PTransfer({ address }: { address: string }) {
               disabled={!canSend}
               style={{
                 padding: "14px 32px",
-                background: canSend ? "#fff" : "rgba(255,255,255,0.06)",
+                background: canSend ? "var(--hv-action-bg)" : "var(--hv-surf2)",
                 border: "none",
-                color: canSend ? "#000" : "rgba(255,255,255,0.2)",
+                color: canSend ? "var(--hv-action-text)" : "var(--hv-t5)",
                 fontFamily: S, fontSize: "12px", letterSpacing: "0.18em",
                 textTransform: "uppercase",
                 cursor: canSend ? "pointer" : "not-allowed",
                 transition: "all 0.15s",
               }}
-              onMouseEnter={ev => { if (canSend) (ev.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.88)"; }}
+              onMouseEnter={ev => { if (canSend) (ev.currentTarget as HTMLButtonElement).style.background = "var(--hv-surf2)"; }}
               onMouseLeave={ev => { if (canSend) (ev.currentTarget as HTMLButtonElement).style.background = "#fff"; }}
             >
               {isPending ? "Awaiting Wallet Confirmation…"
@@ -242,16 +256,16 @@ export default function P2PTransfer({ address }: { address: string }) {
             {isSuccess && (
               <div style={{
                 padding: "16px",
-                border: "1px solid rgba(255,255,255,0.2)",
-                background: "rgba(255,255,255,0.03)",
+                border: "1px solid var(--hv-border3)",
+                background: "var(--hv-surf)",
               }}>
                 <p style={{
                   fontFamily: S, fontSize: "12px",
-                  color: "rgba(255,255,255,0.75)", marginBottom: "4px",
+                  color: "var(--hv-t2)", marginBottom: "4px",
                 }}>Transaction confirmed.</p>
                 {hash && (
-                  <p style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.35)" }}>
-                    {hash.slice(0, 18)}…{hash.slice(-8)}
+                  <p style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t4)" }}>
+                    {hash?.slice(0, 18)}…{hash?.slice(-8)}
                   </p>
                 )}
               </div>
@@ -264,45 +278,45 @@ export default function P2PTransfer({ address }: { address: string }) {
           <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
             <span style={{
               fontFamily: S, fontSize: "10px", fontStyle: "italic",
-              color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase",
+              color: "var(--hv-t4)", letterSpacing: "0.15em", textTransform: "uppercase",
             }}>Transaction Log</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
+            <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
           </div>
 
           {history.length === 0 ? (
             <div style={{
               padding: "48px 24px", textAlign: "center",
-              border: "1px solid rgba(255,255,255,0.06)",
+              border: "1px solid var(--hv-border)",
             }}>
               <p style={{
                 fontFamily: S, fontStyle: "italic", fontSize: "13px",
-                color: "rgba(255,255,255,0.2)",
+                color: "var(--hv-t4)",
               }}>No transactions recorded this session.</p>
             </div>
           ) : (
-            <div style={{ border: "1px solid rgba(255,255,255,0.07)", borderTop: "2px solid rgba(255,255,255,0.2)" }}>
+            <div style={{ border: "1px solid var(--hv-border)", borderTop: "2px solid var(--hv-border3)" }}>
               {history.map((h, i) => (
                 <div key={i} style={{
                   padding: "14px 18px",
-                  borderBottom: i < history.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                  borderBottom: i < history.length - 1 ? "1px solid var(--hv-border)" : "none",
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                   gap: "16px",
                 }}>
                   <div>
-                    <p style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.45)", marginBottom: "3px" }}>
+                    <p style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t3)", marginBottom: "3px" }}>
                       {h.to.slice(0, 10)}…{h.to.slice(-6)}
                     </p>
-                    <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.25)" }}>
+                    <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)" }}>
                       {new Date(h.time).toLocaleTimeString()}
                     </p>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <p style={{ fontFamily: M, fontSize: "13px", color: "rgba(255,255,255,0.75)" }}>
+                    <p style={{ fontFamily: M, fontSize: "13px", color: "var(--hv-t2)" }}>
                       {h.amount} VELD
                     </p>
                     <p style={{
                       fontFamily: S, fontStyle: "italic", fontSize: "9px",
-                      color: h.status === "ok" ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.3)",
+                      color: h.status === "ok" ? "var(--hv-t3)" : "var(--hv-t4)",
                       marginTop: "2px",
                     }}>
                       {h.status === "ok" ? "Settled" : "Failed"}

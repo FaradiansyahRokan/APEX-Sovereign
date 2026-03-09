@@ -55,17 +55,17 @@ export default function Leaderboard() {
         <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
           }}>§ Classification</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
         </div>
         <h2 style={{
           fontFamily: S, fontWeight: 400, fontSize: "30px",
-          color: "#fff", letterSpacing: "0.01em",
+          color: "var(--hv-text)", letterSpacing: "0.01em",
         }}>Reputation Standings</h2>
         <p style={{
           fontFamily: S, fontStyle: "italic", fontSize: "13px",
-          color: "rgba(255,255,255,0.35)", marginTop: "6px",
+          color: "var(--hv-t4)", marginTop: "6px",
         }}>
           {totalN > 0 ? `${totalN.toLocaleString()} participants ranked by cumulative impact score` : "Global ranking ledger"}
         </p>
@@ -75,8 +75,8 @@ export default function Leaderboard() {
       {globalStats && (
         <div style={{
           display: "grid", gridTemplateColumns: "1fr 1fr",
-          borderTop: "2px solid #fff",
-          borderLeft: "1px solid rgba(255,255,255,0.08)",
+          borderTop: "2px solid var(--hv-rule)",
+          borderLeft: "1px solid var(--hv-border)",
           marginBottom: "40px",
         }}>
           {[
@@ -85,36 +85,36 @@ export default function Leaderboard() {
           ].map((s, i) => (
             <div key={s.label} style={{
               padding: "24px 28px",
-              borderRight: "1px solid rgba(255,255,255,0.08)",
+              borderRight: "1px solid var(--hv-border)",
             }}>
               <p style={{
                 fontFamily: S, fontSize: "10px", fontStyle: "italic",
-                color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em", marginBottom: "8px",
+                color: "var(--hv-t4)", letterSpacing: "0.1em", marginBottom: "8px",
               }}>{s.label}</p>
               <p style={{
                 fontFamily: M, fontSize: "28px",
-                color: "rgba(255,255,255,0.9)", letterSpacing: "-0.02em",
+                color: "var(--hv-text)", letterSpacing: "-0.02em",
               }}>{s.value}</p>
             </div>
           ))}
         </div>
       )}
 
-      {/* Podium — top 3 */}
+      {/* Podium top 3 */}
       {!isLoading && entries.length >= 3 && page === 0 && (
         <div style={{ marginBottom: "40px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
             <span style={{
               fontFamily: S, fontSize: "10px", fontStyle: "italic",
-              color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase",
+              color: "var(--hv-t4)", letterSpacing: "0.15em", textTransform: "uppercase",
             }}>Distinguished Standing</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
+            <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
           </div>
 
           <div style={{
             display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-            borderLeft: "1px solid rgba(255,255,255,0.06)",
+            borderTop: "1px solid var(--hv-border2)",
+            borderLeft: "1px solid var(--hv-border)",
           }}>
             {podium.map((entry, i) => {
               if (!entry) return null;
@@ -122,40 +122,40 @@ export default function Leaderboard() {
               return (
                 <div key={entry.address} style={{
                   padding: "28px 24px",
-                  borderRight: "1px solid rgba(255,255,255,0.06)",
-                  borderBottom: "1px solid rgba(255,255,255,0.06)",
-                  background: i === 0 ? "rgba(255,255,255,0.03)" : "transparent",
+                  borderRight: "1px solid var(--hv-border)",
+                  borderBottom: "1px solid var(--hv-border)",
+                  background: i === 0 ? "var(--hv-surf)" : "transparent",
                   position: "relative",
                 }}>
                   {i === 0 && (
                     <div style={{
                       position: "absolute", top: 0, left: 0, right: 0, height: "2px",
-                      background: "#fff",
+                      background: "var(--hv-action-bg)",
                     }} />
                   )}
                   <p style={{
                     fontFamily: S, fontStyle: "italic", fontSize: "11px",
-                    color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em",
+                    color: "var(--hv-t4)", letterSpacing: "0.15em",
                     marginBottom: "12px",
                   }}>Rank {ORDINALS[i]}</p>
                   <p style={{
                     fontFamily: S, fontSize: "12px",
-                    color: "rgba(255,255,255,0.5)", marginBottom: "4px",
+                    color: "var(--hv-t3)", marginBottom: "4px",
                   }}>{rep.rank}</p>
                   <p style={{
                     fontFamily: M, fontSize: "11px",
-                    color: "rgba(255,255,255,0.35)", marginBottom: "14px",
+                    color: "var(--hv-t4)", marginBottom: "14px",
                   }}>{entry.address.slice(0, 8)}…{entry.address.slice(-6)}</p>
                   <p style={{
                     fontFamily: M, fontSize: i === 0 ? "26px" : "22px",
-                    color: i === 0 ? "#fff" : "rgba(255,255,255,0.65)",
+                    color: i === 0 ? "var(--hv-text)" : "var(--hv-t2)",
                     letterSpacing: "-0.02em",
                   }}>
                     {(entry.score / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}
                   </p>
                   <p style={{
                     fontFamily: S, fontSize: "10px", fontStyle: "italic",
-                    color: "rgba(255,255,255,0.2)", marginTop: "4px",
+                    color: "var(--hv-t4)", marginTop: "4px",
                   }}>impact pts</p>
                 </div>
               );
@@ -169,7 +169,7 @@ export default function Leaderboard() {
         <div style={{ padding: "80px 0", textAlign: "center" }}>
           <p style={{
             fontFamily: S, fontStyle: "italic", fontSize: "14px",
-            color: "rgba(255,255,255,0.25)",
+            color: "var(--hv-t4)",
           }}>Retrieving ledger data…</p>
         </div>
       )}
@@ -178,13 +178,13 @@ export default function Leaderboard() {
       {!isLoading && entries.length === 0 && (
         <div style={{
           padding: "80px 40px", textAlign: "center",
-          border: "1px solid rgba(255,255,255,0.06)",
+          border: "1px solid var(--hv-border)",
         }}>
           <p style={{
             fontFamily: S, fontStyle: "italic", fontSize: "16px",
-            color: "rgba(255,255,255,0.25)", marginBottom: "8px",
+            color: "var(--hv-t4)", marginBottom: "8px",
           }}>The ledger is empty.</p>
-          <p style={{ fontFamily: S, fontSize: "12px", color: "rgba(255,255,255,0.15)" }}>
+          <p style={{ fontFamily: S, fontSize: "12px", color: "var(--hv-t5)" }}>
             Submit your first impact proof to initialise the global ranking.
           </p>
         </div>
@@ -193,20 +193,20 @@ export default function Leaderboard() {
       {/* Full table */}
       {!isLoading && entries.length > 0 && (
         <div style={{
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderTop: "2px solid rgba(255,255,255,0.3)",
+          border: "1px solid var(--hv-border)",
+          borderTop: "2px solid var(--hv-border3)",
         }}>
           {/* Table header */}
           <div style={{
             display: "grid", gridTemplateColumns: "56px 1fr 160px 120px",
             padding: "12px 24px",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
-            background: "rgba(255,255,255,0.02)",
+            borderBottom: "1px solid var(--hv-border)",
+            background: "var(--hv-bg2)",
           }}>
             {["No.", "Address", "Designation", "Score"].map((h, i) => (
               <p key={h} style={{
                 fontFamily: S, fontSize: "9px", fontStyle: "italic",
-                color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em",
+                color: "var(--hv-t4)", letterSpacing: "0.1em",
                 textAlign: i === 3 ? "right" : "left",
               }}>{h}</p>
             ))}
@@ -220,38 +220,38 @@ export default function Leaderboard() {
                 style={{
                   display: "grid", gridTemplateColumns: "56px 1fr 160px 120px",
                   padding: "14px 24px", alignItems: "center",
-                  borderBottom: i < entries.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                  background: isTop ? "rgba(255,255,255,0.015)" : "transparent",
+                  borderBottom: i < entries.length - 1 ? "1px solid var(--hv-border)" : "none",
+                  background: isTop ? "var(--hv-surf)" : "transparent",
                   transition: "background 0.12s",
                   cursor: "default",
                 }}
-                onMouseEnter={ev => (ev.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.025)"}
-                onMouseLeave={ev => (ev.currentTarget as HTMLDivElement).style.background = isTop ? "rgba(255,255,255,0.015)" : "transparent"}
+                onMouseEnter={ev => (ev.currentTarget as HTMLDivElement).style.background = "var(--hv-bg2)"}
+                onMouseLeave={ev => (ev.currentTarget as HTMLDivElement).style.background = isTop ? "var(--hv-surf)" : "transparent"}
               >
                 {/* Rank */}
                 <p style={{
                   fontFamily: isTop ? S : M,
                   fontSize: isTop ? "12px" : "11px",
                   fontStyle: isTop ? "italic" : "normal",
-                  color: isTop ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)",
+                  color: isTop ? "var(--hv-t2)" : "var(--hv-t4)",
                 }}>{isTop ? ORDINALS[e.rank - 1] : `#${e.rank}`}</p>
 
                 {/* Address */}
                 <p style={{
                   fontFamily: M, fontSize: "11px",
-                  color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em",
+                  color: "var(--hv-t3)", letterSpacing: "0.04em",
                 }}>{e.address.slice(0, 12)}…{e.address.slice(-8)}</p>
 
                 {/* Tier */}
                 <p style={{
                   fontFamily: S, fontSize: "11px", fontStyle: "italic",
-                  color: "rgba(255,255,255,0.45)",
+                  color: "var(--hv-t3)",
                 }}>{rep.rank}</p>
 
                 {/* Score */}
                 <p style={{
                   fontFamily: M, fontSize: "14px",
-                  color: isTop ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)",
+                  color: isTop ? "var(--hv-text)" : "var(--hv-t2)",
                   textAlign: "right",
                   letterSpacing: "-0.01em",
                 }}>
@@ -266,12 +266,12 @@ export default function Leaderboard() {
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
               padding: "14px 24px",
-              borderTop: "1px solid rgba(255,255,255,0.07)",
-              background: "rgba(255,255,255,0.015)",
+              borderTop: "1px solid var(--hv-border)",
+              background: "var(--hv-bg2)",
             }}>
               <p style={{
                 fontFamily: S, fontStyle: "italic", fontSize: "11px",
-                color: "rgba(255,255,255,0.25)",
+                color: "var(--hv-t4)",
               }}>
                 Page {page + 1} of {pages} · {totalN} total entries
               </p>
@@ -284,14 +284,14 @@ export default function Leaderboard() {
                     style={{
                       padding: "8px 18px",
                       background: "transparent",
-                      border: "1px solid rgba(255,255,255,0.12)",
+                      border: "1px solid var(--hv-border2)",
                       fontFamily: S, fontSize: "11px", fontStyle: "italic",
-                      color: b.dis ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.55)",
+                      color: b.dis ? "var(--hv-t4)" : "var(--hv-t2)",
                       opacity: b.dis ? 0.5 : 1,
                       cursor: b.dis ? "not-allowed" : "pointer",
                       transition: "all 0.15s",
                     }}
-                    onMouseEnter={ev => { if (!b.dis) (ev.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)"; }}
+                    onMouseEnter={ev => { if (!b.dis) (ev.currentTarget as HTMLButtonElement).style.background = "var(--hv-surf2)"; }}
                     onMouseLeave={ev => { (ev.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
                   >
                     {b.label}

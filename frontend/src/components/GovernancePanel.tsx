@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAccount, useBalance } from "wagmi";
+import { useSigner } from "@/contexts/SignerContext";
 import { ENV } from "../utils/env";
 
 const ORACLE_API = ENV.ORACLE_URL;
@@ -25,9 +26,9 @@ const M = "'JetBrains Mono', monospace";
 
 const fieldStyle: React.CSSProperties = {
   width: "100%", padding: "12px 16px",
-  background: "rgba(255,255,255,0.02)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  fontFamily: M, fontSize: "12px", color: "rgba(255,255,255,0.85)",
+  background: "var(--hv-bg2)",
+  border: "1px solid var(--hv-border2)",
+  fontFamily: M, fontSize: "12px", color: "var(--hv-t2)",
   outline: "none", boxSizing: "border-box" as const, borderRadius: "0",
 };
 
@@ -36,7 +37,7 @@ function StatusTag({ status }: { status: string }) {
   return (
     <span style={{
       fontFamily: S, fontStyle: "italic", fontSize: "10px",
-      letterSpacing: "0.1em", color: `rgba(255,255,255,${opacity})`,
+      letterSpacing: "0.1em", color: opacity >= 0.7 ? "var(--hv-text)" : opacity >= 0.4 ? "var(--hv-t2)" : "var(--hv-t4)",
       textTransform: "uppercase",
     }}>{status}</span>
   );
@@ -45,11 +46,11 @@ function StatusTag({ status }: { status: string }) {
 function VoteBar({ forPct }: { forPct: number }) {
   const passing = forPct >= 0.51;
   return (
-    <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", position: "relative", margin: "12px 0" }}>
+    <div style={{ height: "1px", background: "var(--hv-surf2)", position: "relative", margin: "12px 0" }}>
       <div style={{
         position: "absolute", left: 0, top: 0, bottom: 0,
         width: `${forPct * 100}%`,
-        background: `rgba(255,255,255,${passing ? 0.7 : 0.3})`,
+        background: `var(--hv-surf2)" : "var(--hv-surf2)"`,
         transition: "width 0.6s ease",
       }} />
     </div>
@@ -57,7 +58,9 @@ function VoteBar({ forPct }: { forPct: number }) {
 }
 
 export default function GovernancePanel({ reputationScore, eventCount }: { reputationScore: number; eventCount: number }) {
-  const { address } = useAccount();
+  const { address: mmAddress } = useAccount();
+  const { address: havenAddress } = useSigner();
+  const address = mmAddress || havenAddress || undefined;
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [votingPower, setVotingPower] = useState(0);
@@ -111,7 +114,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
       });
       if (!r.ok) { const e = await r.json(); alert(e.detail || "Vote failed"); }
       else { await fetchProposals(); }
-    } catch { alert("Vote failed — oracle connection error"); }
+    } catch { alert("Vote failed oracle connection error"); }
     finally { setVoting(null); }
   }
 
@@ -135,7 +138,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
         setFormData({ title: "", description: "", type: "parameter_change" });
         await fetchProposals();
       }
-    } catch { alert("Proposal creation failed — oracle connection error"); }
+    } catch { alert("Proposal creation failed oracle connection error"); }
     finally { setSubmitting(false); }
   }
 
@@ -149,7 +152,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
   const LabelRow = ({ text }: { text: string }) => (
     <p style={{
       fontFamily: S, fontStyle: "italic", fontSize: "11px",
-      color: "rgba(255,255,255,0.35)", marginBottom: "8px", letterSpacing: "0.05em",
+      color: "var(--hv-t4)", marginBottom: "8px", letterSpacing: "0.05em",
     }}>{text}</p>
   );
 
@@ -161,20 +164,20 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
         <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
           }}>§ Deliberative Assembly</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "16px" }}>
           <div>
             <h2 style={{
               fontFamily: S, fontWeight: 400, fontSize: "30px",
-              color: "#fff", letterSpacing: "0.01em",
+              color: "var(--hv-text)", letterSpacing: "0.01em",
             }}>Governance Council</h2>
             <p style={{
               fontFamily: S, fontStyle: "italic", fontSize: "12px",
-              color: "rgba(255,255,255,0.35)", marginTop: "6px",
-            }}>Quadratic voting — power = √events × tenure + √tokens × 0.3</p>
+              color: "var(--hv-t4)", marginTop: "6px",
+            }}>Quadratic voting power = √events × tenure + √tokens × 0.3</p>
           </div>
 
           <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
@@ -182,15 +185,15 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
             {address && (
               <div style={{
                 padding: "16px 20px",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderTop: "2px solid rgba(255,255,255,0.4)",
+                border: "1px solid var(--hv-border2)",
+                borderTop: "2px solid var(--hv-border-str)",
               }}>
                 <p style={{
                   fontFamily: S, fontSize: "9px", fontStyle: "italic",
-                  color: "rgba(255,255,255,0.3)", letterSpacing: "0.15em",
+                  color: "var(--hv-t4)", letterSpacing: "0.15em",
                   textTransform: "uppercase", marginBottom: "6px",
                 }}>Voting Authority</p>
-                <p style={{ fontFamily: M, fontSize: "22px", color: "#fff" }}>
+                <p style={{ fontFamily: M, fontSize: "22px", color: "var(--hv-text)" }}>
                   {votingPower.toFixed(2)}
                 </p>
               </div>
@@ -199,7 +202,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
             {address && eventCount >= 10 && !showForm && (
               <button onClick={() => setShowForm(true)} style={{
                 padding: "12px 24px",
-                background: "#fff", border: "none", color: "#000",
+                background: "var(--hv-action-bg)", border: "none", color: "var(--hv-action-text)",
                 fontFamily: S, fontSize: "12px", letterSpacing: "0.15em",
                 textTransform: "uppercase", cursor: "pointer",
                 transition: "opacity 0.15s",
@@ -218,14 +221,14 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
       {showForm && (
         <div style={{
           padding: "32px",
-          border: "1px solid rgba(255,255,255,0.15)",
-          borderTop: "2px solid #fff",
+          border: "1px solid var(--hv-border2)",
+          borderTop: "2px solid var(--hv-rule)",
           marginBottom: "32px",
-          background: "rgba(255,255,255,0.02)",
+          background: "var(--hv-bg2)",
         }}>
           <h3 style={{
             fontFamily: S, fontWeight: 400, fontSize: "20px",
-            color: "#fff", marginBottom: "24px",
+            color: "var(--hv-text)", marginBottom: "24px",
           }}>Submit Governance Proposal</h3>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -237,8 +240,8 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
                 onChange={e => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g. Increase Crisis Zone Multiplier to 3×"
                 style={fieldStyle}
-                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
-                onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
+                onFocus={e => { e.target.style.borderColor = "var(--hv-border-str)"; }}
+                onBlur={e => { e.target.style.borderColor = "var(--hv-border3)"; }}
               />
             </div>
 
@@ -250,8 +253,8 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Explain the rationale for this proposal and its anticipated effect on the protocol..."
                 style={{ ...fieldStyle, resize: "vertical" as const, lineHeight: 1.7 }}
-                onFocus={e => { e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
-                onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
+                onFocus={e => { e.target.style.borderColor = "var(--hv-border-str)"; }}
+                onBlur={e => { e.target.style.borderColor = "var(--hv-border3)"; }}
               />
             </div>
 
@@ -260,7 +263,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
               <select
                 value={formData.type}
                 onChange={e => setFormData({ ...formData, type: e.target.value })}
-                style={{ ...fieldStyle, background: "rgba(255,255,255,0.03)" }}
+                style={{ ...fieldStyle, background: "var(--hv-surf)" }}
               >
                 <option value="parameter_change">Parameter Change</option>
                 <option value="treasury_grant">Treasury Grant</option>
@@ -273,8 +276,8 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
               <button type="button" onClick={() => setShowForm(false)} style={{
                 flex: 1, padding: "12px",
                 background: "transparent",
-                border: "1px solid rgba(255,255,255,0.12)",
-                color: "rgba(255,255,255,0.5)",
+                border: "1px solid var(--hv-border2)",
+                color: "var(--hv-t3)",
                 fontFamily: S, fontSize: "12px", letterSpacing: "0.1em",
                 textTransform: "uppercase", cursor: "pointer",
               }}>Cancel</button>
@@ -283,9 +286,9 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
                 disabled={submitting}
                 style={{
                   flex: 2, padding: "12px",
-                  background: submitting ? "rgba(255,255,255,0.08)" : "#fff",
+                  background: submitting ? "var(--hv-surf2)" : "var(--hv-action-bg)",
                   border: "none",
-                  color: submitting ? "rgba(255,255,255,0.3)" : "#000",
+                  color: submitting ? "var(--hv-t4)" : "var(--hv-action-text)",
                   fontFamily: S, fontSize: "12px", letterSpacing: "0.1em",
                   textTransform: "uppercase",
                   cursor: submitting ? "not-allowed" : "pointer",
@@ -301,7 +304,7 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
       {/* Loading */}
       {loading && (
         <div style={{ padding: "80px 0", textAlign: "center" }}>
-          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "rgba(255,255,255,0.25)" }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "var(--hv-t4)" }}>
             Retrieving governance records…
           </p>
         </div>
@@ -311,12 +314,12 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
       {!loading && proposals.length === 0 && (
         <div style={{
           padding: "64px 40px", textAlign: "center",
-          border: "1px solid rgba(255,255,255,0.06)",
+          border: "1px solid var(--hv-border)",
         }}>
-          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "16px", color: "rgba(255,255,255,0.25)", marginBottom: "8px" }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "16px", color: "var(--hv-t4)", marginBottom: "8px" }}>
             No active proposals before the Council.
           </p>
-          <p style={{ fontFamily: S, fontSize: "12px", color: "rgba(255,255,255,0.15)" }}>
+          <p style={{ fontFamily: S, fontSize: "12px", color: "var(--hv-t5)" }}>
             {eventCount >= 10
               ? "You have sufficient standing to submit a proposal above."
               : "A minimum of 10 verified impact events is required to submit proposals."}
@@ -327,14 +330,14 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
       {/* Proposals */}
       {!loading && proposals.length > 0 && (
         <div style={{
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderTop: "2px solid rgba(255,255,255,0.3)",
+          border: "1px solid var(--hv-border)",
+          borderTop: "2px solid var(--hv-border3)",
         }}>
           {proposals.map((p, i) => (
             <div key={p.proposal_id} style={{
               padding: "28px 28px",
-              borderBottom: i < proposals.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
-              background: p.status === "active" ? "rgba(255,255,255,0.015)" : "transparent",
+              borderBottom: i < proposals.length - 1 ? "1px solid var(--hv-border)" : "none",
+              background: p.status === "active" ? "var(--hv-surf)" : "transparent",
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px", marginBottom: "12px" }}>
                 <div style={{ flex: 1 }}>
@@ -342,16 +345,16 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
                     <StatusTag status={p.status} />
                     <span style={{
                       fontFamily: M, fontSize: "9px",
-                      color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em",
+                      color: "var(--hv-t4)", letterSpacing: "0.1em",
                     }}>{timeLeft(p.expires_at)}</span>
                   </div>
                   <p style={{
                     fontFamily: S, fontSize: "16px",
-                    color: "rgba(255,255,255,0.9)", marginBottom: "6px",
+                    color: "var(--hv-text)", marginBottom: "6px",
                   }}>{p.title}</p>
                   <p style={{
                     fontFamily: S, fontStyle: "italic", fontSize: "12px",
-                    color: "rgba(255,255,255,0.4)", lineHeight: 1.7,
+                    color: "var(--hv-t4)", lineHeight: 1.7,
                   }}>{p.description}</p>
                 </div>
               </div>
@@ -361,10 +364,10 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
 
               <div style={{
                 display: "flex", justifyContent: "space-between",
-                fontFamily: S, fontSize: "11px", color: "rgba(255,255,255,0.3)",
+                fontFamily: S, fontSize: "11px", color: "var(--hv-t4)",
                 marginBottom: p.status === "active" ? "16px" : "0",
               }}>
-                <span>In favour: {(p.support_pct * 100).toFixed(1)}% — {p.votes_for.toFixed(1)} VP</span>
+                <span>In favour: {(p.support_pct * 100).toFixed(1)}% {p.votes_for.toFixed(1)} VP</span>
                 <span>{p.voter_count} participants</span>
               </div>
 
@@ -380,22 +383,22 @@ export default function GovernancePanel({ reputationScore, eventCount }: { reput
                       style={{
                         flex: 1, padding: "10px",
                         background: "transparent",
-                        border: `1px solid rgba(255,255,255,${b.vf ? 0.2 : 0.08})`,
-                        color: `rgba(255,255,255,${b.vf ? 0.7 : 0.35})`,
+                        border: b.vf ? "1px solid var(--hv-border3)" : "1px solid var(--hv-border)",
+                        color: b.vf ? "var(--hv-t2)" : "var(--hv-t4)",
                         fontFamily: S, fontStyle: "italic", fontSize: "11px",
                         letterSpacing: "0.08em",
                         opacity: voting === p.proposal_id ? 0.4 : 1,
                         cursor: voting === p.proposal_id ? "not-allowed" : "pointer",
                         transition: "all 0.12s",
                       }}
-                      onMouseEnter={ev => { if (!voting) (ev.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)"; }}
+                      onMouseEnter={ev => { if (!voting) (ev.currentTarget as HTMLButtonElement).style.background = "var(--hv-surf)"; }}
                       onMouseLeave={ev => { (ev.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
                     >{b.label}</button>
                   ))}
                 </div>
               )}
               {p.status === "active" && (!address || eventCount < 1) && (
-                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.25)" }}>
+                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "var(--hv-t4)" }}>
                   {!address ? "Connect wallet to participate." : "A minimum of 1 verified impact event is required to vote."}
                 </p>
               )}

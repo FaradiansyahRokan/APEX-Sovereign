@@ -135,22 +135,22 @@ function useVolunteerHolders(connectedAddr?: string) {
 function MetricTile({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div style={{
-      borderTop: "1px solid rgba(255,255,255,0.08)",
+      borderTop: "1px solid var(--hv-border)",
       padding: "22px 0",
     }}>
       <p style={{
         fontFamily: S, fontStyle: "italic", fontSize: "10px",
-        color: "rgba(255,255,255,0.3)", letterSpacing: "0.12em",
+        color: "var(--hv-t4)", letterSpacing: "0.12em",
         textTransform: "uppercase", marginBottom: "8px",
       }}>{label}</p>
       <p style={{
         fontFamily: M, fontSize: "22px",
-        color: "rgba(255,255,255,0.9)", letterSpacing: "-0.02em", lineHeight: 1,
+        color: "var(--hv-text)", letterSpacing: "-0.02em", lineHeight: 1,
       }}>{value}</p>
       {sub && (
         <p style={{
           fontFamily: S, fontStyle: "italic", fontSize: "10px",
-          color: "rgba(255,255,255,0.28)", marginTop: "5px",
+          color: "var(--hv-t4)", marginTop: "5px",
         }}>{sub}</p>
       )}
     </div>
@@ -163,14 +163,14 @@ function RuledBar({ value, max, label }: { value: number; max: number; label?: s
     <div style={{ marginBottom: "14px" }}>
       {label && (
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-          <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>{label}</span>
-          <span style={{ fontFamily: M, fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>{pct.toFixed(1)}%</span>
+          <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "var(--hv-t4)" }}>{label}</span>
+          <span style={{ fontFamily: M, fontSize: "11px", color: "var(--hv-t4)" }}>{pct.toFixed(1)}%</span>
         </div>
       )}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.07)", position: "relative" }}>
+      <div style={{ height: "1px", background: "var(--hv-surf2)", position: "relative" }}>
         <div style={{
           position: "absolute", left: 0, top: 0, bottom: 0,
-          width: `${pct}%`, background: "#fff",
+          width: `${pct}%`, background: "var(--hv-action-bg)",
           transition: "width 1s cubic-bezier(0.4,0,0.2,1)",
         }} />
       </div>
@@ -210,7 +210,7 @@ export default function EconomyDashboard() {
 
   if (apiLoading && supplyLoading) return (
     <div style={{ padding: "80px 0", textAlign: "center" }}>
-      <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "rgba(255,255,255,0.25)" }}>
+      <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "14px", color: "var(--hv-t4)" }}>
         Retrieving economy data…
       </p>
     </div>
@@ -234,26 +234,26 @@ export default function EconomyDashboard() {
         <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
           }}>§ Monetary Architecture</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
           {isOnChain && (
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <div style={{
                 width: "5px", height: "5px", borderRadius: "50%",
-                background: "rgba(255,255,255,0.6)",
+                background: "var(--hv-surf2)",
                 animation: "ecoLive 2.6s ease-in-out infinite",
               }} />
-              <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.3)" }}>
+              <span style={{ fontFamily: M, fontSize: "8px", letterSpacing: "0.18em", color: "var(--hv-t4)" }}>
                 ON-CHAIN
               </span>
             </div>
           )}
         </div>
-        <h2 style={{ fontFamily: S, fontWeight: 400, fontSize: "30px", color: "#fff", marginBottom: "6px" }}>
+        <h2 style={{ fontFamily: S, fontWeight: 400, fontSize: "30px", color: "var(--hv-text)", marginBottom: "6px" }}>
           Economy Flywheel
         </h2>
-        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>
+        <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "13px", color: "var(--hv-t4)" }}>
           Phase: {phase} · {economy?.economy_health?.replace(/_/g, " ")}
         </p>
       </div>
@@ -261,30 +261,30 @@ export default function EconomyDashboard() {
       {/* Supply progress */}
       <div style={{ marginBottom: "40px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-          <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+          <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "var(--hv-t4)" }}>
             Ecosystem Supply vs Annual Cap
           </span>
-          <span style={{ fontFamily: M, fontSize: "12px", color: "rgba(255,255,255,0.55)" }}>
+          <span style={{ fontFamily: M, fontSize: "12px", color: "var(--hv-t3)" }}>
             {((effLive / maxAnnualCap) * 100).toFixed(2)}%
           </span>
         </div>
-        <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", position: "relative", marginBottom: "8px" }}>
+        <div style={{ height: "1px", background: "var(--hv-surf2)", position: "relative", marginBottom: "8px" }}>
           <div style={{
             position: "absolute", left: 0, top: 0, bottom: 0,
             width: `${Math.min((effLive / maxAnnualCap) * 100, 100)}%`,
-            background: "#fff", transition: "width 1.2s ease",
+            background: "var(--hv-action-bg)", transition: "width 1.2s ease",
           }} />
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.3)" }}>
+          <span style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t4)" }}>
             {effLive.toLocaleString("en-US", { maximumFractionDigits: 2 })} HAVEN
           </span>
-          <span style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.2)" }}>
+          <span style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t4)" }}>
             Cap: {(maxAnnualCap / 1e6).toFixed(1)}M
           </span>
         </div>
         {userBalance > 0 && (
-          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.3)", marginTop: "6px" }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "var(--hv-t4)", marginTop: "6px" }}>
             Your holdings represent {userShare.toFixed(4)}% of total ecosystem supply
           </p>
         )}
@@ -294,8 +294,8 @@ export default function EconomyDashboard() {
       <div style={{
         display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
         gap: "0 40px",
-        borderTop: "2px solid #fff",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        borderTop: "2px solid var(--hv-rule)",
+        borderBottom: "1px solid var(--hv-border)",
         marginBottom: "40px",
         paddingBottom: "8px",
       }}>
@@ -336,21 +336,21 @@ export default function EconomyDashboard() {
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
           <span style={{
             fontFamily: S, fontStyle: "italic", fontSize: "10px",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.15em", textTransform: "uppercase",
           }}>Capital Distribution</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
         </div>
 
         {holderLoading ? (
-          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "rgba(255,255,255,0.25)" }}>
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "12px", color: "var(--hv-t4)" }}>
             Scanning on-chain reward events…
           </p>
         ) : dist && (
           <>
             <div style={{
               display: "grid", gridTemplateColumns: "1fr 1fr",
-              borderTop: "1px solid rgba(255,255,255,0.08)",
-              borderLeft: "1px solid rgba(255,255,255,0.06)",
+              borderTop: "1px solid var(--hv-border)",
+              borderLeft: "1px solid var(--hv-border)",
               marginBottom: "20px",
             }}>
               {[
@@ -359,30 +359,30 @@ export default function EconomyDashboard() {
               ].map(m => (
                 <div key={m.l} style={{
                   padding: "16px 20px",
-                  borderRight: "1px solid rgba(255,255,255,0.06)",
-                  borderBottom: "1px solid rgba(255,255,255,0.06)",
+                  borderRight: "1px solid var(--hv-border)",
+                  borderBottom: "1px solid var(--hv-border)",
                 }}>
-                  <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginBottom: "6px" }}>{m.l}</p>
-                  <p style={{ fontFamily: M, fontSize: "20px", color: "rgba(255,255,255,0.85)" }}>{m.v}</p>
+                  <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)", marginBottom: "6px" }}>{m.l}</p>
+                  <p style={{ fontFamily: M, fontSize: "20px", color: "var(--hv-t2)" }}>{m.v}</p>
                 </div>
               ))}
             </div>
 
             {/* Table */}
             <div style={{
-              border: "1px solid rgba(255,255,255,0.07)",
-              borderTop: "2px solid rgba(255,255,255,0.2)",
+              border: "1px solid var(--hv-border)",
+              borderTop: "2px solid var(--hv-border3)",
             }}>
               <div style={{
                 display: "grid", gridTemplateColumns: "40px 1fr 110px 110px 80px",
                 padding: "10px 20px",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-                background: "rgba(255,255,255,0.02)",
+                borderBottom: "1px solid var(--hv-border)",
+                background: "var(--hv-bg2)",
               }}>
                 {["No.", "Participant", "Balance", "Earned", "Share"].map((h, i) => (
                   <p key={h} style={{
                     fontFamily: S, fontStyle: "italic", fontSize: "9px",
-                    color: "rgba(255,255,255,0.28)",
+                    color: "var(--hv-t4)",
                     textAlign: i >= 2 ? "right" : "left",
                   }}>{h}</p>
                 ))}
@@ -393,20 +393,20 @@ export default function EconomyDashboard() {
                   <div key={h.address} style={{
                     display: "grid", gridTemplateColumns: "40px 1fr 110px 110px 80px",
                     padding: "11px 20px", alignItems: "center",
-                    borderBottom: i < 19 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                    background: isMe ? "rgba(255,255,255,0.02)" : "transparent",
+                    borderBottom: i < 19 ? "1px solid var(--hv-border)" : "none",
+                    background: isMe ? "var(--hv-surf)" : "transparent",
                   }}>
-                    <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.25)" }}>{i + 1}</p>
-                    <p style={{ fontFamily: M, fontSize: "11px", color: isMe ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.55)" }}>
-                      {shortAddr(h.address)}{isMe && <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "9px", color: "rgba(255,255,255,0.5)", marginLeft: "8px" }}>you</span>}
+                    <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "var(--hv-t4)" }}>{i + 1}</p>
+                    <p style={{ fontFamily: M, fontSize: "11px", color: isMe ? "var(--hv-text)" : "var(--hv-t2)" }}>
+                      {shortAddr(h.address)}{isMe && <span style={{ fontFamily: S, fontStyle: "italic", fontSize: "9px", color: "var(--hv-t3)", marginLeft: "8px" }}>you</span>}
                     </p>
-                    <p style={{ fontFamily: M, fontSize: "11px", color: "rgba(255,255,255,0.75)", textAlign: "right" }}>
+                    <p style={{ fontFamily: M, fontSize: "11px", color: "var(--hv-t2)", textAlign: "right" }}>
                       {h.balance.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                     </p>
-                    <p style={{ fontFamily: M, fontSize: "11px", color: "rgba(255,255,255,0.45)", textAlign: "right" }}>
+                    <p style={{ fontFamily: M, fontSize: "11px", color: "var(--hv-t3)", textAlign: "right" }}>
                       {h.total_earned.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                     </p>
-                    <p style={{ fontFamily: M, fontSize: "10px", color: "rgba(255,255,255,0.35)", textAlign: "right" }}>
+                    <p style={{ fontFamily: M, fontSize: "10px", color: "var(--hv-t4)", textAlign: "right" }}>
                       {h.share_pct.toFixed(3)}%
                     </p>
                   </div>
@@ -423,18 +423,18 @@ export default function EconomyDashboard() {
           <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
             <span style={{
               fontFamily: S, fontStyle: "italic", fontSize: "10px",
-              color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase",
+              color: "var(--hv-t4)", letterSpacing: "0.15em", textTransform: "uppercase",
             }}>Global Suffering Index</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
-            <span style={{ fontFamily: M, fontSize: "16px", color: "rgba(255,255,255,0.8)" }}>
+            <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
+            <span style={{ fontFamily: M, fontSize: "16px", color: "var(--hv-t2)" }}>
               {(suffering.composite * 100).toFixed(1)}%
             </span>
           </div>
           <RuledBar label="Famine Severity"  value={suffering.famine_score}       max={1} />
           <RuledBar label="Displacement"     value={suffering.displacement_score} max={1} />
           <RuledBar label="Disaster Score"   value={suffering.disaster_score}     max={1} />
-          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "rgba(255,255,255,0.2)", marginTop: "8px" }}>
-            Live data — GDACS · OCHA · UNHCR · Higher index produces higher token rewards
+          <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "11px", color: "var(--hv-t4)", marginTop: "8px" }}>
+            Live data GDACS · OCHA · UNHCR · Higher index produces higher token rewards
           </p>
         </div>
       )}
@@ -442,12 +442,12 @@ export default function EconomyDashboard() {
       {/* Velocity model */}
       {economy?.velocity && (
         <div style={{
-          borderTop: "1px solid rgba(255,255,255,0.08)",
+          borderTop: "1px solid var(--hv-border)",
           paddingTop: "28px",
         }}>
           <p style={{
             fontFamily: S, fontStyle: "italic", fontSize: "10px",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em",
+            color: "var(--hv-t4)", letterSpacing: "0.15em",
             textTransform: "uppercase", marginBottom: "20px",
           }}>Triple Velocity Model</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0 32px" }}>
@@ -456,11 +456,11 @@ export default function EconomyDashboard() {
               { label: "Idle Decay / yr",  value: `${(economy.velocity.idle_decay_annual * 100).toFixed(1)}%` },
               { label: "Reflex Bonus",     value: `${(economy.velocity.reflex_bonus * 100).toFixed(1)}%` },
             ].map(item => (
-              <div key={item.label} style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "16px" }}>
-                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginBottom: "8px" }}>
+              <div key={item.label} style={{ borderTop: "1px solid var(--hv-border)", paddingTop: "16px" }}>
+                <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)", marginBottom: "8px" }}>
                   {item.label}
                 </p>
-                <p style={{ fontFamily: M, fontSize: "20px", color: "rgba(255,255,255,0.8)" }}>{item.value}</p>
+                <p style={{ fontFamily: M, fontSize: "20px", color: "var(--hv-t2)" }}>{item.value}</p>
               </div>
             ))}
           </div>

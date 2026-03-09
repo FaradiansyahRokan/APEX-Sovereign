@@ -29,19 +29,19 @@ function ScoreTag({ score }: { score: number }) {
   return (
     <div style={{
       width: "52px", height: "52px", flexShrink: 0,
-      border: `1px solid rgba(255,255,255,${score >= 80 ? 0.25 : 0.08})`,
-      background: `rgba(255,255,255,${score >= 80 ? 0.04 : 0.01})`,
+      border: score >= 80 ? "1px solid var(--hv-border3)" : "1px solid var(--hv-border)",
+      background: score >= 80 ? "var(--hv-surf2)" : "var(--hv-surf)",
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
     }}>
       <span style={{
         fontFamily: M, fontSize: "15px", fontWeight: 400,
-        color: `rgba(255,255,255,${intensity})`,
+        color: intensity >= 0.8 ? "var(--hv-text)" : intensity >= 0.5 ? "var(--hv-t2)" : "var(--hv-t3)",
         lineHeight: 1,
       }}>{score.toFixed(0)}</span>
       <span style={{
         fontFamily: S, fontSize: "7px", fontStyle: "italic",
-        color: "rgba(255,255,255,0.25)", marginTop: "2px",
+        color: "var(--hv-t4)", marginTop: "2px",
       }}>score</span>
     </div>
   );
@@ -117,34 +117,34 @@ export default function ImpactFeed() {
         <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "14px" }}>
           <span style={{
             fontFamily: S, fontSize: "10px", fontStyle: "italic",
-            color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase",
+            color: "var(--hv-t4)", letterSpacing: "0.2em", textTransform: "uppercase",
           }}>§ Transaction Record</span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: "1px", background: "var(--hv-surf2)" }} />
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <div style={{
               width: "5px", height: "5px", borderRadius: "50%",
-              background: "rgba(255,255,255,0.6)",
+              background: "var(--hv-surf2)",
               animation: "lbPulse 2.6s ease-in-out infinite",
             }} />
             <span style={{
               fontFamily: M, fontSize: "8px", letterSpacing: "0.2em",
-              color: "rgba(255,255,255,0.3)",
+              color: "var(--hv-t4)",
             }}>LIVE</span>
           </div>
         </div>
 
         <h2 style={{
           fontFamily: S, fontWeight: 400, fontSize: "30px",
-          color: "#fff", letterSpacing: "0.01em",
+          color: "var(--hv-text)", letterSpacing: "0.01em",
         }}>
           {events.length.toLocaleString()}
-          <span style={{ fontSize: "18px", color: "rgba(255,255,255,0.3)", fontStyle: "italic" }}> settlements on-chain</span>
+          <span style={{ fontSize: "18px", color: "var(--hv-t4)", fontStyle: "italic" }}> settlements on-chain</span>
         </h2>
 
         {newCnt > 0 && (
           <p style={{
             fontFamily: S, fontStyle: "italic", fontSize: "12px",
-            color: "rgba(255,255,255,0.5)", marginTop: "6px",
+            color: "var(--hv-t3)", marginTop: "6px",
           }}>
             +{newCnt} new transaction{newCnt > 1 ? "s" : ""} received
           </p>
@@ -153,20 +153,20 @@ export default function ImpactFeed() {
 
       {/* Feed table */}
       <div style={{
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderTop: "2px solid rgba(255,255,255,0.4)",
+        border: "1px solid var(--hv-border)",
+        borderTop: "2px solid var(--hv-border-str)",
       }}>
         {/* Col headers */}
         <div style={{
           display: "grid", gridTemplateColumns: "52px 1fr 110px 90px",
           padding: "10px 20px",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-          background: "rgba(255,255,255,0.02)",
+          borderBottom: "1px solid var(--hv-border)",
+          background: "var(--hv-bg2)",
         }}>
           {["Score", "Participant", "Reward", "Time"].map((h, i) => (
             <p key={h} style={{
               fontFamily: S, fontStyle: "italic", fontSize: "10px",
-              color: "rgba(255,255,255,0.28)", letterSpacing: "0.08em",
+              color: "var(--hv-t4)", letterSpacing: "0.08em",
               textAlign: i === 3 ? "right" : "left",
             }}>{h}</p>
           ))}
@@ -176,7 +176,7 @@ export default function ImpactFeed() {
           <div style={{ padding: "60px 20px", textAlign: "center" }}>
             <p style={{
               fontFamily: S, fontStyle: "italic", fontSize: "14px",
-              color: "rgba(255,255,255,0.25)",
+              color: "var(--hv-t4)",
             }}>Scanning blockchain records…</p>
           </div>
         )}
@@ -185,9 +185,9 @@ export default function ImpactFeed() {
           <div style={{ padding: "80px 40px", textAlign: "center" }}>
             <p style={{
               fontFamily: S, fontStyle: "italic", fontSize: "15px",
-              color: "rgba(255,255,255,0.25)", marginBottom: "8px",
+              color: "var(--hv-t4)", marginBottom: "8px",
             }}>The ledger is empty.</p>
-            <p style={{ fontFamily: S, fontSize: "12px", color: "rgba(255,255,255,0.15)" }}>
+            <p style={{ fontFamily: S, fontSize: "12px", color: "var(--hv-t5)" }}>
               Submit a verified impact proof to record the first transaction.
             </p>
           </div>
@@ -203,18 +203,18 @@ export default function ImpactFeed() {
               style={{
                 display: "grid", gridTemplateColumns: "52px 1fr 110px 90px",
                 padding: "14px 20px", alignItems: "center",
-                borderBottom: i < events.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                borderBottom: i < events.length - 1 ? "1px solid var(--hv-border)" : "none",
                 position: "relative",
                 transition: "background 0.12s",
               }}
-              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.02)"}
+              onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = "var(--hv-bg2)"}
               onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = "transparent"}
             >
               {/* Latest marker */}
               {i === 0 && (
                 <div style={{
                   position: "absolute", left: 0, top: 0, bottom: 0,
-                  width: "2px", background: "rgba(255,255,255,0.4)",
+                  width: "2px", background: "var(--hv-surf2)",
                 }} />
               )}
 
@@ -223,7 +223,7 @@ export default function ImpactFeed() {
               <div style={{ minWidth: 0, paddingLeft: "4px" }}>
                 <p style={{
                   fontFamily: M, fontSize: "11px",
-                  color: "rgba(255,255,255,0.55)", letterSpacing: "0.04em",
+                  color: "var(--hv-t3)", letterSpacing: "0.04em",
                   marginBottom: "4px",
                   overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                 }}>
@@ -231,18 +231,18 @@ export default function ImpactFeed() {
                 </p>
                 <p style={{
                   fontFamily: M, fontSize: "9px",
-                  color: "rgba(255,255,255,0.2)", letterSpacing: "0.06em",
+                  color: "var(--hv-t4)", letterSpacing: "0.06em",
                 }}>Block #{ev.blockNumber.toString()}</p>
               </div>
 
               <p style={{
                 fontFamily: M, fontSize: "12px",
-                color: "rgba(255,255,255,0.7)",
+                color: "var(--hv-t2)",
               }}>+{ev.tokenReward.toFixed(2)}</p>
 
               <p style={{
                 fontFamily: S, fontStyle: "italic", fontSize: "11px",
-                color: "rgba(255,255,255,0.3)",
+                color: "var(--hv-t4)",
                 textAlign: "right",
               }}>{ago(ev.timestamp)}</p>
             </motion.div>
