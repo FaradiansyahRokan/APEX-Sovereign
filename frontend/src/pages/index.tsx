@@ -23,6 +23,280 @@ export default function LandingPage() {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Tenor+Sans&display=swap" />
+        <style>{`
+          /* ── Mobile nav ── */
+          @media (max-width: 860px) {
+            .lp-nav-links { display: none !important; }
+            .lp-nav-btn   { display: none !important; }
+            .lp-nav       { padding: 0 20px !important; }
+            .lp-nav-version { display: none !important; }
+          }
+
+          /* ── Hero ── */
+          @media (max-width: 860px) {
+            .lp-hero-body {
+              flex-direction: column !important;
+              gap: 40px !important;
+              padding: 48px 0 0 !important;
+            }
+            .lp-hero-divider { display: none !important; }
+            .lp-hero-left, .lp-hero-right {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+            .lp-hero-headline {
+              font-size: clamp(38px, 11vw, 72px) !important;
+            }
+            .lp-hero-actions {
+              flex-wrap: wrap !important;
+              gap: 12px !important;
+            }
+            .lp-btn-primary, .lp-btn-outline {
+              width: 100% !important;
+              text-align: center !important;
+              box-sizing: border-box !important;
+            }
+            .lp-hero-stats {
+              grid-template-columns: 1fr 1fr !important;
+            }
+            .lp-stat-row {
+              flex-direction: row !important;
+            }
+            .lp-chain-badge { width: 100% !important; }
+            .lp-key-facts { width: 100% !important; }
+          }
+
+          /* ── Problem section ── */
+          @media (max-width: 768px) {
+            .lp-problem-cols {
+              grid-template-columns: 1fr !important;
+              gap: 28px !important;
+            }
+            .lp-problem-inner {
+              flex-direction: column !important;
+              gap: 28px !important;
+            }
+          }
+
+          /* ── PoBA ── */
+          @media (max-width: 860px) {
+            .lp-poba-grid {
+              flex-direction: column !important;
+              gap: 32px !important;
+            }
+            .lp-poba-div { display: none !important; }
+            .lp-poba-left, .lp-poba-right {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+            .lp-action-grid {
+              grid-template-columns: 1fr 1fr !important;
+            }
+            .lp-formula {
+              flex-direction: column !important;
+              gap: 0 !important;
+            }
+            .lp-formula-sep { display: none !important; }
+            .lp-formula-col {
+              border-left: none !important;
+              border-top: 1px solid rgba(0,0,0,0.1) !important;
+              padding-top: 24px !important;
+              margin-top: 24px !important;
+            }
+            .lp-formula-col:first-child {
+              border-top: none !important;
+              padding-top: 0 !important;
+              margin-top: 0 !important;
+            }
+          }
+          @media (max-width: 480px) {
+            .lp-action-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
+          /* ── SATIN layers ── */
+          @media (max-width: 768px) {
+            .lp-layer-item {
+              flex-direction: column !important;
+              gap: 8px !important;
+              padding: 20px 0 !important;
+            }
+            .lp-layer-num-col, .lp-layer-name-col, .lp-layer-desc-col {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+            .lp-tech-tags { flex-wrap: wrap !important; }
+          }
+
+          /* ── Journey steps ── */
+          @media (max-width: 860px) {
+            .lp-journey-steps {
+              grid-template-columns: 1fr 1fr !important;
+              gap: 28px !important;
+            }
+          }
+          @media (max-width: 540px) {
+            .lp-journey-steps {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
+          /* ── Tokenomics ── */
+          @media (max-width: 860px) {
+            .lp-STC-grid {
+              flex-direction: column !important;
+              gap: 32px !important;
+            }
+            .lp-STC-div { display: none !important; }
+            .lp-STC-left, .lp-STC-right {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+            .lp-phases {
+              flex-wrap: wrap !important;
+              gap: 8px !important;
+            }
+            .lp-phase-cell { flex: 1 1 calc(33% - 8px) !important; min-width: 80px !important; }
+          }
+
+          /* ── Governance ── */
+          @media (max-width: 860px) {
+            .lp-gov-grid {
+              grid-template-columns: 1fr 1fr !important;
+            }
+          }
+          @media (max-width: 540px) {
+            .lp-gov-grid {
+              grid-template-columns: 1fr !important;
+            }
+            .lp-gov-formula code {
+              font-size: 11px !important;
+              word-break: break-all !important;
+            }
+          }
+
+          /* ── Security ── */
+          @media (max-width: 860px) {
+            .lp-security-grid {
+              grid-template-columns: 1fr 1fr !important;
+            }
+          }
+          @media (max-width: 540px) {
+            .lp-security-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
+          /* ── Pull quote ── */
+          @media (max-width: 600px) {
+            .lp-pq-wrap {
+              flex-direction: column !important;
+              gap: 16px !important;
+              padding: 40px 20px !important;
+            }
+            .lp-pq-rule { width: 100% !important; height: 1px !important; }
+            .lp-pq-blockquote { font-size: clamp(16px, 4.5vw, 22px) !important; }
+          }
+
+          /* ── Roadmap ── */
+          @media (max-width: 860px) {
+            .lp-roadmap-track {
+              flex-direction: column !important;
+              gap: 0 !important;
+            }
+            .lp-roadmap-phase {
+              border-right: none !important;
+              border-bottom: 1px solid currentColor !important;
+              flex-direction: row !important;
+              gap: 24px !important;
+            }
+            .lp-phase-meta { min-width: 120px !important; flex-shrink: 0 !important; }
+          }
+          @media (max-width: 540px) {
+            .lp-roadmap-phase {
+              flex-direction: column !important;
+              gap: 16px !important;
+            }
+            .lp-phase-milestones {
+              grid-template-columns: 1fr !important;
+            }
+          }
+
+          /* ── Team ── */
+          @media (max-width: 768px) {
+            .lp-team-grid { padding: 0 20px !important; }
+            .lp-team-wide > div:last-child {
+              grid-template-columns: 1fr !important;
+              gap: 24px !important;
+            }
+          }
+
+          /* ── Contact ── */
+          @media (max-width: 860px) {
+            .lp-contact-inner {
+              flex-direction: column !important;
+              gap: 40px !important;
+            }
+            .lp-contact-div { display: none !important; }
+            .lp-contact-form, .lp-contact-inner > div:first-child {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+          }
+
+          /* ── Footer ── */
+          @media (max-width: 768px) {
+            .lp-footer-top {
+              flex-direction: column !important;
+              gap: 32px !important;
+            }
+            .lp-footer-bottom {
+              flex-direction: column !important;
+              gap: 12px !important;
+              align-items: flex-start !important;
+            }
+            .lp-footer-badges {
+              flex-wrap: wrap !important;
+              gap: 8px !important;
+            }
+            .lp-footer-inner { padding: 40px 20px 32px !important; }
+          }
+
+          /* ── General section padding ── */
+          @media (max-width: 768px) {
+            .lp-hero, .lp-problem, .lp-poba, .lp-satin,
+            .lp-journey, .lp-tokenomics, .lp-governance,
+            .lp-security, .lp-roadmap, .lp-team, .lp-contact {
+              padding-left: 20px !important;
+              padding-right: 20px !important;
+            }
+            .lp-problem-inner, .lp-satin-inner, .lp-journey-inner,
+            .lp-roadmap-inner, .lp-governance-inner, .lp-security-inner,
+            .lp-contact-inner {
+              padding-left: 0 !important;
+              padding-right: 0 !important;
+            }
+            .lp-sec-header {
+              flex-direction: column !important;
+              gap: 6px !important;
+            }
+            .lp-sec-title {
+              font-size: clamp(26px, 7vw, 48px) !important;
+            }
+          }
+
+          /* ── Marquee on mobile ── */
+          @media (max-width: 480px) {
+            .lp-marquee-track {
+              animation-duration: 24s !important;
+            }
+            .lp-marquee-item {
+              padding: 0 20px !important;
+              font-size: 8px !important;
+            }
+          }
+        `}</style>
       </Head>
 
       {/* NAV */}

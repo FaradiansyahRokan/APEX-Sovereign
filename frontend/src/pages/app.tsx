@@ -203,7 +203,7 @@ function Navigation({
           <span style={{ display: "block", width: 22, height: 1, background: C.t28 }} />
           Haven
         </a>
-        <span style={{
+        <span className="nav-version-badge" style={{
           fontFamily: "var(--sans)", fontSize: 7.5, letterSpacing: "0.22em",
           textTransform: "uppercase" as const, color: C.t22,
           border: `1px solid ${C.border2}`, padding: "3px 9px",
@@ -274,6 +274,7 @@ function Navigation({
         {/* "No Wallet?" button — only shown when nothing is connected */}
         {!havenConnected && !isMetaMaskConnected && (
           <button
+            className="nav-no-wallet-btn"
             onClick={onOpenWalletModal}
             style={{
               fontFamily: "var(--sans)", fontSize: 8.5, letterSpacing: "0.2em",
@@ -427,6 +428,7 @@ function HeroSection({ onEnter, onOpenWalletModal }: { onEnter: () => void; onOp
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.42 }}
           style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}
+          className="hero-cta-flex"
         >
           <button
             onClick={onEnter}
@@ -486,7 +488,7 @@ function HeroSection({ onEnter, onOpenWalletModal }: { onEnter: () => void; onOp
           <span style={{
             fontFamily: "var(--sans)", fontSize: 8.5, letterSpacing: "0.24em",
             textTransform: "uppercase" as const, color: C.t28,
-          }}>
+          }} className="hero-live-text">
             Sovereign Avalanche L1 · Chain ID 777000 · Active
           </span>
         </motion.div>
@@ -580,7 +582,7 @@ function ConnectGate({ onOpenWalletModal }: { onOpenWalletModal: () => void }) {
           </button>
         </div>
 
-        <div style={{
+        <div className="connect-gate-features" style={{
           borderTop: `1px solid ${C.border}`, paddingTop: 28,
           display: "flex", justifyContent: "center", gap: 40,
         }}>
@@ -823,10 +825,38 @@ export default function Home() {
         @media (max-width: 900px) {
           .nav-links-wrap { display: none !important; }
         }
+        @media (max-width: 600px) {
+          .nav-version-badge   { display: none !important; }
+          .nav-no-wallet-btn   { display: none !important; }
+        }
         @media (max-width: 768px) {
           .acct-strip { grid-template-columns: 1fr !important; gap: 24px !important; }
           .acct-center { border-left: none !important; border-right: none !important; padding: 0 !important; text-align: left !important; }
           .acct-right  { text-align: left !important; }
+
+          /* Hero CTA flex wrap */
+          .hero-cta-flex { flex-wrap: wrap !important; gap: 12px !important; }
+          .hero-cta-flex button, .hero-cta-flex a {
+            width: 100% !important; text-align: center !important; justify-content: center !important;
+          }
+
+          /* Live badge text compact */
+          .hero-live-text { letter-spacing: 0.12em !important; font-size: 7.5px !important; }
+
+          /* Tab bar smaller padding on mobile */
+          .haven-tabs button { padding: 16px 14px !important; }
+
+          /* ConnectGate features row */
+          .connect-gate-features { gap: 20px !important; flex-wrap: wrap !important; }
+
+          /* Footer status dots */
+          .footer-status-row { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+        }
+        @media (max-width: 480px) {
+          /* Nav: give the right side a bit more breathing room */
+          nav { padding: 0 16px !important; }
+          /* Reduce tab font slightly */
+          .haven-tabs button span:last-child { font-size: 11px !important; }
         }
       `}</style>
 
@@ -903,7 +933,7 @@ export default function Home() {
                 color: C.t28, maxWidth: 240, lineHeight: 1.7,
               }}>Every token backed by a verified act of human goodness.</p>
             </div>
-            <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
+            <div className="footer-status-row" style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
               {["SATIN Oracle", "ZK-Shield", "HAVEN L1 Subnet"].map((s) => (
                 <div key={s} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{

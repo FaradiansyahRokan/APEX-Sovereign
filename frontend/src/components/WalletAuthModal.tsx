@@ -572,7 +572,7 @@ export default function WalletAuthModal({ isOpen, onClose, onConnected, rpcUrl }
                   border: "1px solid var(--hv-border)",
                 }}>
                   <p style={{ fontFamily: "Georgia, serif", fontSize: "9px", color: "var(--hv-t4)", lineHeight: 1.7, letterSpacing: "0.05em" }}>
-                    🔒 Your private key is used locally to sign transactions. It is processed in-browser only and never transmitted.
+                    Your private key is used locally to sign transactions. It is processed in-browser only and never transmitted.
                   </p>
                 </div>
 
