@@ -26,6 +26,8 @@ import uuid
 import json
 import redis
 from typing import Any, Dict, List, Optional
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 # ─── Persistent State (Redis) ─────────────────────────────────────────────────
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -1431,3 +1433,35 @@ async def protocol_layers(_: str = Depends(verify_api_key)):
             {"id": "L8", "name": "Deployment Roadmap",       "status": "active",  "endpoints": ["/api/v1/protocol/status", "/api/v1/protocol/roadmap"]},
         ]
     }
+
+
+
+router = APIRouter(prefix="/api/wallet")
+
+class WalletRegisterRequest(BaseModel):
+    address: str
+    encrypted_keystore: str  
+
+class WalletLoginRequest(BaseModel):
+    address: str
+
+@router.post("/register")
+async def register_wallet(req: WalletRegisterRequest):
+    # Store encrypted keystore in Redis/DB — key is the address
+    redis.setex(f"haven:wallet:{req.address}", 365 * 86400, req.encrypted_keystore)
+    return {"registered": True, "address": req.address}
+
+@router.post("/login")
+async def login_wallet(req: WalletLoginRequest):
+    redis.set(f"haven:wallet:last_login:{req.address}", int(time.time()))
+    return {"ok": True}
+
+@router.get("/keystore/{address}")
+async def get_keystore(address: str):
+    # Optional: let user recover their encrypted keystore
+    ks = redis.get(f"haven:wallet:{address.lower()}")
+    if not ks:
+        raise HTTPException(404, "Keystore not found")
+    return {"encrypted_keystore": ks}
+
+app.include_router(router)
