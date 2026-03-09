@@ -26,9 +26,9 @@ const getDynamicConfig = () => {
 const dynamicCfg = getDynamicConfig();
 
 const havenNetwork = defineChain({
-  id: 777000,
+  id: 666999,
   name: "BridgeStone",
-  nativeCurrency: { decimals: 18, name: "VELD Token", symbol: "VELD" },
+  nativeCurrency: { decimals: 18, name: "STC Token", symbol: "STC" },
   rpcUrls: {
     default: { http: [process.env.NEXT_PUBLIC_RPC_URL || dynamicCfg.rpc] },
   },

@@ -571,7 +571,7 @@ function StreamCard({
           {[
             { label: "Impact", value: entry.impact_score?.toFixed(1) ?? "—", suffix: "/100" },
             { label: "Confidence", value: `${((entry.ai_confidence ?? 0) * 100).toFixed(0)}`, suffix: "%" },
-            { label: "Reward", value: entry.token_reward?.toFixed(2) ?? "—", suffix: " VELD" },
+            { label: "Reward", value: entry.token_reward?.toFixed(2) ?? "—", suffix: " STC" },
             { label: "People", value: entry.people_helped?.toString() ?? "—", suffix: "" },
           ].map(s => (
             <div key={s.label}>

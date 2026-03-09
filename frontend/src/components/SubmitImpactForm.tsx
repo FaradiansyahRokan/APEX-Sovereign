@@ -488,7 +488,7 @@ export default function SubmitImpactForm() {
                 {[
                   { label: "Impact Score", value: `${oracle.impact_score?.toFixed(1)}/100` },
                   { label: "AI Confidence", value: `${((oracle?.ai_confidence || 0) * 100).toFixed(1)}%` },
-                  { label: "VELD Earned", value: `${oracle.token_reward?.toFixed(4)}` },
+                  { label: "STC Earned", value: `${oracle.token_reward?.toFixed(4)}` },
                 ].map(s => (
                   <div key={s.label} style={{ borderTop: "1px solid var(--hv-border)", paddingTop: "14px" }}>
                     <p style={{ fontFamily: S, fontStyle: "italic", fontSize: "10px", color: "var(--hv-t4)", marginBottom: "5px" }}>

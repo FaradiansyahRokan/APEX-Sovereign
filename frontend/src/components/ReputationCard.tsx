@@ -132,7 +132,7 @@ export default function ReputationCard({ address, reputationScore }: Props) {
 
           {/* Fields */}
           <FieldRow label="Verified Events"  value={events.toString()} />
-          <FieldRow label="HAVEN Balance"    value={`${havenFmt} VELD`} />
+          <FieldRow label="HAVEN Balance"    value={`${havenFmt} STC`} />
           <FieldRow label="Last Active"      value={lastDate} />
           <FieldRow label="Status"           value="Verified ✓" />
 

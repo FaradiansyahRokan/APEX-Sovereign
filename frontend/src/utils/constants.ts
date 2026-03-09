@@ -1,23 +1,23 @@
 export const CONTRACTS = {
   // L1 & L2 (Data Layer)
-  REPUTATION_LEDGER: "0xEEff17E284d64dcBFB0D3e5b8867F83a95EB44A5",
-  SOVEREIGN_ID: "0x6141aE1ee80fF18A239Fa427c2d6d65982602FaC",
+  REPUTATION_LEDGER: "0xBfD647E7DA80be6c9ACc74c1B29B610871923825",
+  SOVEREIGN_ID: "0xEBdAADcdB188B5fbAd7a5d0701C4250bfEAcff07",
 
   // L2 (Economy/Value Layer)
-  BENEVOLENCE_VAULT: "0x4B1301a72Da30c4ab3E0CaeFf40Ca28A0b416088",
-  SUPPLY_GOVERNOR: "0x5fEdD60933aF9410f9Fa1eAb14E50a414Aa680c4",
+  BENEVOLENCE_VAULT: "0x7E550F089B91Ccb233266Cc25b1C5Cff97730422",
+  SUPPLY_GOVERNOR: "0x3DEE305134b715A5d9BE191F6172A3a9107213ae",
 
   // L7 (Macro Impact)
-  CRISIS_FUND: "0x28f8D147e76f0D88ccbf80B2FA10Eec7eE41C9C6",
+  CRISIS_FUND: "0xAAc8D8Aa86D46F008562f1e9883ea9058C938EEB",
 };
 
 
 export const HAVEN_CHAIN = {
-  id: 777000,
+  id: 666999,
   name: "BridgeStone",
   rpc: process.env.NEXT_PUBLIC_RPC_URL ||
-    "https://moves-score-payments-armor.trycloudflare.com/ext/bc/w4DDDiThpt7dv6A1T2UqkAUxZkC1JVceqg3QMpZ8nL4KPQcHs/rpc",
-  symbol: "VELD",
+    "https://answer-hansen-understand-built.trycloudflare.com/ext/bc/Yxdrh1Sof5JoTTn66vQjNLdvf7JMYvwMMYUWrjAJBphQ2W9qs/rpc",
+  symbol: "GOOD",
   decimals: 18,
 } as const;
 

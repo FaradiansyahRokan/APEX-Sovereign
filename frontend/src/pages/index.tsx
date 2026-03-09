@@ -34,7 +34,7 @@ export default function LandingPage() {
         <ul className="lp-nav-links">
           <li><a href="#poba">Protocol</a></li>
           <li><a href="#satin">SATIN Oracle</a></li>
-          <li><a href="#tokenomics">VELD</a></li>
+          <li><a href="#tokenomics">STC</a></li>
           <li><a href="#governance">Governance</a></li>
           <li><a href="#roadmap">Roadmap</a></li>
           <li><a href="#team">StoneBridge</a></li>
@@ -52,7 +52,7 @@ export default function LandingPage() {
             <h1 className="lp-hero-headline">
               Humanity<br />Action<br /><em>Verification</em><br />&amp; Economic<br />Network
             </h1>
-            <p className="lp-hero-subhead">HAVEN Protocol · VELD · PoBA</p>
+            <p className="lp-hero-subhead">HAVEN Protocol · STC · PoBA</p>
             <p className="lp-hero-desc">
               A decentralised blockchain protocol that converts real-world humanitarian actions into on-chain economic value through a mechanism that has never existed before: <em>Proof of Beneficial Action.</em>
             </p>
@@ -68,7 +68,7 @@ export default function LandingPage() {
               <span className="lp-label-caps">BridgeStone L1 · Active</span>
             </div>
             <div className="lp-hero-stats">
-              {[[{ l: "Chain ID", n: "777000", note: "Sovereign L1" }, { l: "Native Token", n: "VELD", note: "Proof-backed" }], [{ l: "Oracle Layers", n: "8", note: "SATIN AI pipeline" }, { l: "Action Types", n: "8+", note: "SDG-aligned" }]].map((row, i) => (
+              {[[{ l: "Chain ID", n: "777000", note: "Sovereign L1" }, { l: "Native Token", n: "STC", note: "Proof-backed" }], [{ l: "Oracle Layers", n: "8", note: "SATIN AI pipeline" }, { l: "Action Types", n: "8+", note: "SDG-aligned" }]].map((row, i) => (
                 <div key={i} className="lp-stat-row">
                   {row.map(s => (
                     <div key={s.l} className="lp-stat-cell">
@@ -95,7 +95,7 @@ export default function LandingPage() {
           <div className="lp-marquee-track">
             {[0, 1].map(i => (
               <span key={i}>
-                {["Proof of Beneficial Action", "SATIN Oracle", "SovereignID", "VELD Token", "Quadratic Governance", "CrisisFund", "BridgeStone L1", "Anti-Sybil Layer", "ZK Proofs", "Impact Scoring", "Cross-Temporal Chain", "Behavioral Fingerprint"].map(t => (
+                {["Proof of Beneficial Action", "SATIN Oracle", "SovereignID", "STC Token", "Quadratic Governance", "CrisisFund", "BridgeStone L1", "Anti-Sybil Layer", "ZK Proofs", "Impact Scoring", "Cross-Temporal Chain", "Behavioral Fingerprint"].map(t => (
                   <span key={t} className="lp-marquee-item">{t}</span>
                 ))}
               </span>
@@ -126,7 +126,7 @@ export default function LandingPage() {
           <div className="lp-poba-left">
             <h3 className="lp-poba-title">A new consensus<br /><em>primitive</em></h3>
             <p className="lp-poba-body">PoBA is a novel cryptographic consensus mechanism that converts verified humanitarian actions into on-chain economic events. Unlike Proof of Work or Proof of Stake, PoBA requires proof of real-world beneficial impact as the basis for token issuance.</p>
-            <div className="lp-poba-hl"><p>Every VELD token in circulation is backed by a cryptographically verified act of human goodness — not computational waste or capital lockup.</p></div>
+            <div className="lp-poba-hl"><p>Every STC token in circulation is backed by a cryptographically verified act of human goodness — not computational waste or capital lockup.</p></div>
             <p className="lp-poba-body">The mechanism combines AI visual verification, GPS attestation, behavioral fingerprinting, and community consensus to produce tamper-proof impact proofs stored permanently on the BridgeStone L1.</p>
           </div>
           <div className="lp-poba-div" />
@@ -146,7 +146,7 @@ export default function LandingPage() {
           <div className="lp-formula-sep" />
           <div className="lp-formula-col"><div className="lp-formula-layer-num">Layer II</div><div className="lp-formula-layer-name">Anti-Sybil</div><div className="lp-formula-desc">Behavioral fingerprinting, GPS temporal analysis, device binding, and social graph vouching prevent identity fabrication at any scale.</div></div>
           <div className="lp-formula-sep" />
-          <div className="lp-formula-col"><div className="lp-formula-layer-num">Layer III</div><div className="lp-formula-layer-name">On-Chain Proof</div><div className="lp-formula-desc">zk-proof hash, oracle signature, nonce, and expiry window produce a tamper-proof impact record. Smart contract validates and distributes VELD atomically.</div></div>
+          <div className="lp-formula-col"><div className="lp-formula-layer-num">Layer III</div><div className="lp-formula-layer-name">On-Chain Proof</div><div className="lp-formula-desc">zk-proof hash, oracle signature, nonce, and expiry window produce a tamper-proof impact record. Smart contract validates and distributes STC atomically.</div></div>
         </div>
       </section>
 
@@ -174,7 +174,7 @@ export default function LandingPage() {
         <div className="lp-journey-inner">
           <div className="lp-sec-header"><h2 className="lp-sec-title">The Volunteer <em>Journey</em></h2><span className="lp-label-caps">Four Steps</span></div>
           <div className="lp-journey-steps">
-            {[["01", "Establish Identity", "Register your SovereignID on-chain via the social graph vouching system. Three verified community members attest to your identity. Biometric hash binds your personhood to your wallet permanently."], ["02", "Perform Impact", "Conduct a verified humanitarian action in any of the eight recognised action categories. Document with photographic evidence at the location."], ["03", "Submit Proof", "Upload evidence through the HAVEN app. The SATIN Oracle pipeline examines your photograph independently, then cross-references your account. GPS coordinates and timestamp are cryptographically bound."], ["04", "Receive VELD", "Upon oracle verification, a zk-proof is generated and submitted to the BenevolenceVault. VELD tokens are distributed atomically. Your reputation score is updated on the Ledger."]].map(([n, t, b]) => (
+            {[["01", "Establish Identity", "Register your SovereignID on-chain via the social graph vouching system. Three verified community members attest to your identity. Biometric hash binds your personhood to your wallet permanently."], ["02", "Perform Impact", "Conduct a verified humanitarian action in any of the eight recognised action categories. Document with photographic evidence at the location."], ["03", "Submit Proof", "Upload evidence through the HAVEN app. The SATIN Oracle pipeline examines your photograph independently, then cross-references your account. GPS coordinates and timestamp are cryptographically bound."], ["04", "Receive STC", "Upon oracle verification, a zk-proof is generated and submitted to the BenevolenceVault. STC tokens are distributed atomically. Your reputation score is updated on the Ledger."]].map(([n, t, b]) => (
               <div key={n} className="lp-journey-step"><div className="lp-step-num">{n}</div><div className="lp-step-title">{t}</div><p className="lp-step-body">{b}</p></div>
             ))}
           </div>
@@ -183,12 +183,12 @@ export default function LandingPage() {
 
       {/* TOKENOMICS */}
       <section className="lp-tokenomics" id="tokenomics">
-        <div className="lp-sec-header"><h2 className="lp-sec-title">VELD <em>Tokenomics</em></h2><span className="lp-label-caps">Living Economy</span></div>
-        <div className="lp-veld-grid">
-          <div className="lp-veld-left">
-            <h3 className="lp-veld-headline">The only token<br />backed by <em>goodness</em></h3>
+        <div className="lp-sec-header"><h2 className="lp-sec-title">STC <em>Tokenomics</em></h2><span className="lp-label-caps">Living Economy</span></div>
+        <div className="lp-STC-grid">
+          <div className="lp-STC-left">
+            <h3 className="lp-STC-headline">The only token<br />backed by <em>goodness</em></h3>
             <div className="lp-token-params">
-              {[["Token Name", "VELD"], ["Supply Model", "Proof-backed · No pre-mine"], ["Issuance", "Only via verified impact actions"], ["Burn Mechanism", "1% transaction fee → CrisisFund"], ["Governance Weight", "Reputation-adjusted quadratic"], ["Smart Contract", "Solidity 0.8.20 · BridgeStone L1"]].map(([k, v]) => (
+              {[["Token Name", "STC"], ["Supply Model", "Proof-backed · No pre-mine"], ["Issuance", "Only via verified impact actions"], ["Burn Mechanism", "1% transaction fee → CrisisFund"], ["Governance Weight", "Reputation-adjusted quadratic"], ["Smart Contract", "Solidity 0.8.20 · BridgeStone L1"]].map(([k, v]) => (
                 <div key={k} className="lp-token-param"><span className="lp-tp-key">{k}</span><span className="lp-tp-val">{v}</span></div>
               ))}
             </div>
@@ -198,11 +198,11 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-          <div className="lp-veld-div" />
-          <div className="lp-veld-right">
+          <div className="lp-STC-div" />
+          <div className="lp-STC-right">
             <div className="lp-flywheel-title">The Impact Flywheel</div>
             <div className="lp-flywheel-items">
-              {[["Step 01", "Impact Action", "Volunteer performs verified humanitarian action. SATIN Oracle issues zk-proof. VELD minted and distributed."], ["Step 02", "Reputation Accrual", "Each verified action increases on-chain reputation score. Higher rank unlocks governance weight and oracle eligibility."], ["Step 03", "Economic Signal", "VELD circulation grows proportionally to verified humanitarian activity. Token value anchored to real impact density."], ["Step 04", "CrisisFund", "1% of all transactions feeds the CrisisFund reserve. In active crisis zones, multipliers redirect additional VELD to acute need."], ["Step 05", "Governance", "Token holders and reputation-ranked participants vote on protocol parameters, action category weights, and CrisisFund deployment."]].map(([l, t, b]) => (
+              {[["Step 01", "Impact Action", "Volunteer performs verified humanitarian action. SATIN Oracle issues zk-proof. STC minted and distributed."], ["Step 02", "Reputation Accrual", "Each verified action increases on-chain reputation score. Higher rank unlocks governance weight and oracle eligibility."], ["Step 03", "Economic Signal", "STC circulation grows proportionally to verified humanitarian activity. Token value anchored to real impact density."], ["Step 04", "CrisisFund", "1% of all transactions feeds the CrisisFund reserve. In active crisis zones, multipliers redirect additional STC to acute need."], ["Step 05", "Governance", "Token holders and reputation-ranked participants vote on protocol parameters, action category weights, and CrisisFund deployment."]].map(([l, t, b]) => (
                 <div key={l} className="lp-flywheel-item"><div className="lp-fi-label">{l}</div><div className="lp-fi-title">{t}</div><p className="lp-fi-body">{b}</p></div>
               ))}
             </div>
@@ -215,7 +215,7 @@ export default function LandingPage() {
         <div className="lp-governance-inner">
           <div className="lp-sec-header"><h2 className="lp-sec-title">Quadratic <em>Governance</em></h2><span className="lp-label-caps">DAO Architecture</span></div>
           <div className="lp-gov-grid">
-            {[["01", "Proposal System", "Any participant holding GUARDIAN rank or above may submit governance proposals. Proposals require a 72-hour deliberation window before voting opens.", "Proposal Threshold: GUARDIAN rank (≥ 100 reputation)\nDeliberation Window: 72 hours\nVoting Period: 5 days"], ["02", "Quadratic Voting", "Voting power is the square root of a participant's reputation score, adjusted by VELD holdings. This prevents plutocratic capture while rewarding sustained impact contribution.", "Voting Power = √(reputation_score) × log(1 + veld_balance)\nCapped at SOVEREIGN-rank ceiling"], ["03", "CrisisFund Governance", "The CrisisFund reserve is governed by CHAMPION and SOVEREIGN ranked participants. Deployment decisions require 60% consensus within a 24-hour emergency window.", "Crisis Quorum: 60% of CHAMPION+ holders\nEmergency Window: 24 hours\nMax Single Deploy: 40% of reserve"], ["04", "Parameter Control", "Core protocol parameters — action category weights, oracle layer thresholds, reputation multipliers, and burn rates — are governed by the full DAO.", "Implementation Delay: 30 days\nSupermajority Required: 66%\nVeto Period: 7 days"]].map(([n, t, b, f]) => (
+            {[["01", "Proposal System", "Any participant holding GUARDIAN rank or above may submit governance proposals. Proposals require a 72-hour deliberation window before voting opens.", "Proposal Threshold: GUARDIAN rank (≥ 100 reputation)\nDeliberation Window: 72 hours\nVoting Period: 5 days"], ["02", "Quadratic Voting", "Voting power is the square root of a participant's reputation score, adjusted by STC holdings. This prevents plutocratic capture while rewarding sustained impact contribution.", "Voting Power = √(reputation_score) × log(1 + veld_balance)\nCapped at SOVEREIGN-rank ceiling"], ["03", "CrisisFund Governance", "The CrisisFund reserve is governed by CHAMPION and SOVEREIGN ranked participants. Deployment decisions require 60% consensus within a 24-hour emergency window.", "Crisis Quorum: 60% of CHAMPION+ holders\nEmergency Window: 24 hours\nMax Single Deploy: 40% of reserve"], ["04", "Parameter Control", "Core protocol parameters — action category weights, oracle layer thresholds, reputation multipliers, and burn rates — are governed by the full DAO.", "Implementation Delay: 30 days\nSupermajority Required: 66%\nVeto Period: 7 days"]].map(([n, t, b, f]) => (
               <div key={n} className="lp-gov-card"><div className="lp-gov-card-num">{n}</div><div className="lp-gov-card-title">{t}</div><p className="lp-gov-card-body">{b}</p><div className="lp-gov-formula"><code>{f}</code></div></div>
             ))}
           </div>
@@ -230,7 +230,7 @@ export default function LandingPage() {
             <span className="lp-label-caps" style={{ color: "var(--stone)" }}>Multi-Layer Defence</span>
           </div>
           <div className="lp-security-grid">
-            {[["Anti-Sybil", "SovereignID System", "Social graph vouching requires three verified community attestations. Biometric hash binding prevents wallet rotation attacks."], ["Fraud Detection", "Multi-Vector Analysis", "Perceptual hashing detects duplicate images. ELA identifies manipulation. Screenshot classifiers block fabricated evidence."], ["Oracle Security", "Decentralised Network", "SATIN Oracle nodes require 1,000 VELD stake. Consensus scoring aggregates multiple node verdicts. Byzantine fault tolerance through outlier rejection."], ["Smart Contracts", "Formal Verification", "Solidity 0.8.20 with reentrancy guards and access control. Oracle signature verification prevents replay attacks."], ["Cryptography", "ZK Proof System", "Each impact event receives a unique zk-proof hash binding volunteer address, event ID, impact score, and token reward."], ["Governance", "Timelock Architecture", "All parameter changes execute after 30-day timelock. Emergency proposals require supermajority. Multisig treasury controls."]].map(([l, t, b]) => (
+            {[["Anti-Sybil", "SovereignID System", "Social graph vouching requires three verified community attestations. Biometric hash binding prevents wallet rotation attacks."], ["Fraud Detection", "Multi-Vector Analysis", "Perceptual hashing detects duplicate images. ELA identifies manipulation. Screenshot classifiers block fabricated evidence."], ["Oracle Security", "Decentralised Network", "SATIN Oracle nodes require 1,000 STC stake. Consensus scoring aggregates multiple node verdicts. Byzantine fault tolerance through outlier rejection."], ["Smart Contracts", "Formal Verification", "Solidity 0.8.20 with reentrancy guards and access control. Oracle signature verification prevents replay attacks."], ["Cryptography", "ZK Proof System", "Each impact event receives a unique zk-proof hash binding volunteer address, event ID, impact score, and token reward."], ["Governance", "Timelock Architecture", "All parameter changes execute after 30-day timelock. Emergency proposals require supermajority. Multisig treasury controls."]].map(([l, t, b]) => (
               <div key={l} className="lp-sec-card"><div className="lp-sec-card-label">{l}</div><div className="lp-sec-card-title">{t}</div><p className="lp-sec-card-body">{b}</p></div>
             ))}
           </div>
@@ -252,7 +252,7 @@ export default function LandingPage() {
         <div className="lp-roadmap-inner">
           <div className="lp-sec-header"><h2 className="lp-sec-title">Protocol <em>Roadmap</em></h2><span className="lp-label-caps">Development Phases</span></div>
           <div className="lp-roadmap-track">
-            {([["Phase I · 2024", "Foundation", "active", ["BridgeStone L1 deployment", "SovereignID contract", "BenevolenceVault contract", "SATIN Oracle v1", "Genesis member onboarding", "WalletAuthModal + Haven wallet"]], ["Phase II · Q2 2025", "Expansion", "upcoming", ["SATIN Oracle v2 (8-layer pipeline)", "CrisisFund contract deployment", "Community Stream launch", "Quadratic governance DAO", "NGO partnership programme", "Oracle node network (beta)"]], ["Phase III · Q4 2025", "Scale", "upcoming", ["Cross-chain bridge", "Institutional CSR integration", "Mobile app (iOS + Android)", "Oracle consensus network", "DAO full autonomy transfer", "VELD liquidity programme"]], ["Phase IV · 2026", "Sovereign", "planned", ["Full DAO governance", "Self-sustaining oracle economy", "Multi-jurisdiction SovereignID", "CrisisFund autonomous deployment", "Protocol-as-a-Service API", "HAVEN ecosystem grants"]]] as [string, string, string, string[]][]).map(([tag, title, status, milestones]) => (
+            {([["Phase I · 2024", "Foundation", "active", ["BridgeStone L1 deployment", "SovereignID contract", "BenevolenceVault contract", "SATIN Oracle v1", "Genesis member onboarding", "WalletAuthModal + Haven wallet"]], ["Phase II · Q2 2025", "Expansion", "upcoming", ["SATIN Oracle v2 (8-layer pipeline)", "CrisisFund contract deployment", "Community Stream launch", "Quadratic governance DAO", "NGO partnership programme", "Oracle node network (beta)"]], ["Phase III · Q4 2025", "Scale", "upcoming", ["Cross-chain bridge", "Institutional CSR integration", "Mobile app (iOS + Android)", "Oracle consensus network", "DAO full autonomy transfer", "STC liquidity programme"]], ["Phase IV · 2026", "Sovereign", "planned", ["Full DAO governance", "Self-sustaining oracle economy", "Multi-jurisdiction SovereignID", "CrisisFund autonomous deployment", "Protocol-as-a-Service API", "HAVEN ecosystem grants"]]] as [string, string, string, string[]][]).map(([tag, title, status, milestones]) => (
               <div key={tag} className="lp-roadmap-phase">
                 <div className="lp-phase-meta">
                   <div className="lp-phase-tag">{tag}</div>
@@ -323,7 +323,7 @@ export default function LandingPage() {
         <div className="lp-footer-inner">
           <div className="lp-footer-top">
             <div><div className="lp-footer-wordmark">Haven</div><div className="lp-footer-protocol-line">Humanity Action Verification &amp; Economic Network</div><p className="lp-footer-tagline">A decentralised protocol where every token is backed by a verified act of human goodness.</p></div>
-            {([["Protocol", [["#poba", "Proof of Beneficial Action"], ["#satin", "SATIN Oracle"], ["#poba", "Smart Contracts"], ["#poba", "Security Audit"]]], ["Economy", [["#tokenomics", "VELD Tokenomics"], ["#tokenomics", "Living Economy"], ["#tokenomics", "CrisisFund"], ["#tokenomics", "Flywheel Model"]]], ["Governance", [["#governance", "DAO Proposals"], ["#governance", "Quadratic Voting"], ["#governance", "Community Stream"], ["#team", "StoneBridge Intelligence"]]]] as [string, [string, string][]][]).map(([title, links]) => (
+            {([["Protocol", [["#poba", "Proof of Beneficial Action"], ["#satin", "SATIN Oracle"], ["#poba", "Smart Contracts"], ["#poba", "Security Audit"]]], ["Economy", [["#tokenomics", "STC Tokenomics"], ["#tokenomics", "Living Economy"], ["#tokenomics", "CrisisFund"], ["#tokenomics", "Flywheel Model"]]], ["Governance", [["#governance", "DAO Proposals"], ["#governance", "Quadratic Voting"], ["#governance", "Community Stream"], ["#team", "StoneBridge Intelligence"]]]] as [string, [string, string][]][]).map(([title, links]) => (
               <div key={title}><div className="lp-footer-col-title">{title}</div><ul className="lp-footer-links">{links.map(([href, label]) => <li key={label}><a href={href}>{label}</a></li>)}</ul></div>
             ))}
           </div>

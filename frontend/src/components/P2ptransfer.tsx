@@ -130,7 +130,7 @@ export default function P2PTransfer({ address }: { address: string }) {
               <span style={{
                 fontFamily: S, fontStyle: "italic", fontSize: "16px",
                 color: "var(--hv-t4)", marginLeft: "10px",
-              }}>VELD</span>
+              }}>STC</span>
             </p>
 
             {/* Amount allocation bar */}
@@ -176,7 +176,7 @@ export default function P2PTransfer({ address }: { address: string }) {
             </div>
 
             <div>
-              <Label text="Amount (VELD)" />
+              <Label text="Amount (STC)" />
               <input
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
@@ -312,7 +312,7 @@ export default function P2PTransfer({ address }: { address: string }) {
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <p style={{ fontFamily: M, fontSize: "13px", color: "var(--hv-t2)" }}>
-                      {h.amount} VELD
+                      {h.amount} STC
                     </p>
                     <p style={{
                       fontFamily: S, fontStyle: "italic", fontSize: "9px",

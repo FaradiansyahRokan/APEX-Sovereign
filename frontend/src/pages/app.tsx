@@ -643,7 +643,7 @@ function Dashboard({
             <p style={{
               fontFamily: "var(--sans)", fontSize: 8.5, letterSpacing: "0.24em",
               textTransform: "uppercase" as const, color: C.t22, marginBottom: 10,
-            }}>VELD Balance</p>
+            }}>STC Balance</p>
             <p style={{ fontFamily: "var(--serif)", fontWeight: 300, fontSize: 34, color: C.text, lineHeight: 1 }}>
               <AnimatedNumber value={nativeBalance ? Number(nativeBalance.formatted) : 0} isFloat />
             </p>
